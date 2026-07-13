@@ -1,0 +1,35 @@
+<h2>How should event flyer cards be laid out?</h2>
+<p class="subtitle">Flyers will be multi-colored band posters with varying aspect ratios. The grid must feel cohesive despite the visual noise.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Fixed-ratio grid (Recommended)</h3>
+      <p>All cards share a fixed aspect ratio container (e.g. 3:4 portrait). Flyer images are <code>object-fit: cover</code> inside — no matter how wild the original poster dimensions are, every card is the same size. Clean, disciplined, very neutral. Easiest to make cohesive.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;max-width:360px">
+        <div style="aspect-ratio:3/4;background:#1a1a1a;border:1px solid #333;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666">FLYER</div>
+        <div style="aspect-ratio:3/4;background:#1a1a1a;border:1px solid #333;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666">FLYER</div>
+        <div style="aspect-ratio:3/4;background:#1a1a1a;border:1px solid #333;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666">FLYER</div>
+        <div style="aspect-ratio:3/4;background:#1a1a1a;border:1px solid #333;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666">FLYER</div>
+        <div style="aspect-ratio:3/4;background:#1a1a1a;border:1px solid #333;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666">FLYER</div>
+        <div style="aspect-ratio:3/4;background:#1a1a1a;border:1px solid #333;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666">FLYER</div>
+      </div>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>CSS Masonry / Pinterest-style</h3>
+      <p>Cards preserve their natural aspect ratio. Taller posters show more of the artwork. Creates an energetic, editorial feel. Harder to keep visually neutral — the varying heights create rhythm but can look chaotic with loud colors.</p>
+      <div style="columns:3;gap:8px;margin-top:12px;max-width:360px">
+        <div style="break-inside:avoid;background:#1a1a1a;border:1px solid #333;border-radius:2px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666;height:120px">FLYER</div>
+        <div style="break-inside:avoid;background:#1a1a1a;border:1px solid #333;border-radius:2px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666;height:80px">FLYER</div>
+        <div style="break-inside:avoid;background:#1a1a1a;border:1px solid #333;border-radius:2px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666;height:100px">FLYER</div>
+        <div style="break-inside:avoid;background:#1a1a1a;border:1px solid #333;border-radius:2px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666;height:90px">FLYER</div>
+        <div style="break-inside:avoid;background:#1a1a1a;border:1px solid #333;border-radius:2px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666;height:110px">FLYER</div>
+        <div style="break-inside:avoid;background:#1a1a1a;border:1px solid #333;border-radius:2px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#666;height:75px">FLYER</div>
+      </div>
+    </div>
+  </div>
+</div>

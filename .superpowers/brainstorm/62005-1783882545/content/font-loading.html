@@ -1,0 +1,19 @@
+<h2>How should we handle the Lausanne typeface?</h2>
+<p class="subtitle">Lausanne is a commercial font from Swiss Typefaces — the design.md specifies it as the only typeface used across the entire site.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>System-ui fallback for now (Recommended)</h3>
+      <p>Wire up the CSS custom property and Tailwind <code>@theme</code> block exactly as specified in design.md, but use the <code>ui-sans-serif, system-ui</code> fallback stack until you provide the font files. Swapping in the real Lausanne later is a one-line change to <code>globals.css</code>. Keeps development unblocked immediately.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Self-hosted from the start</h3>
+      <p>You provide the <code>.woff2</code> files and we load them via <code>@font-face</code> in <code>globals.css</code>. The site looks exactly correct immediately — correct kerning, weights, and rhythm from day one. Requires you to have the license and files ready now.</p>
+    </div>
+  </div>
+</div>
