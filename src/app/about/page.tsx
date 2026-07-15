@@ -40,7 +40,7 @@ export default function AboutPage() {
         </ScrollReveal>
 
         {/* Team */}
-        <div className="border-t border-pewter/20 pt-16 mb-16">
+        <div className="border-t border-pewter/20 pt-20 mb-20">
           <ScrollReveal>
             <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">The team</p>
           </ScrollReveal>
@@ -51,7 +51,7 @@ export default function AboutPage() {
             style={{ fontSize: 'var(--text-heading-sm)' }}
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             {teamMembers.map((member, i) => (
               <ScrollReveal key={member.id} delay={i * 0.08}>
                 <TeamMemberCard member={member} />
@@ -62,7 +62,7 @@ export default function AboutPage() {
 
         {/* CTA */}
         <ScrollReveal>
-          <div className="border-t border-pewter/20 pt-16 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+          <div className="border-t border-pewter/20 pt-20 flex flex-col sm:flex-row items-start sm:items-center gap-8">
             <p className="text-body text-pewter max-w-sm">
               Interested in working with us or bringing an artist to Sri Lanka?
             </p>

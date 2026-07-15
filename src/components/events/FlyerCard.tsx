@@ -16,7 +16,7 @@ export default function FlyerCard({ event }: Props) {
   return (
     <Link
       href={`/events/${event.slug}`}
-      className="group block border border-pewter/30 hover:border-ghost-white transition-colors overflow-hidden"
+      className="group block border border-pewter/20 hover:border-ghost-white/60 transition-colors duration-300 overflow-hidden"
       aria-label={`${event.title} — ${formatDate(event.date)}`}
     >
       <div className="aspect-[3/4] relative bg-absolute-zero overflow-hidden">
@@ -37,7 +37,7 @@ export default function FlyerCard({ event }: Props) {
         )}
       </div>
 
-      <div className="p-4 border-t border-pewter/30 flex flex-col gap-1">
+      <div className="p-5 border-t border-pewter/20 flex flex-col gap-1.5">
         <p className="text-caption text-electric-lime tracking-widest uppercase">
           {formatDate(event.date)}
         </p>

@@ -4,6 +4,7 @@ import SmoothScrollProvider from '@/components/layout/SmoothScrollProvider'
 import CustomCursor from '@/components/layout/CustomCursor'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import LogoIntro from '@/components/layout/LogoIntro'
 
 export const metadata: Metadata = {
   title: {
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="bg-absolute-zero text-ghost-white font-lausanne">
         <SmoothScrollProvider>
+          <LogoIntro />
           <CustomCursor />
           <Navbar />
           <main>{children}</main>

@@ -17,7 +17,7 @@ export default function TicketPhaseCard({ phase, selected, onSelect }: Props) {
       disabled={unavailable}
       aria-pressed={selected}
       aria-label={`${phase.name} — ${phase.currency} ${phase.price.toLocaleString()}${phase.isSoldOut ? ' — Sold out' : !phase.isActive ? ' — Not available yet' : ''}`}
-      className="w-full text-left border transition-colors p-5 disabled:opacity-40 disabled:cursor-not-allowed"
+      className="w-full text-left border transition-colors duration-200 p-6 disabled:opacity-40 disabled:cursor-not-allowed"
       style={{
         borderColor: selected ? 'var(--color-ghost-white)' : 'var(--color-pewter)',
         backgroundColor: selected ? 'rgba(255,255,255,0.05)' : 'transparent',

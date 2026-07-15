@@ -51,7 +51,7 @@ export default async function EventDetailPage({ params }: PageProps) {
 
         {/* Flyer + info */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
-          <div className="relative border border-pewter/30">
+          <div className="relative border border-pewter/20">
             {event.flyerUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -111,7 +111,7 @@ export default async function EventDetailPage({ params }: PageProps) {
 
         {/* Description */}
         <ScrollReveal>
-          <div className="max-w-2xl mb-20 border-t border-pewter/20 pt-10">
+          <div className="max-w-2xl mb-20 border-t border-pewter/20 pt-16">
             <p className="text-caption text-electric-lime tracking-widest uppercase mb-4">About this event</p>
             <p className="text-body text-pewter leading-relaxed">{event.description}</p>
           </div>

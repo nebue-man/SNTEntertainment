@@ -14,7 +14,7 @@ export default function MediaCard({ item }: Props) {
   return (
     <>
       <button
-        className="group relative w-full border border-pewter/30 hover:border-ghost-white transition-colors overflow-hidden text-left"
+        className="group relative w-full border border-pewter/20 hover:border-ghost-white/60 transition-colors duration-300 overflow-hidden text-left"
         onClick={() => setOpen(true)}
         aria-label={`View ${item.eventTitle}`}
       >
@@ -37,7 +37,7 @@ export default function MediaCard({ item }: Props) {
             </div>
           )}
         </div>
-        <div className="p-3 border-t border-pewter/30">
+        <div className="p-4 border-t border-pewter/20">
           <p className="text-body-sm text-ghost-white truncate">{item.eventTitle}</p>
           <p className="text-caption text-pewter">{item.year}</p>
         </div>

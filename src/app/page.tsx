@@ -76,7 +76,7 @@ export default async function Home() {
             </GhostButton>
           </ScrollReveal>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {featuredPastWork.slice(0, 4).map((item, i) => (
             <ScrollReveal key={item.id} delay={i * 0.08}>
               <MediaCard item={item} />
@@ -106,7 +106,7 @@ export default async function Home() {
             </GhostButton>
           </ScrollReveal>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {upcoming.slice(0, 4).map((event, i) => (
             <ScrollReveal key={event.id} delay={i * 0.08}>
               <FlyerCard event={event} />

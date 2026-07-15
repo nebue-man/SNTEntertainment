@@ -23,13 +23,13 @@ export default function EventTicketSection({ eventId, phases }: Props) {
   return (
     <>
       <ScrollReveal>
-        <div className="border-t border-pewter/20 pt-10">
+        <div className="border-t border-pewter/20 pt-16">
           <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Tickets</p>
-          <p className="text-body-sm text-pewter mb-8 max-w-md">
+          <p className="text-body-sm text-pewter mb-10 max-w-md leading-relaxed">
             Select a ticket phase to request your spot. Our team will contact you with payment
             details by email.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-3xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl">
             {phases.map((phase) => (
               <TicketPhaseCard
                 key={phase.id}

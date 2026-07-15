@@ -14,15 +14,19 @@ type LinkProps   = BaseProps & AnchorHTMLAttributes<HTMLAnchorElement>  & { href
 
 type Props = ButtonProps | LinkProps
 
+// Design spec (design.md — K72):
+//   thin  — 1px Ghost White border, 0px radius, 25px h-pad, 0px v-pad
+//   pill  — 3px Ghost White border, pill radius, 28px h-pad, ~21px v-pad
 function variantClasses(variant: Variant) {
+  const shared = 'inline-flex items-center justify-center transition-opacity hover:opacity-70 focus:outline-none text-body-sm font-light tracking-widest uppercase text-ghost-white'
   if (variant === 'thin') {
-    return 'border border-ghost-white text-ghost-white px-6 py-0 rounded-none text-body font-light tracking-widest uppercase'
+    return `${shared} border border-ghost-white px-[25px] py-[9px] rounded-none`
   }
-  return 'border-[3px] border-ghost-white text-ghost-white px-7 pt-5 pb-0 rounded-pill text-body font-light tracking-widest uppercase'
+  return `${shared} border-[3px] border-ghost-white px-[28px] py-[21px] rounded-pill`
 }
 
 export default function GhostButton({ variant = 'pill', className = '', children, ...props }: Props) {
-  const classes = `inline-flex items-center justify-center transition-opacity hover:opacity-70 ${variantClasses(variant)} ${className}`
+  const classes = `${variantClasses(variant)} ${className}`
 
   if ('href' in props && props.href) {
     const { href, ...rest } = props as LinkProps
@@ -34,7 +38,13 @@ export default function GhostButton({ variant = 'pill', className = '', children
   }
 
   return (
-    <button className={classes} {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}>
+    // appearance-none in globals.css handles UA chrome; explicit bg-transparent + border
+    // here makes the element own all visible styling with no UA interference
+    <button
+      type="button"
+      className={classes}
+      {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}
+    >
       {children}
     </button>
   )

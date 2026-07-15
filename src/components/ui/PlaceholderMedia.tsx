@@ -23,7 +23,7 @@ export default function PlaceholderMedia({
 }: Props) {
   return (
     <div
-      className={`relative w-full ${ratioClass[aspectRatio]} border border-pewter flex flex-col items-center justify-center gap-3 bg-absolute-zero/50 ${className}`}
+      className={`relative w-full ${ratioClass[aspectRatio]} border border-pewter/30 flex flex-col items-center justify-center gap-4 bg-absolute-zero/50 ${className}`}
     >
       <div className="text-pewter">
         {type === 'video' ? <Film size={32} strokeWidth={1} /> : <ImageIcon size={32} strokeWidth={1} />}

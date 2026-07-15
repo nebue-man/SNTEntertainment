@@ -86,7 +86,7 @@ export default function HeroCarousel({ slides, heading, tagline }: Props) {
         <SplitHeadline
           text={heading}
           as="h1"
-          className="text-ghost-white font-light leading-none mb-4"
+          className="text-ghost-white font-light leading-none mb-6"
           style={{ fontSize: 'var(--text-display-sm)' }}
           once={false}
         />
@@ -99,7 +99,7 @@ export default function HeroCarousel({ slides, heading, tagline }: Props) {
           {tagline}
         </motion.p>
 
-        <div className="flex gap-2 mt-8" role="tablist" aria-label="Carousel slides">
+        <div className="flex gap-3 mt-10" role="tablist" aria-label="Carousel slides">
           {slides.map((s, i) => (
             <button
               key={s.id}
@@ -107,7 +107,7 @@ export default function HeroCarousel({ slides, heading, tagline }: Props) {
               aria-selected={i === index}
               aria-label={`Slide ${i + 1}`}
               onClick={() => goTo(i)}
-              className="h-px w-8 transition-all duration-300"
+              className="h-[1.5px] w-10 transition-all duration-300"
               style={{ backgroundColor: i === index ? 'var(--color-ghost-white)' : 'var(--color-pewter)' }}
             />
           ))}

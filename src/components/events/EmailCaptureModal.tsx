@@ -72,14 +72,14 @@ export default function EmailCaptureModal({ open, onClose, eventId, phaseName, p
           onClick={onClose}
         >
           <motion.div
-            className="w-full max-w-md border border-pewter/50 bg-absolute-zero p-8"
+            className="w-full max-w-md border border-pewter/30 bg-absolute-zero p-10"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 20, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between mb-6">
+            <div className="flex items-start justify-between mb-8">
               <div>
                 <p className="text-caption text-electric-lime tracking-widest uppercase mb-1">
                   Ticket Request
@@ -118,7 +118,7 @@ export default function EmailCaptureModal({ open, onClose, eventId, phaseName, p
                     value={email}
                     onChange={(e) => { setEmail(e.target.value); setFieldError('') }}
                     placeholder="your@email.com"
-                    className="w-full bg-transparent border border-pewter/50 focus:border-ghost-white px-4 py-3 text-body text-ghost-white placeholder:text-pewter/50 outline-none transition-colors"
+                    className="w-full bg-transparent border border-pewter/30 focus:border-ghost-white px-5 py-4 text-body text-ghost-white placeholder:text-pewter/50 outline-none transition-colors"
                     aria-describedby={fieldError ? 'field-error' : undefined}
                     aria-invalid={!!fieldError}
                   />
@@ -136,7 +136,7 @@ export default function EmailCaptureModal({ open, onClose, eventId, phaseName, p
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full border border-ghost-white text-ghost-white text-body-sm tracking-widest uppercase py-3 px-6 hover:bg-ghost-white hover:text-absolute-zero transition-colors disabled:opacity-50"
+                  className="w-full border border-ghost-white text-ghost-white text-body-sm tracking-widest uppercase py-4 px-6 hover:bg-ghost-white hover:text-absolute-zero transition-colors disabled:opacity-50"
                   aria-label="Submit ticket request"
                 >
                   {status === 'loading' ? 'Sending…' : 'Submit Request'}
