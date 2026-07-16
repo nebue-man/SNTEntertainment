@@ -48,36 +48,36 @@ function GalleryOverlay({
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 bg-black flex flex-col"
+      className="fixed inset-0 z-[300] bg-black flex flex-col"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
     >
+      {/* Close button — fixed to gallery top-right, isolated from nav */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-6 z-10 w-11 h-11 flex items-center justify-center text-white/40 hover:text-white transition-colors"
+        aria-label="Close gallery"
+      >
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
+
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 shrink-0">
+      <div className="flex items-center justify-between pl-6 pr-20 py-5 border-b border-white/10 shrink-0">
         <div>
-          <p className="text-ghost-white font-light text-[15px] leading-snug">{event.title}</p>
-          <p className="text-pewter text-[11px] mt-0.5 tracking-wide">
+          <p className="text-ghost-white font-light text-[15px] leading-tight">{event.title}</p>
+          <p className="text-pewter text-[11px] mt-2 tracking-wide">
             {event.venue}&nbsp;&middot;&nbsp;{new Date(event.eventDate).getFullYear()}
           </p>
         </div>
-        <div className="flex items-center gap-5">
-          {photos.length > 0 && (
-            <span className="text-pewter/50 text-[11px] tabular-nums">
-              {idx + 1} / {photos.length}
-            </span>
-          )}
-          <button
-            onClick={onClose}
-            className="text-white/40 hover:text-white transition-colors"
-            aria-label="Close gallery"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
+        {photos.length > 0 && (
+          <span className="text-pewter/50 text-[11px] tabular-nums">
+            {idx + 1} / {photos.length}
+          </span>
+        )}
       </div>
 
       {/* Photo */}
