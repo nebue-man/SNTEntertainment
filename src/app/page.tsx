@@ -8,6 +8,7 @@ import { featuredPastWork } from '@/lib/mediaConfig'
 import { upcomingEventsPlaceholder } from '@/lib/eventsConfig'
 import { getUpcomingEvents, getHeroVideos } from '@/lib/api'
 import type { Event, HeroSlide } from '@/lib/types'
+import { resolveMediaUrl } from '@/lib/mediaUrl'
 
 async function fetchUpcoming(): Promise<Event[]> {
   try {
@@ -23,7 +24,7 @@ async function fetchHeroSlides(): Promise<HeroSlide[]> {
     return slots.map((s) => ({
       id: String(s.slotNumber),
       type: 'video' as const,
-      src: s.videoUrl,
+      src: resolveMediaUrl(s.videoUrl),
       alt: `Hero video ${s.slotNumber}`,
       label: '',
     }))

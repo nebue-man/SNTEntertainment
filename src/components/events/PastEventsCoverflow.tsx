@@ -1,8 +1,8 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, type TargetAndTransition, type Transition } from 'framer-motion'
-import Image from 'next/image'
 import type { PastApiEvent } from '@/lib/types'
+import { resolveMediaUrl } from '@/lib/mediaUrl'
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
@@ -102,13 +102,11 @@ function GalleryOverlay({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
-              <Image
-                src={photo.url}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={resolveMediaUrl(photo.url)}
                 alt={`${event.title} — photo ${idx + 1}`}
-                fill
-                sizes="100vw"
-                className="object-contain"
-                priority
+                className="absolute inset-0 w-full h-full object-contain"
               />
             </motion.div>
           </AnimatePresence>
@@ -328,12 +326,11 @@ export default function PastEventsCoverflow({ events }: { events: PastApiEvent[]
             >
               <div className="relative w-full h-full rounded-xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
                 {coverPhoto ? (
-                  <Image
-                    src={coverPhoto.url}
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={resolveMediaUrl(coverPhoto.url)}
                     alt={event.title}
-                    fill
-                    sizes="240px"
-                    className="object-cover"
+                    className="absolute inset-0 w-full h-full object-cover"
                     loading="lazy"
                   />
                 ) : (
