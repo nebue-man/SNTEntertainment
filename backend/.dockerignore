@@ -1,0 +1,13 @@
+node_modules
+.git
+dist
+
+# Uploads are provided by a Docker named volume at runtime — the host
+# directory must not be baked into the image or it shadows the volume.
+uploads
+
+# Secrets stay on the host; the container receives them via env_file / environment.
+.env
+
+*.log
+npm-debug.log*

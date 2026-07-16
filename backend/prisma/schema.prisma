@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+enum EventStatus {
+  UPCOMING
+  PAST
+}
+
+enum MediaType {
+  VIDEO
+  PHOTO
+}
+
+enum RequestStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+}
+
+// ── Models ────────────────────────────────────────────────────────────────────
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model Event {
+  id             String          @id @default(cuid())
+  slug           String          @unique
+  title          String
+  description    String
+  venue          String
+  eventDate      DateTime
+  status         EventStatus
+  flyerUrl       String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  artists        Artist[]
+  media          EventMedia[]
+  phases         TicketPhase[]
+  ticketRequests TicketRequest[]
+
+  @@index([status, eventDate])
+}
+
+model Artist {
+  id      String @id @default(cuid())
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  name    String
+  role    String
+
+  @@index([eventId])
+}
+
+model EventMedia {
+  id                 String    @id @default(cuid())
+  eventId            String
+  event              Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  type               MediaType
+  url                String
+  cloudinaryPublicId String
+  sortOrder          Int
+
+  @@index([eventId, sortOrder])
+}
+
+model TicketPhase {
+  id                String          @id @default(cuid())
+  eventId           String
+  event             Event           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  name              String
+  price             Decimal         @db.Decimal(10, 2)
+  currency          String          @default("LKR")
+  quantityAvailable Int
+  quantitySold      Int             @default(0)
+  isActive          Boolean         @default(true)
+  sortOrder         Int
+  requests          TicketRequest[]
+
+  @@index([eventId, isActive])
+}
+
+model TicketRequest {
+  id  String @id @default(cuid())
+
+  // Foreign keys
+  eventId String
+  event   Event       @relation(fields: [eventId], references: [id])
+  phaseId String
+  phase   TicketPhase @relation(fields: [phaseId], references: [id])
+
+  email          String
+  priceAtRequest Decimal @db.Decimal(10, 2)
+
+  paymentSlipUrl      String
+  paymentSlipPublicId String
+
+  status     RequestStatus @default(PENDING)
+  adminNotes String?
+
+  // Phase 2 payment gateway — columns exist now, unused until Phase 2
+  paymentGatewayReference String?
+  paymentGatewayStatus    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventId, status])
+  @@index([phaseId])
+}
+
+// Simple key-value store for admin-editable site settings
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
+
+// Fixed set of 5 video slots for the homepage hero carousel
+model HeroVideoSlot {
+  id                 String   @id @default(cuid())
+  slotNumber         Int      @unique
+  videoUrl           String?
+  cloudinaryPublicId String?
+  updatedAt          DateTime @updatedAt
+}

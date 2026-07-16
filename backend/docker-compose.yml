@@ -1,0 +1,23 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "${PORT:-4000}:4000"
+    # Load most vars from .env; DATABASE_URL is overridden below to reach the
+    # host machine's Postgres via host.docker.internal instead of localhost.
+    env_file: .env
+    environment:
+      DATABASE_URL: "postgresql://dilshan@host.docker.internal:5432/snt_events?schema=public"
+    volumes:
+      # Uploads land at /app/dist/uploads inside the container because
+      # __dirname in the compiled files is /app/dist/src and multer/static
+      # paths are all built with path.join(__dirname, '../../../uploads/...')
+      # or path.join(__dirname, '../uploads'). The named volume persists across
+      # container restarts and image rebuilds.
+      - uploads:/app/dist/uploads
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  uploads:
