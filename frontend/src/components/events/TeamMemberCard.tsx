@@ -6,7 +6,7 @@ interface Props { member: TeamMember }
 export default function TeamMemberCard({ member }: Props) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="aspect-square border border-pewter/30 overflow-hidden">
+      <div className="aspect-[4/5] border border-pewter/30 overflow-hidden">
         {member.photoSrc ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -17,7 +17,7 @@ export default function TeamMemberCard({ member }: Props) {
         ) : (
           <PlaceholderMedia
             label={`${member.name} — portrait photo (replace with client asset)`}
-            aspectRatio="1/1"
+            aspectRatio="4/5"
             type="image"
           />
         )}
