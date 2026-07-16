@@ -40,6 +40,32 @@ export interface TicketRequestResponse {
   message: string
 }
 
+// ─── Real API response shapes (verified against live backend) ─────────────────
+
+export interface ApiEventMedia {
+  id: string
+  type: 'PHOTO' | 'VIDEO'
+  url: string
+  sortOrder: number
+}
+
+export interface PastApiEvent {
+  id: string
+  slug: string
+  title: string
+  venue: string
+  eventDate: string
+  status: 'PAST'
+  flyerUrl: string | null
+  media: ApiEventMedia[]
+  artists: { name: string; role: string }[]
+}
+
+export interface HeroVideoEntry {
+  slotNumber: number
+  videoUrl: string
+}
+
 // ─── Config / placeholder data shapes ────────────────────────────────────────
 
 export interface HeroSlide {

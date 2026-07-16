@@ -1,4 +1,4 @@
-import type { Event, TicketRequest, TicketRequestResponse } from '@/lib/types'
+import type { Event, PastApiEvent, HeroVideoEntry, TicketRequest, TicketRequestResponse } from '@/lib/types'
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const base = process.env.NEXT_PUBLIC_API_URL ?? ''
@@ -16,13 +16,24 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const getUpcomingEvents = () =>
-  apiFetch<Event[]>('/api/events?status=upcoming')
+  apiFetch<{ data: Event[] }>('/api/events?status=upcoming')
+    .then((r) => (Array.isArray(r.data) ? r.data : []))
 
 export const getPastEvents = () =>
-  apiFetch<Event[]>('/api/events?status=past')
+  apiFetch<{ data: Event[] }>('/api/events?status=past')
+    .then((r) => (Array.isArray(r.data) ? r.data : []))
 
 export const getEvent = (slug: string) =>
-  apiFetch<Event>(`/api/events/${slug}`)
+  apiFetch<{ data: Event }>(`/api/events/${slug}`)
+    .then((r) => r.data)
+
+export const getPastEventsWithMedia = () =>
+  apiFetch<{ data: PastApiEvent[] }>('/api/events?status=past')
+    .then((r) => (Array.isArray(r.data) ? r.data : []))
+
+export const getHeroVideos = () =>
+  apiFetch<{ data: HeroVideoEntry[] }>('/api/hero-videos')
+    .then((r) => (Array.isArray(r.data) ? r.data : []))
 
 export const createTicketRequest = (body: TicketRequest) =>
   apiFetch<TicketRequestResponse>('/api/ticket-requests', {

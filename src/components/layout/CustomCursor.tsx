@@ -14,6 +14,8 @@ export default function CustomCursor() {
       return
     }
 
+    document.documentElement.classList.add('custom-cursor')
+
     let x = 0, y = 0
     let ringX = 0, ringY = 0
     let rafId: number
@@ -57,6 +59,7 @@ export default function CustomCursor() {
     rafId = requestAnimationFrame(tick)
 
     return () => {
+      document.documentElement.classList.remove('custom-cursor')
       document.removeEventListener('mousemove', onMove)
       cancelAnimationFrame(rafId)
       observer.disconnect()

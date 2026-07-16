@@ -4,10 +4,10 @@ import SplitHeadline from '@/components/ui/SplitHeadline'
 import GhostButton from '@/components/ui/GhostButton'
 import MediaCard from '@/components/media/MediaCard'
 import FlyerCard from '@/components/events/FlyerCard'
-import { heroSlides, featuredPastWork } from '@/lib/mediaConfig'
+import { featuredPastWork } from '@/lib/mediaConfig'
 import { upcomingEventsPlaceholder } from '@/lib/eventsConfig'
-import { getUpcomingEvents } from '@/lib/api'
-import type { Event } from '@/lib/types'
+import { getUpcomingEvents, getHeroVideos } from '@/lib/api'
+import type { Event, HeroSlide } from '@/lib/types'
 
 async function fetchUpcoming(): Promise<Event[]> {
   try {
@@ -17,8 +17,23 @@ async function fetchUpcoming(): Promise<Event[]> {
   }
 }
 
+async function fetchHeroSlides(): Promise<HeroSlide[]> {
+  try {
+    const slots = await getHeroVideos()
+    return slots.map((s) => ({
+      id: String(s.slotNumber),
+      type: 'video' as const,
+      src: s.videoUrl,
+      alt: `Hero video ${s.slotNumber}`,
+      label: '',
+    }))
+  } catch {
+    return []
+  }
+}
+
 export default async function Home() {
-  const upcoming = await fetchUpcoming()
+  const [upcoming, heroSlides] = await Promise.all([fetchUpcoming(), fetchHeroSlides()])
 
   return (
     <>

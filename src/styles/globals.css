@@ -93,12 +93,12 @@
   }
 }
 
-*, *::before, *::after {
+.custom-cursor *, .custom-cursor *::before, .custom-cursor *::after {
   cursor: none !important;
 }
 
 @media (pointer: coarse) {
-  *, *::before, *::after {
+  .custom-cursor *, .custom-cursor *::before, .custom-cursor *::after {
     cursor: auto !important;
   }
 }

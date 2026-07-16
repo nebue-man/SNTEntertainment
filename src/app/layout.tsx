@@ -1,10 +1,6 @@
 import type { Metadata } from 'next'
 import '@/styles/globals.css'
-import SmoothScrollProvider from '@/components/layout/SmoothScrollProvider'
-import CustomCursor from '@/components/layout/CustomCursor'
-import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
-import LogoIntro from '@/components/layout/LogoIntro'
+import ClientShell from '@/components/layout/ClientShell'
 
 export const metadata: Metadata = {
   title: {
@@ -24,13 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="bg-absolute-zero text-ghost-white font-lausanne">
-        <SmoothScrollProvider>
-          <LogoIntro />
-          <CustomCursor />
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </SmoothScrollProvider>
+        <ClientShell>{children}</ClientShell>
       </body>
     </html>
   )

@@ -33,6 +33,31 @@ export default function HeroCarousel({ slides, heading, tagline }: Props) {
     timerRef.current = setInterval(advance, AUTOPLAY_MS)
   }
 
+  // Static fallback when no slides are available
+  if (slides.length === 0) {
+    return (
+      <section
+        className="relative w-full h-screen bg-absolute-zero flex flex-col justify-end overflow-hidden"
+        aria-label="Hero"
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-absolute-zero/60" />
+        <div
+          className="relative z-10 pb-16 md:pb-24"
+          style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
+        >
+          <SplitHeadline
+            text={heading}
+            as="h1"
+            className="text-ghost-white font-light leading-none mb-6"
+            style={{ fontSize: 'var(--text-display-sm)' }}
+            once={false}
+          />
+          <p className="text-body-lg text-ghost-white/70 font-light max-w-lg">{tagline}</p>
+        </div>
+      </section>
+    )
+  }
+
   const slide = slides[index]
 
   return (
