@@ -66,11 +66,29 @@ export default function LogoIntro() {
 
     // ── Init particle engine ───────────────────────────────────────────
     ;(async () => {
+      // Desktop gets a 28% larger logo; mobile stays at the natural contain size
+      // so the logo never clips horizontally on narrow viewports.
+      const drawScale = W >= 768 ? 1.28 : 1.0
+
+      // The logo image is square (1080×1080). Under `contain` fit the rendered
+      // height equals min(W, H). Scaling by drawScale may push dh > H on
+      // landscape, clipping top/bottom symmetrically — that's fine.
+      const dh        = Math.min(W, H) * drawScale   // logo render height on canvas
+      const vertOff   = (H - dh) / 2                 // vertical offset (may be negative)
+
+      // Tagline starts at ~68% down the image. Convert to canvas-space fraction.
+      const taglineYStart = Math.min((vertOff + dh * 0.68) / H, 0.95)
+
+      // Particle counts scale linearly with drawScale (visible logo area grows
+      // with the larger dimension that is not yet clipped by the canvas edge).
+      const logoCount    = Math.round(2000 * drawScale)  // ~2560 at 1.28×
+      const taglineCount = Math.round(1800 * drawScale)  // ~2304 at 1.28×
+
       const instance = new LogoBreak(canvas!, {
         // Logical display dimensions — keeps all coordinates in CSS-pixel space
         displayWidth:  W,
         displayHeight: H,
-        count:          2000,
+        count:          logoCount,
         color:          '#ffffff',
         particleRadius: 2.0,
         repelOnHover:   true,
@@ -86,7 +104,16 @@ export default function LogoIntro() {
         springDamping:   0.84,
       })
       lb = instance
-      await instance.loadFromImage('/logo-white.png', { sampleStride: 1 })
+      await instance.loadFromImage('/logo-white.png', { sampleStride: 1, drawScale })
+      // Extra particle budget for the tagline region at smaller radius so the
+      // letterforms resolve at their rendered size.
+      await instance.loadFromImageAppend('/logo-white.png', {
+        sampleStride:   1,
+        count:          taglineCount,
+        yStartFraction: taglineYStart,
+        radius:         1.3,
+        drawScale,
+      })
       instance.start()
       setReady(true)
     })()
