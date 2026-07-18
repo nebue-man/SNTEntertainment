@@ -43,12 +43,22 @@ export class LogoBreak {
     this.springStrength  = opts.springStrength  ?? 0.02;
     this.springDamping   = opts.springDamping   ?? 0.82;
 
-    this.particles     = [];
-    this._scrubReady   = false;   // true once _initScrubVectors has run
-    this._scrubTarget  = 0;       // raw target set by breakScrub()
-    this._scrubProgress = 0;      // smoothed value lerped each frame toward _scrubTarget
-    this.mouse         = { x: -9999, y: -9999, active: false };
-    this._raf          = null;
+    this.particles      = [];
+    this._scrubReady    = false;   // true once _initScrubVectors has run
+    this._scrubTarget   = 0;       // raw target set by breakScrub()
+    this._scrubProgress = 0;       // smoothed value lerped each frame toward _scrubTarget
+    this._ambientMode   = false;   // true once startAmbient() is called (one-way)
+    this.mouse          = { x: -9999, y: -9999, active: false };
+    this._raf           = null;
+
+    // Pause animation when the tab is hidden — only meaningful in ambient phase
+    // where the animation runs indefinitely in the background.
+    this._onVisibility = () => {
+      if (!this._ambientMode) return;
+      if (document.hidden) this.stop();
+      else this.start();
+    };
+    document.addEventListener('visibilitychange', this._onVisibility);
 
     if (this.repelOnHover) {
       canvas.addEventListener('pointermove', (e) => {
@@ -258,16 +268,16 @@ export class LogoBreak {
         ctrlY:    midY - vx * curveMag,
       };
 
-      // Place particle at scatter position so the field starts assembled-looking
-      // scatter rather than briefly flashing at home then jumping.
-      p.x = p.sv.scatterX;
-      p.y = p.sv.scatterY;
+      // Logo starts fully assembled at rest — progress 0 = home, progress 1 = scatter.
+      p.x = p.homeX;
+      p.y = p.homeY;
       p.mode = 'scrubbing';
     }
 
     // Sort by depth once so the draw loop can bin by alpha without re-sorting.
     this.particles.sort((a, b) => a.depth - b.depth);
 
+    this._ambientMode  = false;
     this._scrubReady   = true;
     this._scrubProgress = 0;
   }
@@ -300,6 +310,22 @@ export class LogoBreak {
 
   reassemble() {
     for (const p of this.particles) p.mode = 'returning';
+  }
+
+  /**
+   * Switch all particles to independent ambient drift (one-way, irreversible).
+   * Each particle gets a slow random velocity and transitions to 'ambient' mode.
+   * Call this after the logo has broken enough that scroll-linking ends.
+   */
+  startAmbient() {
+    for (const p of this.particles) {
+      const ang   = Math.random() * Math.PI * 2;
+      const speed = 0.08 + Math.random() * 0.18; // 0.08–0.26 px/frame at 60fps
+      p.driftVx = Math.cos(ang) * speed;
+      p.driftVy = Math.sin(ang) * speed;
+      p.mode = 'ambient';
+    }
+    this._ambientMode = true;
   }
 
   // ── Render loop ───────────────────────────────────────────────────────
@@ -337,10 +363,10 @@ export class LogoBreak {
         const t  = 1 - Math.pow(1 - localRaw, 2);
         const mt = 1 - t;
 
-        // Quadratic bezier: P0 (scatter) → P1 (control) → P2 (home).
-        // All three points are precomputed in _initScrubVectors.
-        p.x = mt * mt * sv.scatterX + 2 * mt * t * sv.ctrlX + t * t * p.homeX;
-        p.y = mt * mt * sv.scatterY + 2 * mt * t * sv.ctrlY + t * t * p.homeY;
+        // Quadratic bezier: P0 (home) → P1 (control) → P2 (scatter).
+        // progress=0 keeps particles at rest on the logo; progress=1 = fully broken.
+        p.x = mt * mt * p.homeX + 2 * mt * t * sv.ctrlX + t * t * sv.scatterX;
+        p.y = mt * mt * p.homeY + 2 * mt * t * sv.ctrlY + t * t * sv.scatterY;
 
       } else if (p.mode === 'exploding') {
         p.x  += p.vx; p.y  += p.vy;
@@ -357,6 +383,22 @@ export class LogoBreak {
         ) {
           p.x = p.homeX; p.y = p.homeY; p.vx = 0; p.vy = 0; p.mode = 'home';
         }
+
+      } else if (p.mode === 'ambient') {
+        // Independent gentle drift — no scroll link, no home target.
+        // Tiny per-frame velocity perturbation produces organic floating motion.
+        p.driftVx = (p.driftVx ?? 0) * 0.994 + (Math.random() - 0.5) * 0.006;
+        p.driftVy = (p.driftVy ?? 0) * 0.994 + (Math.random() - 0.5) * 0.006;
+        const spd = Math.sqrt(p.driftVx * p.driftVx + p.driftVy * p.driftVy);
+        if (spd > 0.35) { p.driftVx *= 0.35 / spd; p.driftVy *= 0.35 / spd; }
+        p.x += p.driftVx;
+        p.y += p.driftVy;
+        // Wrap far-off-screen particles to the opposite edge so the ambient
+        // field stays populated without visible teleportation.
+        if      (p.x < -80)               p.x = this.width  + 60;
+        else if (p.x > this.width  + 80)  p.x = -60;
+        if      (p.y < -80)               p.y = this.height + 60;
+        else if (p.y > this.height + 80)  p.y = -60;
 
       } else { // 'home' — idle cursor repulsion + ease back to home
         if (this.repelOnHover && this.mouse.active) {
@@ -379,19 +421,15 @@ export class LogoBreak {
     // floating-point drift from the exponential lerp never reaching 0 or 1.
     if (this._scrubReady) {
       if (this._scrubProgress < 0.002 && this._scrubTarget <= 0) {
-        // Fully scattered — snap to P0.
+        // Logo fully assembled — snap to exact home positions.
         for (const p of this.particles) {
-          if (p.mode === 'scrubbing' && p.sv) {
-            p.x = p.sv.scatterX; p.y = p.sv.scatterY;
-          }
+          if (p.mode === 'scrubbing') { p.x = p.homeX; p.y = p.homeY; }
         }
         this._scrubProgress = 0;
       } else if (this._scrubProgress > 0.998 && this._scrubTarget >= 1) {
-        // Fully assembled — snap to home.
+        // Logo fully broken — snap to scatter positions.
         for (const p of this.particles) {
-          if (p.mode === 'scrubbing') {
-            p.x = p.homeX; p.y = p.homeY;
-          }
+          if (p.mode === 'scrubbing' && p.sv) { p.x = p.sv.scatterX; p.y = p.sv.scatterY; }
         }
         this._scrubProgress = 1;
       }

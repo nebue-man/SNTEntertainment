@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { memo, startTransition, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence, type TargetAndTransition, type Transition } from 'framer-motion'
 import type { PastApiEvent } from '@/lib/types'
 import { resolveMediaUrl } from '@/lib/mediaUrl'
@@ -49,10 +49,9 @@ function GalleryOverlay({
   return (
     <motion.div
       className="fixed inset-0 z-[300] bg-black flex flex-col"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3, ease: 'easeOut' }}
+      transition={{ duration: 0.25, ease: 'easeIn' }}
     >
       {/* Close button — fixed to gallery top-right, isolated from nav */}
       <button
@@ -164,9 +163,115 @@ function GalleryOverlay({
   )
 }
 
+// ── Card ───────────────────────────────────────────────────────────────────────
+
+interface CoverflowCardProps {
+  event: PastApiEvent
+  d: number
+  isHovered: boolean
+  isWarping: boolean
+  isSelected: boolean
+  onHoverStart: () => void
+  onHoverEnd: () => void
+  onClick: () => void
+  onTouchStart: () => void
+  onTouchEnd: () => void
+}
+
+const CoverflowCard = memo(function CoverflowCard({
+  event,
+  d,
+  isHovered,
+  isWarping,
+  isSelected,
+  onHoverStart,
+  onHoverEnd,
+  onClick,
+  onTouchStart,
+  onTouchEnd,
+}: CoverflowCardProps) {
+  const coverPhoto = event.media.find((m) => m.type === 'PHOTO') ?? null
+
+  const baseX       = d * SPACING - CARD_W / 2
+  const baseRotY    = d * -TILT_DEG
+  const baseZ       = -Math.abs(d) * Z_RECESSION
+  const baseScale   = Math.max(0.58, 1 - Math.abs(d) * 0.13)
+  const baseOpacity = Math.max(0, 1 - Math.abs(d) * 0.32)
+
+  const anim = useMemo<TargetAndTransition>(() => {
+    if (isWarping && isSelected)
+      return { x: baseX, rotateY: 0, z: 900, scale: 7, opacity: 0 }
+    if (isWarping)
+      return { x: baseX, rotateY: baseRotY, z: baseZ - 40, scale: baseScale * 0.55, opacity: 0 }
+    if (isHovered)
+      return { x: baseX, rotateY: 0, z: baseZ + 90, scale: baseScale * 1.1, opacity: 1 }
+    return { x: baseX, rotateY: baseRotY, z: baseZ, scale: baseScale, opacity: baseOpacity }
+  }, [baseX, baseRotY, baseZ, baseScale, baseOpacity, isHovered, isWarping, isSelected])
+
+  const trans = useMemo<Transition>(() => {
+    if (isWarping && isSelected) return { duration: 0.55, ease: [0.55, 0, 1, 0.45] as const }
+    if (isWarping)               return { duration: 0.4,  ease: 'easeIn' }
+    if (isHovered)               return { duration: 0.25, ease: [0.22, 1, 0.36, 1] as const }
+    return                              { duration: 0.12, ease: 'linear' }
+  }, [isHovered, isWarping, isSelected])
+
+  const cardStyle = useMemo(() => ({
+    left: '50%' as const,
+    top: '50%' as const,
+    width: CARD_W,
+    height: CARD_H,
+    marginTop: -CARD_H / 2,
+    transformStyle: 'preserve-3d' as const,
+    zIndex: Math.round(10 - Math.abs(d) * 2),
+    willChange: (isHovered || isWarping) ? 'transform' : 'auto',
+  }), [d, isHovered, isWarping])
+
+  return (
+    <motion.div
+      className="absolute cursor-pointer"
+      style={cardStyle}
+      animate={anim}
+      transition={trans}
+      onClick={onClick}
+      onHoverStart={onHoverStart}
+      onHoverEnd={onHoverEnd}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
+      <div className="relative w-full h-full rounded-xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+        {coverPhoto ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={resolveMediaUrl(coverPhoto.url)}
+            alt={event.title}
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full bg-[#161616] flex items-center justify-center">
+            <span className="text-pewter/40 text-[10px] tracking-widest uppercase">No Photos</span>
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <p className="text-ghost-white font-light text-[13px] leading-snug line-clamp-2">
+            {event.title}
+          </p>
+          <p className="text-pewter/70 text-[10px] mt-1 tracking-wider">
+            {new Date(event.eventDate).toLocaleDateString('en-US', {
+              month: 'short',
+              year: 'numeric',
+            })}
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  )
+})
+
 // ── Coverflow ──────────────────────────────────────────────────────────────────
 
-export default function PastEventsCoverflow({ events }: { events: PastApiEvent[] }) {
+export default function PastEventsCoverflow({ events, initialSlug }: { events: PastApiEvent[]; initialSlug?: string }) {
   const N = events.length
 
   // Rotation state — float that increases monotonically
@@ -174,6 +279,9 @@ export default function PastEventsCoverflow({ events }: { events: PastApiEvent[]
   const [displayCenter, setDisplayCenter] = useState(0)
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const pausedRef = useRef(false)
+  // Snapshot of displayCenter taken at hover-start so pending transitions
+  // can't shift d mid-hover and cause a Framer Motion re-target snap.
+  const frozenCenter = useRef(0)
 
   // Interaction state
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -186,7 +294,7 @@ export default function PastEventsCoverflow({ events }: { events: PastApiEvent[]
     tickRef.current = setInterval(() => {
       if (!pausedRef.current) {
         centerRef.current += ROTATION_PER_TICK
-        setDisplayCenter(centerRef.current)
+        startTransition(() => setDisplayCenter(centerRef.current))
       }
     }, TICK_MS)
     return () => { if (tickRef.current) clearInterval(tickRef.current) }
@@ -195,10 +303,25 @@ export default function PastEventsCoverflow({ events }: { events: PastApiEvent[]
   const pause = useCallback(() => { pausedRef.current = true }, [])
   const resume = useCallback(() => { pausedRef.current = false }, [])
 
-  // Compute shortest-path offset from current center to card at index i
+  // Deep-link support: when ?event=<slug> is present (e.g., navigated from
+  // the homepage "Our work speaks" strip), auto-open that event's gallery.
+  useEffect(() => {
+    if (!initialSlug || events.length === 0) return
+    const targetIdx = events.findIndex((e) => e.slug === initialSlug)
+    if (targetIdx < 0) return
+    const target = events[targetIdx]
+    // Center the carousel on this event so the coverflow is in the right
+    // position when the gallery is later closed.
+    centerRef.current = targetIdx
+    setDisplayCenter(targetIdx)
+    pause()
+    setActiveEvent(target)
+  }, [initialSlug, events, pause])
+
   function getOffset(i: number): number {
     if (N === 0) return 0
-    const eff = ((displayCenter % N) + N) % N
+    const center = hoveredId !== null ? frozenCenter.current : displayCenter
+    const eff = ((center % N) + N) % N
     let d = i - eff
     if (d > N / 2) d -= N
     if (d < -N / 2) d += N
@@ -265,55 +388,21 @@ export default function PastEventsCoverflow({ events }: { events: PastApiEvent[]
           const d = getOffset(i)
           if (Math.abs(d) > VISIBLE_RANGE) return null
 
-          const isHovered = hoveredId === event.id
+          const isHovered  = hoveredId === event.id
           const isSelected = clickingId === event.id
-          const isWarping = !!clickingId
-
-          const coverPhoto = event.media.find((m) => m.type === 'PHOTO') ?? null
-
-          // Base transform values
-          const baseX = d * SPACING - CARD_W / 2
-          const baseRotY = d * -TILT_DEG
-          const baseZ = -Math.abs(d) * Z_RECESSION
-          const baseScale = Math.max(0.58, 1 - Math.abs(d) * 0.13)
-          const baseOpacity = Math.max(0, 1 - Math.abs(d) * 0.32)
-
-          // Animate props for each state
-          let anim: TargetAndTransition
-          let trans: Transition
-
-          if (isWarping && isSelected) {
-            anim = { x: baseX, rotateY: 0, z: 900, scale: 7, opacity: 0 }
-            trans = { duration: 0.55, ease: [0.55, 0, 1, 0.45] }
-          } else if (isWarping) {
-            anim = { x: baseX, rotateY: baseRotY, z: baseZ - 40, scale: baseScale * 0.55, opacity: 0 }
-            trans = { duration: 0.4, ease: 'easeIn' }
-          } else if (isHovered) {
-            anim = { x: baseX, rotateY: 0, z: baseZ + 90, scale: baseScale * 1.1, opacity: 1 }
-            trans = { duration: 0.25, ease: [0.22, 1, 0.36, 1] }
-          } else {
-            anim = { x: baseX, rotateY: baseRotY, z: baseZ, scale: baseScale, opacity: baseOpacity }
-            trans = { duration: 0.12, ease: 'linear' }
-          }
+          const isWarping  = !!clickingId
 
           return (
-            <motion.div
+            <CoverflowCard
               key={event.id}
-              className="absolute cursor-pointer"
-              style={{
-                left: '50%',
-                top: '50%',
-                width: CARD_W,
-                height: CARD_H,
-                marginTop: -CARD_H / 2,
-                transformStyle: 'preserve-3d',
-                zIndex: Math.round(10 - Math.abs(d) * 2),
-              }}
-              animate={anim}
-              transition={trans}
-              onClick={() => handleCardClick(event)}
+              event={event}
+              d={d}
+              isHovered={isHovered}
+              isWarping={isWarping}
+              isSelected={isSelected}
               onHoverStart={() => {
                 if (clickingId) return
+                frozenCenter.current = displayCenter
                 setHoveredId(event.id)
                 pause()
               }}
@@ -321,39 +410,10 @@ export default function PastEventsCoverflow({ events }: { events: PastApiEvent[]
                 setHoveredId(null)
                 if (!clickingId) resume()
               }}
+              onClick={() => handleCardClick(event)}
               onTouchStart={pause}
               onTouchEnd={() => { if (!clickingId) resume() }}
-            >
-              <div className="relative w-full h-full rounded-xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
-                {coverPhoto ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={resolveMediaUrl(coverPhoto.url)}
-                    alt={event.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-[#161616] flex items-center justify-center">
-                    <span className="text-pewter/40 text-[10px] tracking-widest uppercase">No Photos</span>
-                  </div>
-                )}
-                {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
-                {/* Caption */}
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="text-ghost-white font-light text-[13px] leading-snug line-clamp-2">
-                    {event.title}
-                  </p>
-                  <p className="text-pewter/70 text-[10px] mt-1 tracking-wider">
-                    {new Date(event.eventDate).toLocaleDateString('en-US', {
-                      month: 'short',
-                      year: 'numeric',
-                    })}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
+            />
           )
         })}
       </div>

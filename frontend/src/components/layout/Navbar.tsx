@@ -1,11 +1,15 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { AnimatePresence, motion, type Variants } from 'framer-motion'
 import GhostButton from '@/components/ui/GhostButton'
 import AmbientClock from '@/components/layout/AmbientClock'
+import { getUpcomingEvents, getPastEventsWithMedia } from '@/lib/api'
+import { resolveMediaUrl } from '@/lib/mediaUrl'
+import PersistentLogo from '@/components/layout/PersistentLogo'
+import { useLogoSettled } from '@/components/layout/LogoContext'
 
 // ── Two-line hamburger / × icon ───────────────────────────────────────────────
 function MenuIcon({ asX }: { asX: boolean }) {
@@ -41,7 +45,7 @@ function MenuIcon({ asX }: { asX: boolean }) {
 // the color placeholder block disappears automatically once src is set.
 type PreviewImg  = { src: string | null; color: string; label: string }
 type PreviewData = {
-  type:      'single' | 'gallery' | 'event'
+  type:      'single' | 'gallery' | 'event' | 'logo'
   images:    PreviewImg[]
   eventName?: string
   eventDate?: string
@@ -52,7 +56,7 @@ const menuSections: { label: string; href: string; preview: PreviewData }[] = [
     label: 'Home',
     href:  '/',
     preview: {
-      type:   'single',
+      type:   'logo',
       images: [{ src: null, color: '#181818', label: 'Homepage preview' }],
     },
   },
@@ -139,6 +143,33 @@ function SectionPreview({ preview }: { preview: PreviewData }) {
   const idx = useCarousel(preview.images.length)
   const img = preview.images[idx]
 
+  // Spinning logo — mounts when Home is active, unmounts when another item is
+  // hovered. Because AnimatePresence re-mounts this subtree on every activeIdx
+  // change (key={activeIdx} + mode="wait"), the rotation restarts fresh each
+  // time Home becomes active — matching the other previews' reset-on-re-hover
+  // behaviour.
+  if (preview.type === 'logo') {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+        <motion.img
+          src="/logo-white.png"
+          alt="SNT"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'linear', repeatType: 'loop' }}
+          style={{ width: '72%', display: 'block', userSelect: 'none', pointerEvents: 'none' }}
+        />
+        <p style={{
+          fontSize:      '11px',
+          color:         '#6b6b6b',
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+        }}>
+          SNT Live Events
+        </p>
+      </div>
+    )
+  }
+
   if (preview.type === 'event') {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -214,6 +245,69 @@ const previewVars: Variants = {
 export default function Navbar() {
   const [open, setOpen]         = useState(false)
   const [activeIdx, setActiveIdx] = useState(0)
+  const pathname = usePathname()
+  const isHome   = pathname === '/'
+  const { settled } = useLogoSettled()
+
+  // Live preview data — fetched once on mount; falls back to static config until resolved
+  const [upcomingLive, setUpcomingLive] = useState<{
+    name: string; date: string; flyer: string | null
+  } | null>(null)
+  const [pastCoverSrcs, setPastCoverSrcs] = useState<(string | null)[]>([null, null, null])
+
+  useEffect(() => {
+    getUpcomingEvents()
+      .then(events => {
+        const e = events[0]
+        if (!e) return
+        setUpcomingLive({
+          name:  e.title,
+          date:  new Date(e.date).toLocaleDateString('en-US', {
+            day: 'numeric', month: 'short', year: 'numeric',
+          }),
+          flyer: e.flyerUrl ?? null,
+        })
+      })
+      .catch(() => {})
+
+    getPastEventsWithMedia()
+      .then(events => {
+        const top3 = events
+          .slice()
+          .sort((a, b) => new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime())
+          .slice(0, 3)
+        setPastCoverSrcs(
+          top3.map(e => {
+            const photo = e.media
+              .filter(m => m.type === 'PHOTO')
+              .sort((a, b) => a.sortOrder - b.sortOrder)[0]
+            return photo ? resolveMediaUrl(photo.url) : null
+          })
+        )
+      })
+      .catch(() => {})
+  }, [])
+
+  // Merge static config with live data for a given section index.
+  // Sections 1 (Upcoming) and 2 (Past Events) get real images; others pass through unchanged.
+  function getLivePreview(i: number): PreviewData {
+    const base = menuSections[i].preview
+    if (i === 1) {
+      return {
+        ...base,
+        eventName: upcomingLive?.name  ?? base.eventName,
+        eventDate: upcomingLive?.date  ?? base.eventDate,
+        images:    [{ ...base.images[0], src: upcomingLive?.flyer ?? null }],
+      }
+    }
+    if (i === 2) {
+      return {
+        ...base,
+        images: base.images.map((img, j) => ({ ...img, src: pastCoverSrcs[j] ?? null })),
+      }
+    }
+    return base
+  }
 
   // Escape key closes menu
   useEffect(() => {
@@ -230,22 +324,19 @@ export default function Navbar() {
 
   return (
     <>
+      {/* ── Persistent top-center logo ────────────────────────────────────────
+          Shown immediately on every non-home page.
+          On the homepage it appears once the scroll animation settles (settled=true),
+          at which point it replaces the animated fixedLogoRef in HeroIntro. */}
+      {(!isHome || settled) && (
+        <PersistentLogo href={isHome ? undefined : '/'} />
+      )}
+
       {/* ── Persistent header — sits ABOVE the menu overlay (z-[200]) ─────── */}
       <header
-        className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-between py-5 md:py-6"
+        className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-end py-5 md:py-6"
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
-        <Link href="/" onClick={close} aria-label="SNT home">
-          <Image
-            src="/logo-white.png"
-            alt="SNT Events logo"
-            width={80}
-            height={32}
-            className="h-8 w-auto object-contain"
-            priority
-          />
-        </Link>
-
         <div className="flex items-center gap-4">
           <AmbientClock />
           {/* Single toggle button — hamburger ↔ × with animated morph.
@@ -293,36 +384,43 @@ export default function Navbar() {
                   initial="closed"
                   animate="open"
                 >
-                  {menuSections.map(({ label, href, preview }, i) => (
-                    <motion.li key={href} variants={itemVars}>
-                      <Link
-                        href={href}
-                        className="group flex items-center justify-between py-3 border-b border-pewter/10 text-ghost-white font-light hover:text-electric-lime transition-colors duration-200"
-                        style={{ fontSize: 'clamp(2rem, 5.5vw, 4rem)', lineHeight: 1.15 }}
-                        onClick={close}
-                        onMouseEnter={() => setActiveIdx(i)}
-                        onFocus={() => setActiveIdx(i)}
-                      >
-                        <span>{label}</span>
-
-                        {/* Inline thumbnail — always shown on mobile, hover-reveal on desktop */}
-                        <span
-                          className="ml-5 flex-shrink-0 transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100"
-                          style={{
-                            width:       'clamp(44px, 7vw, 72px)',
-                            aspectRatio: '3 / 4',
-                            display:     'block',
-                            overflow:    'hidden',
-                          }}
+                  {menuSections.map(({ label, href }, i) => {
+                    const livePreview = getLivePreview(i)
+                    return (
+                      <motion.li key={href} variants={itemVars}>
+                        <Link
+                          href={href}
+                          className="group flex items-center justify-between py-3 border-b border-pewter/10 text-ghost-white font-light hover:text-electric-lime transition-colors duration-200"
+                          style={{ fontSize: 'clamp(2rem, 5.5vw, 4rem)', lineHeight: 1.15 }}
+                          onClick={close}
+                          onMouseEnter={() => setActiveIdx(i)}
+                          onFocus={() => setActiveIdx(i)}
+                          prefetch={false}
                         >
-                          <PreviewBlock
-                            img={preview.images[0]}
-                            style={{ width: '100%', height: '100%' }}
-                          />
-                        </span>
-                      </Link>
-                    </motion.li>
-                  ))}
+                          <span>{label}</span>
+
+                          {/* Inline thumbnail — always shown on mobile, hover-reveal on desktop.
+                              Skipped for logo-type items (Home) — the right panel handles that preview. */}
+                          {livePreview.type !== 'logo' && (
+                            <span
+                              className="ml-5 flex-shrink-0 transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                              style={{
+                                width:       'clamp(44px, 7vw, 72px)',
+                                aspectRatio: '3 / 4',
+                                display:     'block',
+                                overflow:    'hidden',
+                              }}
+                            >
+                              <PreviewBlock
+                                img={livePreview.images[0]}
+                                style={{ width: '100%', height: '100%' }}
+                              />
+                            </span>
+                          )}
+                        </Link>
+                      </motion.li>
+                    )
+                  })}
                 </motion.ul>
               </nav>
 
@@ -340,7 +438,7 @@ export default function Navbar() {
                     exit="exit"
                     style={{ width: '100%' }}
                   >
-                    <SectionPreview preview={menuSections[activeIdx].preview} />
+                    <SectionPreview preview={getLivePreview(activeIdx)} />
                   </motion.div>
                 </AnimatePresence>
               </div>

@@ -5,7 +5,12 @@ import type { PastApiEvent } from '@/lib/types'
 
 export const metadata: Metadata = { title: 'Past Events — SNT' }
 
-export default async function PastEventsPage() {
+export default async function PastEventsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ event?: string }>
+}) {
+  const { event: initialSlug } = await searchParams
   let events: PastApiEvent[] = []
   try {
     events = await getPastEventsWithMedia()
@@ -15,7 +20,7 @@ export default async function PastEventsPage() {
 
   return (
     <main className="min-h-screen bg-black">
-      <PastEventsCoverflow events={events} />
+      <PastEventsCoverflow events={events} initialSlug={initialSlug} />
     </main>
   )
 }

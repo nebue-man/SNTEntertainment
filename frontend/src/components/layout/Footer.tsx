@@ -9,8 +9,8 @@ export default function Footer() {
           <Image
             src="/logo-white.png"
             alt="SNT Events"
-            width={80}
-            height={32}
+            width={40}
+            height={40}
             className="h-8 w-auto object-contain"
           />
           <p className="text-body-sm text-pewter max-w-xs">
