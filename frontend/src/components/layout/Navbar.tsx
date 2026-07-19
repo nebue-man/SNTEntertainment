@@ -324,25 +324,31 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── Persistent top-center logo ────────────────────────────────────────
-          Shown immediately on every non-home page.
-          On the homepage it appears once the scroll animation settles (settled=true),
-          at which point it replaces the animated fixedLogoRef in HeroIntro. */}
-      {(!isHome || settled) && (
-        <PersistentLogo href={isHome ? undefined : '/'} />
-      )}
-
-      {/* ── Persistent header — sits ABOVE the menu overlay (z-[200]) ─────── */}
+      {/* ── Unified header — single row: [clock | logo | hamburger] ──────────
+          Three-column CSS grid with equal outer 1fr columns ensures the logo
+          is centered on the FULL viewport width (not inside the padded area).
+          Side padding is applied per-cell so the logo's center point matches
+          fixedLogoRef's justifyContent:center alignment during the crossfade.
+          py-4 (16px) matches LOGO_REST_TOP so the logo's top edge sits at
+          exactly 16px from the viewport top — the same as fixedLogoRef. */}
       <header
-        className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-end py-5 md:py-6"
-        style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
+        className="fixed top-0 left-0 right-0 z-[200] grid items-center py-4"
+        style={{ gridTemplateColumns: '1fr auto 1fr' }}
       >
-        <div className="flex items-center gap-4">
+        {/* Left — ambient timestamp */}
+        <div style={{ paddingLeft: 'var(--headline-padding-x)' }}>
           <AmbientClock />
-          {/* Single toggle button — hamburger ↔ × with animated morph.
-               min-h/w-[44px] ensures a WCAG-compliant tap target even
-               though the icon is visually smaller; items-center on the
-               button base class keeps the icon centred inside. */}
+        </div>
+
+        {/* Center — logo (hidden on homepage while intro animation is active) */}
+        <div className="flex justify-center">
+          {(!isHome || settled) && <PersistentLogo />}
+        </div>
+
+        {/* Right — hamburger toggle */}
+        <div className="flex justify-end" style={{ paddingRight: 'var(--headline-padding-x)' }}>
+          {/* min-h/w-[44px] keeps a WCAG-compliant tap target even though
+              the icon is visually smaller */}
           <GhostButton
             variant="thin"
             onClick={() => setOpen(o => !o)}
@@ -372,7 +378,7 @@ export default function Navbar() {
           >
             {/* Content area starts below the persistent header */}
             <div
-              className="flex-1 flex flex-col md:flex-row items-stretch pt-[88px] md:pt-[96px] pb-6 gap-8 overflow-hidden"
+              className="flex-1 flex flex-col md:flex-row items-stretch pt-[112px] pb-6 gap-8 overflow-hidden"
               style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
             >
 

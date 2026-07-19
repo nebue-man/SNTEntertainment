@@ -1,6 +1,5 @@
 'use client'
-
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { HeroSlide } from '@/lib/types'
@@ -10,19 +9,15 @@ import { useLenis } from '@/components/layout/SmoothScrollProvider'
 import { LOGO_REST_TOP, LOGO_REST_H, LOGO_FILTER } from '@/components/layout/PersistentLogo'
 import { useLogoSettled } from '@/components/layout/LogoContext'
 
+const AUTOPLAY_MS = 4500
+const LOGO_H      = 400
+const SCALE_START = 1.0
+
 interface Props {
-  slides: HeroSlide[]
+  slides:  HeroSlide[]
   heading: string
   tagline: string
 }
-
-const AUTOPLAY_MS = 4500
-// The stage logo element is rendered at its natural CSS size (LOGO_H px square)
-// so the browser never needs to upscale — it scales DOWN as progress increases.
-const LOGO_H      = 400  // natural CSS size of the stage logo element in px
-const SCALE_START = 1.0  // element is already at hero size; no upscaling needed
-// LOGO_REST_TOP and LOGO_REST_H are imported from PersistentLogo — single source
-// of truth so the animation endpoint matches the static settled version exactly.
 
 export default function HeroIntro({ slides, heading, tagline }: Props) {
   const wrapperRef    = useRef<HTMLDivElement>(null)
@@ -36,10 +31,30 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
   // One-way lock: set to true once p reaches 1. After that, scroll events
   // no longer drive the animation — the logo stays at its resting state
   // permanently, even if the user scrolls back to the top.
-  const settledRef = useRef(false)
+  const settledRef    = useRef(false)
+  // One-shot flag written by useLayoutEffect when a skip-intro sessionStorage
+  // signal is found; consumed by the scroll useEffect on the same mount cycle.
+  const skipIntroRef  = useRef(false)
 
   const lenis = useLenis()
   const { settled, setSettled } = useLogoSettled()
+
+  // Runs synchronously before the first browser paint so the user never sees
+  // the large-logo initial frame when arriving via a logo click.
+  useLayoutEffect(() => {
+    // Always reset the shared settled flag on mount — prevents stale
+    // settled=true from a previous session bleeding through when navigating
+    // back to the homepage.
+    setSettled(false)
+
+    // Check for the skip-intro signal written by PersistentLogo's onClick.
+    // Consuming it here (read + remove) ensures a subsequent direct visit or
+    // page refresh always shows the full intro animation.
+    if (sessionStorage.getItem('snt-skip-intro') === '1') {
+      sessionStorage.removeItem('snt-skip-intro')
+      skipIntroRef.current = true
+    }
+  }, [setSettled])
 
   // Once the context-settled flag becomes true, PersistentLogo (rendered by
   // Navbar) has already appeared in the same React commit. Hide the animated
@@ -111,12 +126,12 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
       }
       prevP = p
 
-      // ── Video: reveal as logo moves away ──────────────────────────
-      // Starts at p=0.15 so there's a beat before the video appears,
-      // with a subtle scale-up for a cinematic entrance feel.
-      const vp = Math.max(0, Math.min((p - 0.15) / 0.7, 1))
-      video.style.opacity   = String(vp)
-      video.style.transform = `scale(${0.94 + 0.06 * vp})`
+      // ── Video: always visible, subtle scale-up as scroll progresses ──
+      // Opacity stays at 1 from the first frame so the video plays
+      // full-bleed behind the header immediately (no black startup gap).
+      // The gentle scale from 0.94→1.0 over the full scroll range gives
+      // a cinematic push-in without hiding the video at any scroll position.
+      video.style.transform = `scale(${0.94 + 0.06 * p})`
 
       // ── Text: heading + tagline, trails the video reveal ──────────
       if (text) {
@@ -144,6 +159,17 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
         settledRef.current = true
         setSettled(true)
       }
+    }
+
+    // If arriving via logo click (skip-intro flag set in useLayoutEffect),
+    // apply the fully-settled visual state immediately — no animation plays.
+    // The flag is cleared here so a Lenis re-mount doesn't re-trigger this path.
+    if (skipIntroRef.current) {
+      skipIntroRef.current = false
+      applyProgress(1)
+      settledRef.current = true
+      setSettled(true)
+      return  // no scroll listeners needed — permanently settled
     }
 
     computeAndApply(window.scrollY)
@@ -202,10 +228,9 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
         <Image
           src="/logo-white.png"
           alt="SNT Events"
-          width={112}
-          height={112}
-          className="h-28 w-auto object-contain"
-          style={{ filter: LOGO_FILTER }}
+          width={LOGO_REST_H}
+          height={LOGO_REST_H}
+          style={{ height: LOGO_REST_H, width: 'auto', objectFit: 'contain', filter: LOGO_FILTER }}
           priority
         />
       </div>
@@ -234,10 +259,10 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
             style={{
               position:        'absolute',
               inset:           0,
-              opacity:         0,
+              opacity:         1,
               transform:       'scale(0.94)',
               transformOrigin: 'center',
-              willChange:      'transform, opacity',
+              willChange:      'transform',
             }}
           >
             {slide ? (
@@ -287,11 +312,12 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
           </div>
 
           {/* ── Top gradient scrim ───────────────────────────────────
-              Ensures the navbar (timestamp, hamburger) and the resting
-              logo mark stay legible against any video frame. Sits above
-              the video layer (z:2) but below text (z:5) and logo (z:10).
-              Painted once — no JS involvement — so it fades in naturally
-              as the video fades in behind it. */}
+              Keeps the full header row (timestamp, logo, hamburger)
+              legible against any video frame. The video is always at
+              opacity:1 from the first frame, so this scrim must be
+              painted at all times — no JS involvement, no animation.
+              220px covers the 112px header with comfortable bleed.
+              Sits above the video layer (z:2), below text (z:5). */}
           <div
             style={{
               position:      'absolute',
