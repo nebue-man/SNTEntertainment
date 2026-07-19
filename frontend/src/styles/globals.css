@@ -9,11 +9,11 @@
   --font-lausanne: 'Lausanne', ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  --text-caption: 11px;
-  --text-body-sm: 14px;
-  --text-body: 16px;
-  --text-body-lg: 20px;
-  --text-heading-sm: 35px;
+  --text-caption: 13px;
+  --text-body-sm: 16px;
+  --text-body: 18px;
+  --text-body-lg: 22px;
+  --text-heading-sm: clamp(2.25rem, 5vw, 4rem);
   --text-heading: clamp(2.5rem, 8vw, 5.875rem);
   --text-heading-lg: clamp(3rem, 10vw, 7.1875rem);
   --text-display-sm: clamp(2.5rem, 11vw, 8.5625rem);
@@ -68,6 +68,11 @@
     font-family: var(--font-lausanne);
     font-weight: 300;
     -webkit-font-smoothing: antialiased;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
   }
 
   body {

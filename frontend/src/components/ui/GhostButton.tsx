@@ -20,9 +20,9 @@ type Props = ButtonProps | LinkProps
 function variantClasses(variant: Variant) {
   const shared = 'inline-flex items-center justify-center transition-opacity hover:opacity-70 focus:outline-none text-body-sm font-light tracking-widest uppercase text-ghost-white'
   if (variant === 'thin') {
-    return `${shared} border border-ghost-white px-[25px] py-[9px] rounded-none`
+    return `${shared} border border-ghost-white px-[34px] py-[14px] rounded-none`
   }
-  return `${shared} border-[3px] border-ghost-white px-[28px] py-[21px] rounded-pill`
+  return `${shared} border-[3px] border-ghost-white px-[44px] py-[28px] rounded-pill`
 }
 
 export default function GhostButton({ variant = 'pill', className = '', children, ...props }: Props) {

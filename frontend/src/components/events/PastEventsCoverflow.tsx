@@ -67,13 +67,13 @@ function GalleryOverlay({
       {/* Header */}
       <div className="flex items-center justify-between pl-6 pr-20 py-5 border-b border-white/10 shrink-0">
         <div>
-          <p className="text-ghost-white font-light text-[15px] leading-tight">{event.title}</p>
-          <p className="text-pewter text-[11px] mt-2 tracking-wide">
+          <p className="text-ghost-white font-light text-[17px] leading-tight">{event.title}</p>
+          <p className="text-pewter text-[13px] mt-2 tracking-wide">
             {event.venue}&nbsp;&middot;&nbsp;{new Date(event.eventDate).getFullYear()}
           </p>
         </div>
         {photos.length > 0 && (
-          <span className="text-pewter/50 text-[11px] tabular-nums">
+          <span className="text-pewter/50 text-[13px] tabular-nums">
             {idx + 1} / {photos.length}
           </span>
         )}
@@ -111,7 +111,7 @@ function GalleryOverlay({
           </AnimatePresence>
         ) : (
           <div className="flex items-center justify-center h-full">
-            <p className="text-pewter/50 text-[13px]">No photos for this event.</p>
+            <p className="text-pewter/50 text-[15px]">No photos for this event.</p>
           </div>
         )}
 
@@ -254,7 +254,7 @@ const CoverflowCard = memo(function CoverflowCard({
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <p className="text-ghost-white font-light text-[13px] leading-snug line-clamp-2">
+          <p className="text-ghost-white font-light text-[15px] leading-snug line-clamp-2">
             {event.title}
           </p>
           <p className="text-pewter/70 text-[10px] mt-1 tracking-wider">
@@ -350,7 +350,7 @@ export default function PastEventsCoverflow({ events, initialSlug }: { events: P
         className="min-h-[60vh] flex items-center"
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
-        <p className="text-pewter/50 text-[13px]">No past events yet.</p>
+        <p className="text-pewter/50 text-[15px]">No past events yet.</p>
       </div>
     )
   }
@@ -362,7 +362,7 @@ export default function PastEventsCoverflow({ events, initialSlug }: { events: P
         className="pt-36 pb-10"
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
-        <p className="text-[11px] text-electric-lime tracking-[0.25em] uppercase mb-4">Portfolio</p>
+        <p className="text-[13px] text-electric-lime tracking-[0.25em] uppercase mb-4">Portfolio</p>
         <h1
           className="text-ghost-white font-light"
           style={{ fontSize: 'var(--text-heading-sm)' }}
@@ -425,7 +425,7 @@ export default function PastEventsCoverflow({ events, initialSlug }: { events: P
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-center text-pewter/30 text-[10px] tracking-[0.25em] uppercase mt-8 pb-16 select-none"
+            className="text-center text-pewter/30 text-[10px] tracking-[0.25em] uppercase mt-8 pb-[96px] select-none"
           >
             Click any event to explore photos
           </motion.p>

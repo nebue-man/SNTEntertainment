@@ -72,11 +72,11 @@ export default async function Home() {
         <SplitHeadline
           text="We build nights worth remembering."
           as="h2"
-          className="text-ghost-white font-light mb-8 max-w-3xl"
-          style={{ fontSize: 'var(--text-heading-sm)' }}
+          className="text-ghost-white font-light mb-10 max-w-4xl"
+          style={{ fontSize: 'clamp(2.25rem, 5vw, 4rem)' }}
         />
         <ScrollReveal delay={0.2}>
-          <p className="text-body text-pewter max-w-xl mb-10 leading-relaxed">
+          <p className="text-body text-pewter max-w-2xl mb-12 leading-relaxed">
             SNT is Sri Lanka&apos;s premier live music event company. We partner with the
             island&apos;s top-tier bands and international acts to deliver electrifying
             experiences at iconic venues nationwide.
