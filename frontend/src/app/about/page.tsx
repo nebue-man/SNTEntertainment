@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: 'About Us' }
 
 export default function AboutPage() {
   return (
-    <div className="pt-32 pb-24">
+    <div className="pb-24">
       <div style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
 
         {/* Story */}

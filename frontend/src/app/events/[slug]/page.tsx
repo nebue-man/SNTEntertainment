@@ -46,7 +46,7 @@ export default async function EventDetailPage({ params }: PageProps) {
   if (!event) notFound()
 
   return (
-    <article className="pt-32 pb-24">
+    <article className="pb-24">
       <div style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
 
         {/* Flyer + info */}

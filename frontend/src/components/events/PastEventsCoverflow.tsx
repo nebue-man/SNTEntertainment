@@ -359,7 +359,7 @@ export default function PastEventsCoverflow({ events, initialSlug }: { events: P
     <div className="relative bg-black overflow-hidden" style={{ minHeight: '80vh' }}>
       {/* Page header */}
       <div
-        className="pt-36 pb-10"
+        className="pb-10"
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
         <p className="text-[13px] text-electric-lime tracking-[0.25em] uppercase mb-4">Portfolio</p>

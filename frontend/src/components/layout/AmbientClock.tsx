@@ -2,23 +2,40 @@
 
 import { useEffect, useState } from 'react'
 
-export default function AmbientClock() {
-  const [time, setTime] = useState('')
+function formatCityTime(date: Date, timezone: string): string {
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: timezone,
+    hour:     '2-digit',
+    minute:   '2-digit',
+    second:   '2-digit',
+    hour12:   false,
+  }).formatToParts(date)
+  const get = (type: string) => parts.find(p => p.type === type)?.value ?? '00'
+  return `${get('hour')}:${get('minute')}:${get('second')}`
+}
+
+// Hook reused by VisitorClock — returns "CITY_HH:MM:SS" updated every second.
+// Returns empty string until mounted (avoids SSR/hydration mismatch).
+export function useCityTime(city: string, timezone: string): string {
+  const [label, setLabel] = useState('')
 
   useEffect(() => {
-    function update() {
-      const now = new Date()
-      const hh = String(now.getHours()).padStart(2, '0')
-      const mm = String(now.getMinutes()).padStart(2, '0')
-      const ss = String(now.getSeconds()).padStart(2, '0')
-      setTime(`COLOMBO_${hh}:${mm}:${ss}`)
+    if (!city || !timezone) return
+    function tick() {
+      setLabel(`${city}_${formatCityTime(new Date(), timezone)}`)
     }
-    update()
-    const id = setInterval(update, 1000)
+    tick()
+    const id = setInterval(tick, 1000)
     return () => clearInterval(id)
-  }, [])
+  }, [city, timezone])
 
-  if (!time) return null
+  return label
+}
+
+export default function AmbientClock() {
+  const label = useCityTime('COLOMBO', 'Asia/Colombo')
+
+  if (!label) return null
 
   return (
     <span
@@ -26,7 +43,7 @@ export default function AmbientClock() {
       style={{ color: 'var(--color-pewter)', opacity: 0.6 }}
       aria-hidden="true"
     >
-      {time}
+      {label}
     </span>
   )
 }

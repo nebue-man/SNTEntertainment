@@ -21,7 +21,7 @@ export default async function UpcomingEventsPage() {
   const events = await fetchUpcoming()
 
   return (
-    <div className="pt-32 pb-24" style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
+    <div className="pb-24" style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
       <ScrollReveal>
         <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">What&apos;s on</p>
       </ScrollReveal>

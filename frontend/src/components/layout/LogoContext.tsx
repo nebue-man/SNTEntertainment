@@ -3,24 +3,31 @@
 import { createContext, useContext, useState, type Dispatch, type SetStateAction } from 'react'
 
 interface LogoContextValue {
-  settled:    boolean
-  setSettled: Dispatch<SetStateAction<boolean>>
+  scrollProgress: number
+  setScrollProgress: Dispatch<SetStateAction<number>>
 }
 
 const LogoContext = createContext<LogoContextValue>({
-  settled:    false,
-  setSettled: () => {},
+  scrollProgress: 0,
+  setScrollProgress: () => {},
 })
 
 export function LogoProvider({ children }: { children: React.ReactNode }) {
-  const [settled, setSettled] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
   return (
-    <LogoContext.Provider value={{ settled, setSettled }}>
+    <LogoContext.Provider value={{ scrollProgress, setScrollProgress }}>
       {children}
     </LogoContext.Provider>
   )
 }
 
+// Consumers that only need a boolean settled flag
 export function useLogoSettled() {
+  const { scrollProgress } = useContext(LogoContext)
+  return { settled: scrollProgress >= 1 }
+}
+
+// HeroIntro uses this to write progress on every scroll event
+export function useLogoScrollProgress() {
   return useContext(LogoContext)
 }

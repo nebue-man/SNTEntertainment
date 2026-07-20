@@ -1,17 +1,25 @@
 'use client'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { HeroSlide } from '@/lib/types'
 import PlaceholderMedia from '@/components/ui/PlaceholderMedia'
 import SplitHeadline from '@/components/ui/SplitHeadline'
 import { useLenis } from '@/components/layout/SmoothScrollProvider'
-import { LOGO_REST_TOP, LOGO_REST_H, LOGO_FILTER } from '@/components/layout/PersistentLogo'
-import { useLogoSettled } from '@/components/layout/LogoContext'
+import {
+  LOGO_STAGE_H,
+  LOGO_REST_SCALE,
+  LOGO_REST_H,
+  LOGO_REST_TOP,
+  LOGO_REST_LEFT,
+  LOGO_FILTER,
+} from '@/components/layout/PersistentLogo'
+import { useLogoScrollProgress } from '@/components/layout/LogoContext'
 
-const AUTOPLAY_MS = 4500
-const LOGO_H      = 400
-const SCALE_START = 1.0
+const AUTOPLAY_MS  = 4500
+// scaleFactor: how many times larger the logo appears at p=0 vs p=1
+const SCALE_FACTOR = LOGO_STAGE_H / LOGO_REST_H  // 400/180 ≈ 2.22
 
 interface Props {
   slides:  HeroSlide[]
@@ -20,50 +28,32 @@ interface Props {
 }
 
 export default function HeroIntro({ slides, heading, tagline }: Props) {
-  const wrapperRef    = useRef<HTMLDivElement>(null)
-  const stageLogoRef  = useRef<HTMLDivElement>(null)
-  const fixedLogoRef  = useRef<HTMLDivElement>(null)
-  const videoRef      = useRef<HTMLDivElement>(null)
-  const textRef       = useRef<HTMLDivElement>(null)
+  const wrapperRef   = useRef<HTMLDivElement>(null)
+  const logoRef      = useRef<HTMLDivElement>(null)   // single fixed logo element
+  const videoRef     = useRef<HTMLDivElement>(null)
+  const textRef      = useRef<HTMLDivElement>(null)
 
   const [index, setIndex] = useState(0)
-  const timerRef   = useRef<ReturnType<typeof setInterval> | null>(null)
-  // One-way lock: set to true once p reaches 1. After that, scroll events
-  // no longer drive the animation — the logo stays at its resting state
-  // permanently, even if the user scrolls back to the top.
-  const settledRef    = useRef(false)
-  // One-shot flag written by useLayoutEffect when a skip-intro sessionStorage
-  // signal is found; consumed by the scroll useEffect on the same mount cycle.
+  const timerRef      = useRef<ReturnType<typeof setInterval> | null>(null)
+  // One-shot: set when arriving via logo click (skip-intro sessionStorage signal).
+  // Prevents the intro animation from playing; logo jumps straight to settled state.
   const skipIntroRef  = useRef(false)
 
   const lenis = useLenis()
-  const { settled, setSettled } = useLogoSettled()
+  const { setScrollProgress } = useLogoScrollProgress()
 
-  // Runs synchronously before the first browser paint so the user never sees
-  // the large-logo initial frame when arriving via a logo click.
+  // Runs synchronously before first paint so the large-logo frame is never seen
+  // when arriving via a logo click from another page.
   useLayoutEffect(() => {
-    // Always reset the shared settled flag on mount — prevents stale
-    // settled=true from a previous session bleeding through when navigating
-    // back to the homepage.
-    setSettled(false)
+    // Always reset progress on mount so stale settled=true from a previous
+    // session doesn't bleed through when navigating back to the homepage.
+    setScrollProgress(0)
 
-    // Check for the skip-intro signal written by PersistentLogo's onClick.
-    // Consuming it here (read + remove) ensures a subsequent direct visit or
-    // page refresh always shows the full intro animation.
     if (sessionStorage.getItem('snt-skip-intro') === '1') {
       sessionStorage.removeItem('snt-skip-intro')
       skipIntroRef.current = true
     }
-  }, [setSettled])
-
-  // Once the context-settled flag becomes true, PersistentLogo (rendered by
-  // Navbar) has already appeared in the same React commit. Hide the animated
-  // fixedLogoRef so there's no invisible duplicate in the paint tree.
-  useEffect(() => {
-    if (settled && fixedLogoRef.current) {
-      fixedLogoRef.current.style.display = 'none'
-    }
-  }, [settled])
+  }, [setScrollProgress])
 
   // ── Carousel autoplay ─────────────────────────────────────────────
   useEffect(() => {
@@ -83,57 +73,36 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
   }
 
   // ── Scroll-driven animation ───────────────────────────────────────
-  // All transform/opacity values are written directly to DOM refs to
-  // avoid React re-renders on every scroll event.
+  // All DOM mutations are written directly to refs to avoid per-scroll re-renders.
   useEffect(() => {
     let H = window.innerHeight
-
-    let prevP = -1  // tracks last p value to detect per-frame jumps
+    let W = window.innerWidth
 
     function applyProgress(p: number) {
-      const stageLogo = stageLogoRef.current
-      const fixedLogo = fixedLogoRef.current
-      const video     = videoRef.current
-      const text      = textRef.current
-      if (!stageLogo || !fixedLogo || !video) return
+      const logo  = logoRef.current
+      const video = videoRef.current
+      const text  = textRef.current
+      if (!logo || !video) return
 
-      // ── Logo: large + centered (p=0) → small + top-center (p=1) ──
-      // The element is anchored at top:LOGO_REST_TOP, left:50%.
-      // At p=0 we push it down via translateY so it visually lands at
-      // the vertical centre of the viewport, then release it to top as
-      // p→1. Scale shrinks from SCALE_START to 1.
-      const centerY = H / 2 - LOGO_REST_TOP - (LOGO_H * SCALE_START) / 2
-      const ty      = (1 - p) * centerY
-      const scale   = SCALE_START + (LOGO_REST_H / LOGO_H - SCALE_START) * p
-      stageLogo.style.transform = `translate(-50%, ${ty}px) scale(${scale})`
+      // ── Logo: diagonal center-screen (p=0) → top-left (p=1) ──────
+      // Element is fixed at (LOGO_REST_LEFT, LOGO_REST_TOP) with
+      // transformOrigin:'top left'. At rest (p=1) scale=1 → LOGO_REST_H px.
+      // At start (p=0) scale=SCALE_FACTOR → LOGO_STAGE_H px, centered via translate.
+      const visualSizeAtStart = LOGO_REST_H * SCALE_FACTOR  // = LOGO_STAGE_H
+      const tx_start = W / 2 - visualSizeAtStart / 2 - LOGO_REST_LEFT
+      const ty_start = H * 0.45 - visualSizeAtStart / 2 - LOGO_REST_TOP
+      const tx    = tx_start * (1 - p)
+      const ty    = ty_start * (1 - p)
+      const scale = SCALE_FACTOR + (1 - SCALE_FACTOR) * p  // SCALE_FACTOR → 1
 
-      // Cross-fade between stage logo and fixed-position persistent logo.
-      // The stage logo lives inside the sticky element and would scroll
-      // away once the wrapper unpins; the fixed logo takes over so the
-      // brand mark never disappears.
-      const cross = Math.max(0, Math.min((p - 0.75) / 0.25, 1))
-      stageLogo.style.opacity = String(1 - cross)
-      fixedLogo.style.opacity = String(cross)
+      logo.style.transform      = `translate(${tx}px, ${ty}px) scale(${scale})`
+      // Enable pointer events (click to home) only when settled at top-left
+      logo.style.pointerEvents  = p >= 1 ? 'auto' : 'none'
 
-      // ── Diagnostic logging (p > 0.9) ─────────────────────────────
-      if (p > 0.9) {
-        const delta = prevP >= 0 ? p - prevP : 0
-        console.log(
-          `[HeroIntro] p=${p.toFixed(5)}  Δp=${delta.toFixed(5)}  ty=${ty.toFixed(2)}  scale=${scale.toFixed(5)}` +
-          `  stageOp=${(1-cross).toFixed(4)}  fixedOp=${cross.toFixed(4)}` +
-          `  settled=${settledRef.current}  path=live-interpolation`
-        )
-      }
-      prevP = p
-
-      // ── Video: always visible, subtle scale-up as scroll progresses ──
-      // Opacity stays at 1 from the first frame so the video plays
-      // full-bleed behind the header immediately (no black startup gap).
-      // The gentle scale from 0.94→1.0 over the full scroll range gives
-      // a cinematic push-in without hiding the video at any scroll position.
+      // ── Video: subtle push-in scale ───────────────────────────────
       video.style.transform = `scale(${0.94 + 0.06 * p})`
 
-      // ── Text: heading + tagline, trails the video reveal ──────────
+      // ── Text: trails the video reveal ────────────────────────────
       if (text) {
         const tp = Math.max(0, Math.min((p - 0.5) / 0.4, 1))
         text.style.opacity   = String(tp)
@@ -141,41 +110,31 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
       }
     }
 
-    // Compute current scroll progress and apply, so the visual state is
-    // always correct whether Lenis has initialised yet or not.
     function computeAndApply(scrollY: number) {
-      if (settledRef.current) return  // one-way: never un-settle
       const wrapper    = wrapperRef.current
       const scrollable = wrapper ? wrapper.offsetHeight - H : 0
       const rawP = scrollable > 0 ? scrollY / scrollable : 0
       const p    = Math.max(0, Math.min(rawP, 1))
       applyProgress(p)
-      if (p >= 1) {
-        console.log(
-          `[HeroIntro] SETTLING — locking at p=1` +
-          `  scrollY=${scrollY.toFixed(2)}  scrollable=${scrollable.toFixed(2)}  rawP=${rawP.toFixed(5)}` +
-          `  finalScale=${(LOGO_REST_H / LOGO_H).toFixed(5)}  finalTy=0  stageOp=0  fixedOp=1`
-        )
-        settledRef.current = true
-        setSettled(true)
-      }
+      setScrollProgress(p)
     }
 
-    // If arriving via logo click (skip-intro flag set in useLayoutEffect),
-    // apply the fully-settled visual state immediately — no animation plays.
-    // The flag is cleared here so a Lenis re-mount doesn't re-trigger this path.
+    // skip-intro: jump to settled visual state immediately; no scroll listeners
+    // attached so the logo stays locked at rest (arriving via logo click from
+    // another page — no reason to play the intro again).
     if (skipIntroRef.current) {
       skipIntroRef.current = false
       applyProgress(1)
-      settledRef.current = true
-      setSettled(true)
-      return  // no scroll listeners needed — permanently settled
+      setScrollProgress(1)
+      return
     }
 
+    // Apply state for current scroll position (handles refresh-while-scrolled).
     computeAndApply(window.scrollY)
 
     function onResize() {
       H = window.innerHeight
+      W = window.innerWidth
       computeAndApply(window.scrollY)
     }
     window.addEventListener('resize', onResize, { passive: true })
@@ -188,70 +147,53 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
     function handleScroll(e: any) {
       computeAndApply(e.scroll as number)
     }
-
     lenis.on('scroll', handleScroll)
 
     return () => {
       lenis.off('scroll', handleScroll)
       window.removeEventListener('resize', onResize)
     }
-  }, [lenis])
+  }, [lenis, setScrollProgress])
 
   const slide = slides[index] ?? null
 
   return (
     <>
-      {/* ── Fixed persistent logo ─────────────────────────────────────
-          Sits at top-centre at z-[205] (above Navbar z-[200]).
-          Opacity is driven by the scroll effect above (starts at 0,
-          fades in during the p=0.75→1 crossover so it seamlessly
-          replaces the stage logo when the sticky section unpins). */}
-      {/* Full-viewport-width container + flexbox centering is more robust than
-          left:50%/translateX(-50%), which can drift by a subpixel depending on
-          element intrinsic width calculation. */}
+      {/* ── Fixed logo — animates from center-screen to top-left ──────
+          Single element drives the full animation (no crossfade needed).
+          transformOrigin:'top left' ensures scale grows from the resting
+          anchor point rather than from the element center.               */}
       <div
-        ref={fixedLogoRef}
+        ref={logoRef}
         style={{
-          position:       'fixed',
-          top:            0,
-          left:           0,
-          right:          0,
-          display:        'flex',
-          justifyContent: 'center',
-          paddingTop:     LOGO_REST_TOP,
-          zIndex:         205,
-          opacity:        0,
-          pointerEvents:  'none',
-          willChange:     'opacity',
+          position:        'fixed',
+          top:             LOGO_REST_TOP,
+          left:            LOGO_REST_LEFT,
+          zIndex:          205,
+          transformOrigin: 'top left',
+          willChange:      'transform',
+          pointerEvents:   'none',
         }}
       >
-        <Image
-          src="/logo-white.png"
-          alt="SNT Events"
-          width={LOGO_REST_H}
-          height={LOGO_REST_H}
-          style={{ height: LOGO_REST_H, width: 'auto', objectFit: 'contain', filter: LOGO_FILTER }}
-          priority
-        />
+        <Link href="/" aria-label="SNT home" tabIndex={-1}>
+          <Image
+            src="/logo-white.png"
+            alt="SNT Events"
+            width={LOGO_REST_H}
+            height={LOGO_REST_H}
+            style={{ height: LOGO_REST_H, width: 'auto', objectFit: 'contain', filter: LOGO_FILTER }}
+            priority
+          />
+        </Link>
       </div>
 
-      {/* ── Scroll wrapper ────────────────────────────────────────────
-          200vh total height gives 100vh of scroll travel (wrapper
-          height − viewport height) to drive progress 0→1. */}
+      {/* ── Scroll wrapper — 200vh gives 100vh of scroll travel ──── */}
       <div ref={wrapperRef} style={{ height: '200vh', position: 'relative' }}>
 
-        {/* ── Pinned stage ──────────────────────────────────────────
-            Sticky at top:0 for the full 100vh scroll range.
-            After the user scrolls past the wrapper the stage
-            unsticks and the fixed logo (above) takes over. */}
+        {/* ── Pinned stage — sticky for the full 100vh scroll range ── */}
         <div
           className="bg-absolute-zero"
-          style={{
-            position: 'sticky',
-            top:      0,
-            height:   '100vh',
-            overflow: 'hidden',
-          }}
+          style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}
         >
           {/* ── Video carousel layer ──────────────────────────────── */}
           <div
@@ -259,7 +201,6 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
             style={{
               position:        'absolute',
               inset:           0,
-              opacity:         1,
               transform:       'scale(0.94)',
               transformOrigin: 'center',
               willChange:      'transform',
@@ -286,11 +227,7 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
                         />
                       ) : (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={slide.src}
-                          alt={slide.alt}
-                          className="w-full h-full object-cover"
-                        />
+                        <img src={slide.src} alt={slide.alt} className="w-full h-full object-cover" />
                       )
                     ) : (
                       <div className="w-full h-full flex">
@@ -311,13 +248,7 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
             )}
           </div>
 
-          {/* ── Top gradient scrim ───────────────────────────────────
-              Keeps the full header row (timestamp, logo, hamburger)
-              legible against any video frame. The video is always at
-              opacity:1 from the first frame, so this scrim must be
-              painted at all times — no JS involvement, no animation.
-              220px covers the 112px header with comfortable bleed.
-              Sits above the video layer (z:2), below text (z:5). */}
+          {/* ── Top gradient scrim — keeps header row legible ──────── */}
           <div
             style={{
               position:      'absolute',
@@ -331,7 +262,7 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
             }}
           />
 
-          {/* ── Text + slide dots layer ───────────────────────────── */}
+          {/* ── Text + slide dots ─────────────────────────────────── */}
           <div
             ref={textRef}
             className="absolute inset-0 flex flex-col justify-end z-[5]"
@@ -342,12 +273,7 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
               paddingBottom: '4rem',
             }}
           >
-            <div
-              style={{
-                paddingLeft:  'var(--headline-padding-x)',
-                paddingRight: 'var(--headline-padding-x)',
-              }}
-            >
+            <div style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
               <SplitHeadline
                 text={heading}
                 as="h1"
@@ -378,38 +304,6 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
                 </div>
               )}
             </div>
-          </div>
-
-          {/* ── Stage logo ────────────────────────────────────────────
-              Anchored at top:LOGO_REST_TOP, left:50%.
-              applyProgress() pushes it down via translateY so it
-              appears centered at p=0, then releases it to its natural
-              top-centre position as p→1. transform-origin:top center
-              ensures the scale grows/shrinks from the top-centre
-              anchor point, keeping horizontal alignment stable. */}
-          <div
-            ref={stageLogoRef}
-            style={{
-              position:        'absolute',
-              top:             LOGO_REST_TOP,
-              left:            '50%',
-              transformOrigin: 'top center',
-              zIndex:          10,
-              willChange:      'transform, opacity',
-              pointerEvents:   'none',
-            }}
-          >
-            {/* Element is natively 400×400 so the browser renders at full size
-                and the CSS transform scales DOWN — no upscaling blurriness. */}
-            <Image
-              src="/logo-white.png"
-              alt="SNT Events"
-              width={400}
-              height={400}
-              className="w-[400px] h-[400px] object-contain"
-              style={{ filter: LOGO_FILTER }}
-              priority
-            />
           </div>
         </div>
       </div>

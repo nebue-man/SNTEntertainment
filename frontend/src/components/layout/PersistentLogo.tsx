@@ -4,33 +4,30 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
-// ── Shared settled-state constants ─────────────────────────────────────────────
-// These are the authoritative values for the logo's resting position and size.
-// HeroIntro imports them so its animation endpoint matches exactly, preventing
-// visual drift between the animated and static versions.
+// ── Shared logo geometry constants ──────────────────────────────────────────
+// LOGO_STAGE_H:   Natural render size of the large hero logo element (px).
+// LOGO_REST_SCALE: Scale of the resting logo relative to LOGO_STAGE_H. Tune here.
+// LOGO_REST_H:    Resting logo display size derived from the above.
+// LOGO_REST_TOP:  Fixed top offset — matches header py-4 (16 px).
+// LOGO_REST_LEFT: Fixed left offset — left-anchored resting position.
+export const LOGO_STAGE_H    = 400
+export const LOGO_REST_SCALE = 0.45
+export const LOGO_REST_H     = Math.round(LOGO_STAGE_H * LOGO_REST_SCALE)  // 180
+export const LOGO_REST_TOP   = 16
+export const LOGO_REST_LEFT  = 32
 
-// ── Shared settled-state constants ─────────────────────────────────────────────
-// LOGO_REST_TOP: matches the header's py-4 top padding (16px), so fixedLogoRef
-//   in HeroIntro perfectly overlaps the in-header logo during the crossfade.
-// LOGO_REST_H: the logo's rendered height inside the unified header row.
-//   At 80px it is visually prominent (1.8× the hamburger button height) while
-//   fitting cleanly within the 112px header (80 + 2×16px py-4 padding).
-export const LOGO_REST_TOP = 16   // px — must equal the header's top padding
-export const LOGO_REST_H   = 80   // px — prominent in-header logo size
-export const LOGO_FILTER   =
+export const LOGO_FILTER =
   'drop-shadow(0 2px 10px rgba(0,0,0,0.9)) drop-shadow(0 0 32px rgba(0,0,0,0.55))'
 
-// Renders the SNT logo as a link — used inside the unified header's center column.
-// The parent (Navbar header) handles all positioning; this component is just content.
+// Renders the SNT logo as a clickable link at its resting size.
+// Used by Navbar on non-home pages (home page uses HeroIntro's animated logo).
 export default function PersistentLogo() {
   const pathname = usePathname()
 
   function handleClick() {
-    // Set a one-shot sessionStorage flag so HeroIntro skips its large-to-small
-    // intro animation on the next homepage mount, landing directly in the settled
-    // state. Only written when navigating AWAY from "/" — clicking while already
-    // on the homepage is a Next.js no-op (no remount), so writing the flag there
-    // would leave it stranded and wrongly skip the intro on the next direct visit.
+    // Write a skip-intro flag so HeroIntro jumps straight to settled state
+    // when the homepage remounts, rather than playing the full intro animation.
+    // Only relevant when navigating away from "/".
     if (pathname !== '/') {
       sessionStorage.setItem('snt-skip-intro', '1')
     }
