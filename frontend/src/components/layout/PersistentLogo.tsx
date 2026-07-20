@@ -1,5 +1,7 @@
 'use client'
 
+import React, { useEffect, useRef } from 'react'
+import gsap from 'gsap'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
@@ -23,6 +25,18 @@ export const LOGO_FILTER =
 // Used by Navbar on non-home pages (home page uses HeroIntro's animated logo).
 export default function PersistentLogo() {
   const pathname = usePathname()
+  const spinRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!spinRef.current) return
+    const tween = gsap.to(spinRef.current, {
+      rotateY: 360,
+      duration: 7,
+      repeat: -1,
+      ease: 'none',
+    })
+    return () => { tween.kill() }
+  }, [])
 
   function handleClick() {
     // Write a skip-intro flag so HeroIntro jumps straight to settled state
@@ -35,14 +49,57 @@ export default function PersistentLogo() {
 
   return (
     <Link href="/" aria-label="SNT home" onClick={handleClick}>
-      <Image
-        src="/logo-white.png"
-        alt="SNT Events"
-        width={LOGO_REST_H}
-        height={LOGO_REST_H}
-        style={{ height: LOGO_REST_H, width: 'auto', objectFit: 'contain', filter: LOGO_FILTER }}
-        priority
-      />
+      {/* Perspective container — depth for the rotateX spin */}
+      <div style={{ perspective: '900px', width: LOGO_REST_H, height: LOGO_REST_H }}>
+        {/* Rotating inner — GSAP drives rotateX; outer wrapper gets position/scale */}
+        <div
+          ref={spinRef}
+          style={{
+            position:       'relative',
+            width:          '100%',
+            height:         '100%',
+            transformStyle: 'preserve-3d',
+          }}
+        >
+          {/* Front face */}
+          <Image
+            src="/logo-white.png"
+            alt="SNT Events"
+            width={LOGO_REST_H}
+            height={LOGO_REST_H}
+            style={{
+              height:                   LOGO_REST_H,
+              width:                    'auto',
+              objectFit:                'contain',
+              filter:                   LOGO_FILTER,
+              backfaceVisibility:       'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+            } as React.CSSProperties}
+            priority
+          />
+          {/* Back face — rotateX(180deg) places it on the reverse side.
+              At parent=180deg the combined transform = identity so it appears
+              right-side-up with no additional mirror needed. */}
+          <Image
+            src="/logo-white.png"
+            alt=""
+            width={LOGO_REST_H}
+            height={LOGO_REST_H}
+            style={{
+              position:                 'absolute',
+              top:                      0,
+              left:                     0,
+              height:                   LOGO_REST_H,
+              width:                    'auto',
+              objectFit:                'contain',
+              filter:                   LOGO_FILTER,
+              backfaceVisibility:       'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              transform:                'rotateY(180deg)',
+            } as React.CSSProperties}
+          />
+        </div>
+      </div>
     </Link>
   )
 }

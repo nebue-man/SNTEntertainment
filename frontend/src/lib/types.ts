@@ -24,7 +24,7 @@ export interface Event {
   venue: string
   description: string
   flyerUrl?: string
-  lineup: string[]
+  lineup?: string[]
   status: 'upcoming' | 'past'
   media?: EventMedia[]
   ticketPhases?: TicketPhase[]

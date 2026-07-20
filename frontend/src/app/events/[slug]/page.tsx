@@ -92,12 +92,12 @@ export default async function EventDetailPage({ params }: PageProps) {
                 </p>
               </div>
             </ScrollReveal>
-            {event.lineup.length > 0 && (
+            {(event.lineup?.length ?? 0) > 0 && (
               <ScrollReveal delay={0.15}>
                 <div>
                   <p className="text-body-sm text-pewter mb-2 tracking-widest uppercase">Lineup</p>
                   <ul className="flex flex-col gap-1">
-                    {event.lineup.map((artist) => (
+                    {event.lineup?.map((artist) => (
                       <li key={artist} className="text-body-lg text-ghost-white font-light">
                         {artist}
                       </li>

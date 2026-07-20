@@ -1,5 +1,6 @@
 'use client'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
 import Link from 'next/link'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -29,7 +30,8 @@ interface Props {
 
 export default function HeroIntro({ slides, heading, tagline }: Props) {
   const wrapperRef   = useRef<HTMLDivElement>(null)
-  const logoRef      = useRef<HTMLDivElement>(null)   // single fixed logo element
+  const logoRef      = useRef<HTMLDivElement>(null)   // outer fixed div — scroll animation target
+  const spinRef      = useRef<HTMLDivElement>(null)   // inner rotating div — GSAP spin target
   const videoRef     = useRef<HTMLDivElement>(null)
   const textRef      = useRef<HTMLDivElement>(null)
 
@@ -71,6 +73,18 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
       setIndex(n => (n + 1) % slides.length)
     }, AUTOPLAY_MS)
   }
+
+  // ── Continuous logo spin (independent of scroll position) ────────
+  useEffect(() => {
+    if (!spinRef.current) return
+    const tween = gsap.to(spinRef.current, {
+      rotateY: 360,
+      duration: 7,
+      repeat: -1,
+      ease: 'none',
+    })
+    return () => { tween.kill() }
+  }, [])
 
   // ── Scroll-driven animation ───────────────────────────────────────
   // All DOM mutations are written directly to refs to avoid per-scroll re-renders.
@@ -163,6 +177,9 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
           Single element drives the full animation (no crossfade needed).
           transformOrigin:'top left' ensures scale grows from the resting
           anchor point rather than from the element center.               */}
+      {/* Outer fixed div — position/scale controlled by applyProgress (scroll animation).
+          Must remain the direct target of logoRef; nothing inside it should override
+          the `transform` or `pointerEvents` that applyProgress writes here. */}
       <div
         ref={logoRef}
         style={{
@@ -176,14 +193,56 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
         }}
       >
         <Link href="/" aria-label="SNT home" tabIndex={-1}>
-          <Image
-            src="/logo-white.png"
-            alt="SNT Events"
-            width={LOGO_REST_H}
-            height={LOGO_REST_H}
-            style={{ height: LOGO_REST_H, width: 'auto', objectFit: 'contain', filter: LOGO_FILTER }}
-            priority
-          />
+          {/* Perspective container — provides 3D depth for the rotateX spin */}
+          <div style={{ perspective: '900px', width: LOGO_REST_H, height: LOGO_REST_H }}>
+            {/* Rotating inner — GSAP drives rotateX; outer logoRef gets scroll translate/scale */}
+            <div
+              ref={spinRef}
+              style={{
+                position:       'relative',
+                width:          '100%',
+                height:         '100%',
+                transformStyle: 'preserve-3d',
+              }}
+            >
+              {/* Front face */}
+              <Image
+                src="/logo-white.png"
+                alt="SNT Events"
+                width={LOGO_REST_H}
+                height={LOGO_REST_H}
+                style={{
+                  height:                   LOGO_REST_H,
+                  width:                    'auto',
+                  objectFit:                'contain',
+                  filter:                   LOGO_FILTER,
+                  backfaceVisibility:       'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                } as React.CSSProperties}
+                priority
+              />
+              {/* Back face — rotateX(180deg) places it on the reverse side.
+                  Combined with parent at 180deg = identity: appears right-side-up. */}
+              <Image
+                src="/logo-white.png"
+                alt=""
+                width={LOGO_REST_H}
+                height={LOGO_REST_H}
+                style={{
+                  position:                 'absolute',
+                  top:                      0,
+                  left:                     0,
+                  height:                   LOGO_REST_H,
+                  width:                    'auto',
+                  objectFit:                'contain',
+                  filter:                   LOGO_FILTER,
+                  backfaceVisibility:       'hidden',
+                  WebkitBackfaceVisibility: 'hidden',
+                  transform:                'rotateY(180deg)',
+                } as React.CSSProperties}
+              />
+            </div>
+          </div>
         </Link>
       </div>
 
