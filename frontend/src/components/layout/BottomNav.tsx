@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useLogoSettled } from '@/components/layout/LogoContext'
 
 const NAV_LINKS = [
   { label: 'Home',            short: 'Home',     href: '/' },
@@ -15,12 +16,18 @@ const NAV_LINKS = [
 export default function BottomNav() {
   const pathname = usePathname()
   const [mounted, setMounted] = useState(false)
+  const { settled } = useLogoSettled()
 
   useEffect(() => { setMounted(true) }, [])
 
   function isActive(href: string) {
     return href === '/' ? pathname === '/' : pathname.startsWith(href)
   }
+
+  const isHome = pathname === '/'
+  // On homepage: hide until the logo has finished its journey to the top.
+  // On all other pages: always visible.
+  if (!mounted || (isHome && !settled)) return null
 
   const nav = (
     <nav
@@ -34,6 +41,7 @@ export default function BottomNav() {
         borderRadius:         '9999px',
         whiteSpace:           'nowrap',
         boxShadow:            '0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.04)',
+        animation:            'nav-fade-in 0.5s ease forwards',
       }}
     >
       {NAV_LINKS.map(({ label, short, href }) => {
@@ -63,6 +71,5 @@ export default function BottomNav() {
     </nav>
   )
 
-  if (!mounted) return null
   return createPortal(nav, document.body)
 }
