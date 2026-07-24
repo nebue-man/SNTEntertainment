@@ -2,7 +2,6 @@ import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import path from 'path'
 
 import { ticketRequestLimiter, loginLimiter } from './middleware/rateLimiter'
 import { errorHandler } from './middleware/errorHandler'
@@ -29,15 +28,6 @@ app.use(
 // ── Body parsing ──────────────────────────────────────────────────────────────
 app.use(express.json())
 app.use(cookieParser())
-
-// ── Static uploads ────────────────────────────────────────────────────────────
-// Override Helmet's default CORP: same-origin so the Next.js frontend (different
-// port) can embed images served from this backend.
-app.use('/uploads', (_req, res, next) => {
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
-  next()
-})
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
 
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => res.json({ status: 'ok' }))

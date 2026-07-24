@@ -5,6 +5,9 @@ const REQUIRED_ENV = [
   'DATABASE_URL',
   'JWT_SECRET',
   'FRONTEND_URL',
+  'CLOUDINARY_CLOUD_NAME',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET',
 ] as const
 
 const missing = REQUIRED_ENV.filter((k) => !process.env[k])

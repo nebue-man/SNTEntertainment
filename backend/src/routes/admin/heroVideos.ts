@@ -1,26 +1,13 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import multer from 'multer'
-import path from 'path'
-import fs from 'fs'
-import { randomUUID } from 'crypto'
 import { prisma } from '../../lib/prisma'
 import { AppError } from '../../lib/errors'
+import { uploadBuffer, deleteAsset } from '../../lib/cloudinary'
 
 const router = Router()
 
-const HERO_DIR = path.join(__dirname, '../../../uploads/hero')
-fs.mkdirSync(HERO_DIR, { recursive: true })
-
-const heroStorage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, HERO_DIR),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || '.mp4'
-    cb(null, randomUUID() + ext)
-  },
-})
-
 const heroUpload = multer({
-  storage: heroStorage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 200 * 1024 * 1024 },
   fileFilter(_req, file, cb) {
     if (file.mimetype.startsWith('video/')) {
@@ -35,18 +22,6 @@ function parseSlot(raw: string): number {
   const n = parseInt(raw, 10)
   if (!Number.isInteger(n) || n < 1 || n > 5) throw new AppError('slotNumber must be 1–5', 400)
   return n
-}
-
-function deleteLocalFile(url: string | null) {
-  if (!url) return
-  try {
-    const filename = path.basename(new URL(url).pathname)
-    fs.unlink(path.join(HERO_DIR, filename), (err) => {
-      if (err && err.code !== 'ENOENT') console.error('Failed to delete hero file:', err)
-    })
-  } catch {
-    // ignore
-  }
 }
 
 // GET /api/admin/hero-videos — all 5 slots (including empty)
@@ -68,36 +43,39 @@ router.patch(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const slotNumber = parseSlot(req.params.slotNumber)
-
       if (!req.file) return next(new AppError('Video file is required', 400))
 
       const existing = await prisma.heroVideoSlot.findUnique({ where: { slotNumber } })
-      if (!existing) {
-        fs.unlink(req.file.path, () => {})
-        return next(new AppError('Slot not found', 404))
+      if (!existing) return next(new AppError('Slot not found', 404))
+
+      // Upload new video to Cloudinary
+      const { url, publicId } = await uploadBuffer(req.file.buffer, 'video', { folder: 'snt/hero' })
+
+      // Delete previous Cloudinary asset (best-effort, after new upload succeeds)
+      if (existing.cloudinaryPublicId) {
+        await deleteAsset(existing.cloudinaryPublicId, 'video')
       }
 
-      // Delete previous file before overwriting
-      deleteLocalFile(existing.videoUrl)
-
-      const baseUrl = `${req.protocol}://${req.get('host')}`
-      const videoUrl = `${baseUrl}/uploads/hero/${req.file.filename}`
-
-      const updated = await prisma.heroVideoSlot.update({
-        where: { slotNumber },
-        data: { videoUrl, cloudinaryPublicId: null },
-      })
+      let updated
+      try {
+        updated = await prisma.heroVideoSlot.update({
+          where: { slotNumber },
+          data: { videoUrl: url, cloudinaryPublicId: publicId },
+        })
+      } catch (err) {
+        // DB write failed — clean up the just-uploaded Cloudinary asset
+        await deleteAsset(publicId, 'video')
+        throw err
+      }
 
       res.json({ data: updated })
     } catch (err) {
-      // Clean up uploaded file if DB write fails
-      if (req.file) fs.unlink(req.file.path, () => {})
       next(err)
     }
   }
 )
 
-// DELETE /api/admin/hero-videos/:slotNumber — clears the slot and deletes local file
+// DELETE /api/admin/hero-videos/:slotNumber — clears the slot and deletes Cloudinary asset
 router.delete('/:slotNumber', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const slotNumber = parseSlot(req.params.slotNumber)
@@ -105,12 +83,14 @@ router.delete('/:slotNumber', async (req: Request, res: Response, next: NextFunc
     const existing = await prisma.heroVideoSlot.findUnique({ where: { slotNumber } })
     if (!existing) return next(new AppError('Slot not found', 404))
 
-    deleteLocalFile(existing.videoUrl)
-
     const cleared = await prisma.heroVideoSlot.update({
       where: { slotNumber },
       data: { videoUrl: null, cloudinaryPublicId: null },
     })
+
+    if (existing.cloudinaryPublicId) {
+      await deleteAsset(existing.cloudinaryPublicId, 'video')
+    }
 
     res.json({ data: cleared })
   } catch (err) {

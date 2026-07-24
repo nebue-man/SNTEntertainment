@@ -1,27 +1,14 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import multer from 'multer'
-import path from 'path'
-import fs from 'fs'
-import { randomUUID } from 'crypto'
 import { prisma } from '../../lib/prisma'
 import { AppError } from '../../lib/errors'
+import { uploadBuffer, deleteAsset } from '../../lib/cloudinary'
 import { ReorderMediaSchema } from '../../schemas/media'
 
 const router = Router({ mergeParams: true })
 
-const UPLOADS_DIR = path.join(__dirname, '../../../uploads/events')
-fs.mkdirSync(UPLOADS_DIR, { recursive: true })
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase() || '.jpg'
-    cb(null, randomUUID() + ext)
-  },
-})
-
 const mediaUpload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter(_req, file, cb) {
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
@@ -32,17 +19,6 @@ const mediaUpload = multer({
     }
   },
 })
-
-function deleteLocalFile(url: string) {
-  try {
-    const filename = path.basename(new URL(url).pathname)
-    fs.unlink(path.join(UPLOADS_DIR, filename), (err) => {
-      if (err && err.code !== 'ENOENT') console.error('Failed to delete file:', err)
-    })
-  } catch {
-    // ignore parse errors
-  }
-}
 
 // GET /api/admin/events/:eventId/media
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
@@ -70,11 +46,7 @@ router.post(
         where: { id: req.params.eventId },
         select: { id: true },
       })
-      if (!event) {
-        // Clean up already-saved files before erroring
-        for (const f of files) fs.unlink(f.path, () => {})
-        return next(new AppError('Event not found', 404))
-      }
+      if (!event) return next(new AppError('Event not found', 404))
 
       const maxOrder = await prisma.eventMedia.aggregate({
         where: { eventId: req.params.eventId },
@@ -82,22 +54,31 @@ router.post(
       })
       let nextOrder = (maxOrder._max.sortOrder ?? -1) + 1
 
-      const baseUrl = `${req.protocol}://${req.get('host')}`
-
-      const created = await prisma.$transaction(
-        files.map((file) => {
-          const url = `${baseUrl}/uploads/events/${file.filename}`
-          return prisma.eventMedia.create({
-            data: {
-              eventId: req.params.eventId,
-              type: 'PHOTO',
-              url,
-              cloudinaryPublicId: '',
-              sortOrder: nextOrder++,
-            },
-          })
-        })
+      // Upload all files to Cloudinary in parallel
+      const uploads = await Promise.all(
+        files.map((file) => uploadBuffer(file.buffer, 'image', { folder: 'snt/events' }))
       )
+
+      // Persist DB records; clean up Cloudinary assets on failure
+      let created
+      try {
+        created = await prisma.$transaction(
+          uploads.map(({ url, publicId }) =>
+            prisma.eventMedia.create({
+              data: {
+                eventId: req.params.eventId,
+                type: 'PHOTO',
+                url,
+                cloudinaryPublicId: publicId,
+                sortOrder: nextOrder++,
+              },
+            })
+          )
+        )
+      } catch (err) {
+        await Promise.all(uploads.map(({ publicId }) => deleteAsset(publicId, 'image')))
+        throw err
+      }
 
       res.status(201).json({ data: created })
     } catch (err) {
@@ -140,14 +121,18 @@ router.delete('/:mediaId', async (req: Request, res: Response, next: NextFunctio
   try {
     const media = await prisma.eventMedia.findUnique({
       where: { id: req.params.mediaId },
-      select: { eventId: true, url: true },
+      select: { eventId: true, cloudinaryPublicId: true },
     })
     if (!media || media.eventId !== req.params.eventId) {
       return next(new AppError('Media not found for this event', 404))
     }
 
-    deleteLocalFile(media.url)
     await prisma.eventMedia.delete({ where: { id: req.params.mediaId } })
+
+    if (media.cloudinaryPublicId) {
+      await deleteAsset(media.cloudinaryPublicId, 'image')
+    }
+
     res.json({ data: { ok: true } })
   } catch (err) {
     next(err)
