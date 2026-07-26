@@ -15,7 +15,7 @@ function formatDate(iso: string) {
 export default function FlyerCard({ event }: Props) {
   return (
     <Link
-      href={`/events/${event.slug}`}
+      href={`/events/view?slug=${event.slug}`}
       className="group block border border-pewter/20 hover:border-ghost-white/60 transition-colors duration-300 overflow-hidden"
       aria-label={`${event.title} — ${formatDate(event.date)}`}
     >

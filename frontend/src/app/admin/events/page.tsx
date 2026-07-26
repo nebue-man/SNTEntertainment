@@ -93,7 +93,7 @@ export default function AdminEventsPage() {
               {events.map(event => (
                 <tr key={event.id} className="border-b border-[#4d4d4d]/50 hover:bg-white/[0.02] transition-colors">
                   <td className="px-4 py-4 first:pl-0 font-light">
-                    <Link href={`/admin/events/${event.id}`} className="hover:text-[#d3fd50] transition-colors">
+                    <Link href={`/admin/events/edit?id=${event.id}`} className="hover:text-[#d3fd50] transition-colors">
                       {event.title}
                     </Link>
                   </td>
@@ -106,7 +106,7 @@ export default function AdminEventsPage() {
                   <td className="px-4 py-4 last:pr-0">
                     <div className="flex items-center gap-4 justify-end">
                       <Link
-                        href={`/admin/events/${event.id}`}
+                        href={`/admin/events/edit?id=${event.id}`}
                         className="text-[12px] text-white/40 hover:text-white transition-colors"
                       >
                         Edit

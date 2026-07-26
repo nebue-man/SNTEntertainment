@@ -1,23 +1,39 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-snt}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-snt_events}
+    volumes:
+      # Named volume — survives container restarts and image rebuilds.
+      # NEVER run `docker compose down -v` in production without a backup.
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-snt} -d ${POSTGRES_DB:-snt_events}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # 5432 is intentionally NOT published to the host. The backend reaches
+    # postgres via Docker's internal network (hostname "postgres").
+    # To inspect manually: docker compose exec postgres psql -U snt -d snt_events
+
   backend:
     build: .
     ports:
       - "${PORT:-4000}:4000"
-    # Load most vars from .env; DATABASE_URL is overridden below to reach the
-    # host machine's Postgres via host.docker.internal instead of localhost.
     env_file: .env
     environment:
-      DATABASE_URL: "postgresql://dilshan@host.docker.internal:5432/snt_events?schema=public"
+      # Overrides the DATABASE_URL in .env to use Docker's internal network.
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-snt}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-snt_events}?schema=public"
     volumes:
-      # Uploads land at /app/dist/uploads inside the container because
-      # __dirname in the compiled files is /app/dist/src and multer/static
-      # paths are all built with path.join(__dirname, '../../../uploads/...')
-      # or path.join(__dirname, '../uploads'). The named volume persists across
-      # container restarts and image rebuilds.
       - uploads:/app/dist/uploads
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
+  postgres_data:
   uploads:

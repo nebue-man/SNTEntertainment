@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { Play } from 'lucide-react'
 import HeroIntro from '@/components/media/HeroIntro'
@@ -5,55 +8,64 @@ import ScrollReveal from '@/components/ui/ScrollReveal'
 import SplitHeadline from '@/components/ui/SplitHeadline'
 import GhostButton from '@/components/ui/GhostButton'
 import FlyerCard from '@/components/events/FlyerCard'
+import LoadingGate from '@/components/ui/LoadingGate'
 import { upcomingEventsPlaceholder } from '@/lib/eventsConfig'
 import { getUpcomingEvents, getHeroVideos, getPastEventsWithMedia } from '@/lib/api'
 import type { Event, HeroSlide, PastApiEvent } from '@/lib/types'
 import { resolveMediaUrl } from '@/lib/mediaUrl'
 
-async function fetchUpcoming(): Promise<Event[]> {
-  try {
-    return await getUpcomingEvents()
-  } catch {
-    return upcomingEventsPlaceholder
-  }
-}
+export default function Home() {
+  const [upcoming, setUpcoming] = useState<Event[]>([])
+  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([])
+  const [pastFeatured, setPastFeatured] = useState<PastApiEvent[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
-async function fetchHeroSlides(): Promise<HeroSlide[]> {
-  try {
-    const slots = await getHeroVideos()
-    return slots.map((s) => ({
-      id: String(s.slotNumber),
-      type: 'video' as const,
-      src: resolveMediaUrl(s.videoUrl),
-      alt: `Hero video ${s.slotNumber}`,
-      label: '',
-    }))
-  } catch {
-    return []
-  }
-}
+  const fetchAll = useCallback(() => {
+    setLoading(true)
+    setError(false)
 
-async function fetchPastFeatured(): Promise<PastApiEvent[]> {
-  try {
-    const events = await getPastEventsWithMedia()
-    return events
-      .slice()
-      .sort((a, b) => new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime())
-      .slice(0, 4)
-  } catch {
-    return []
-  }
-}
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), 12000)
+    )
 
-export default async function Home() {
-  const [upcoming, heroSlides, pastFeatured] = await Promise.all([
-    fetchUpcoming(),
-    fetchHeroSlides(),
-    fetchPastFeatured(),
-  ])
+    Promise.race([
+      Promise.all([getUpcomingEvents(), getHeroVideos(), getPastEventsWithMedia()]),
+      timeout,
+    ])
+      .then(([upcomingData, heroData, pastData]) => {
+        setUpcoming(upcomingData.length > 0 ? upcomingData : upcomingEventsPlaceholder)
+        setHeroSlides(
+          heroData.map((s) => ({
+            id: String(s.slotNumber),
+            type: 'video' as const,
+            src: resolveMediaUrl(s.videoUrl),
+            alt: `Hero video ${s.slotNumber}`,
+            label: '',
+          }))
+        )
+        setPastFeatured(
+          pastData
+            .slice()
+            .sort((a, b) => new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime())
+            .slice(0, 4)
+        )
+        setLoading(false)
+      })
+      .catch(() => {
+        setError(true)
+        setLoading(false)
+      })
+  }, [])
+
+  useEffect(() => {
+    fetchAll()
+  }, [fetchAll])
 
   return (
     <>
+      <LoadingGate loading={loading} error={error} onRetry={fetchAll} />
+
       {/* ── Hero intro — scroll-driven logo transition + video reveal ── */}
       <HeroIntro
         slides={heroSlides}

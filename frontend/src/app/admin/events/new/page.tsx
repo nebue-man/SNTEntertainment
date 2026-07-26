@@ -46,7 +46,7 @@ export default function NewEventPage() {
       if (flyer) form.append('flyer', flyer)
 
       const res = await createEvent(form)
-      router.push(`/admin/events/${res.data.id}`)
+      router.push(`/admin/events/edit?id=${res.data.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create event')
     } finally {

@@ -1,5 +1,6 @@
 'use client'
-import { use, useEffect, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { toDateTimeLocal } from '@/lib/dateUtils'
 import {
@@ -13,7 +14,6 @@ import {
   reorderMedia,
   deleteMedia,
   type AdminEventDetail,
-  type Artist,
   type Phase,
   type MediaItem,
 } from '@/lib/adminApi'
@@ -484,9 +484,9 @@ function MediaTab({ event, onSaved }: { event: AdminEventDetail; onSaved: () => 
 const TABS = ['Details', 'Artists', 'Phases', 'Media'] as const
 type Tab = typeof TABS[number]
 
-
-export default function EventEditPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+function EventEditContent() {
+  const searchParams = useSearchParams()
+  const id = searchParams.get('id') ?? ''
   const [event, setEvent] = useState<AdminEventDetail | null>(null)
   const [tab, setTab] = useState<Tab>('Details')
   const [loading, setLoading] = useState(true)
@@ -503,7 +503,10 @@ export default function EventEditPage({ params }: { params: Promise<{ id: string
     }
   }
 
-  useEffect(() => { load() }, [id])
+  useEffect(() => {
+    if (!id) { setError('No event ID provided'); setLoading(false); return }
+    load()
+  }, [id])
 
   if (loading) return <div className="p-8 text-white/30 text-sm">Loading…</div>
   if (error || !event) return <div className="p-8 text-red-400 text-sm">{error || 'Not found'}</div>
@@ -545,5 +548,13 @@ export default function EventEditPage({ params }: { params: Promise<{ id: string
         {tab === 'Media'   && <MediaTab   event={event} onSaved={load} />}
       </div>
     </div>
+  )
+}
+
+export default function EventEditPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-white/30 text-sm">Loading…</div>}>
+      <EventEditContent />
+    </Suspense>
   )
 }

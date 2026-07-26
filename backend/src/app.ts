@@ -18,9 +18,22 @@ const app = express()
 app.use(helmet())
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+// FRONTEND_URL may be a comma-separated list of allowed origins (useful for
+// local dev where the static-export preview server runs on a different port
+// than the Next.js dev server). In production this should be a single origin.
+const allowedOrigins = (process.env.FRONTEND_URL ?? '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean)
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: (incoming, cb) => {
+      // Allow requests with no Origin header (same-origin / server-to-server)
+      if (!incoming) return cb(null, true)
+      if (allowedOrigins.includes(incoming)) return cb(null, true)
+      cb(new Error(`Origin ${incoming} not allowed by CORS`))
+    },
     credentials: true,
   })
 )
