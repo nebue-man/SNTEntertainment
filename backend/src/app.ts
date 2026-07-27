@@ -15,7 +15,13 @@ import adminRouter from './routes/admin'
 const app = express()
 
 // ── Security headers ──────────────────────────────────────────────────────────
-app.use(helmet())
+// crossOriginResourcePolicy must be 'cross-origin' because the frontend and
+// backend run on different origins (different ports locally, different subdomains
+// in production). The Helmet default 'same-origin' would block the browser from
+// loading videos/images served by this backend from the frontend's origin.
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}))
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
 // FRONTEND_URL may be a comma-separated list of allowed origins (useful for

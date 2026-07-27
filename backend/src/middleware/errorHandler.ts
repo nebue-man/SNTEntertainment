@@ -26,7 +26,16 @@ export function errorHandler(
   // Unexpected error — log internally, never leak stack trace
   console.error('[unhandled error]', err)
 
+  // Extract a readable message even when err is a plain object (e.g. Cloudinary
+  // error objects which are not Error instances but do have a .message property).
+  const devMessage =
+    err instanceof Error
+      ? err.message
+      : err !== null && typeof err === 'object' && 'message' in err
+      ? String((err as { message: unknown }).message)
+      : String(err)
+
   res.status(500).json({
-    error: isProd ? 'Internal server error' : String(err),
+    error: isProd ? 'Internal server error' : devMessage,
   })
 }

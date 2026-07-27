@@ -16,7 +16,7 @@ import {
   LOGO_REST_LEFT,
   LOGO_FILTER,
 } from '@/components/layout/PersistentLogo'
-import { useLogoScrollProgress } from '@/components/layout/LogoContext'
+import { useSetLogoScrollProgress } from '@/components/layout/LogoContext'
 
 const AUTOPLAY_MS  = 4500
 // scaleFactor: how many times larger the logo appears at p=0 vs p=1
@@ -42,7 +42,7 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
   const skipIntroRef  = useRef(false)
 
   const lenis = useLenis()
-  const { setScrollProgress } = useLogoScrollProgress()
+  const setScrollProgress = useSetLogoScrollProgress()
 
   // Runs synchronously before first paint so the large-logo frame is never seen
   // when arriving via a logo click from another page.

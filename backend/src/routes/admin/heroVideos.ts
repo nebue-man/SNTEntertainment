@@ -48,7 +48,6 @@ router.patch(
       const existing = await prisma.heroVideoSlot.findUnique({ where: { slotNumber } })
       if (!existing) return next(new AppError('Slot not found', 404))
 
-      // Upload new video to Cloudinary
       const { url, publicId } = await uploadBuffer(req.file.buffer, 'video', { folder: 'snt/hero' })
 
       // Delete previous Cloudinary asset (best-effort, after new upload succeeds)
