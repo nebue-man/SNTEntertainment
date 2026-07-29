@@ -11,7 +11,10 @@ import { getEvent } from '@/lib/api'
 import type { Event } from '@/lib/types'
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-LK', {
+  if (!iso) return 'Date TBA'
+  const d = new Date(iso)
+  if (isNaN(d.getTime())) return 'Date TBA'
+  return d.toLocaleDateString('en-LK', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -105,7 +108,7 @@ function EventDetail() {
               <div className="flex flex-col justify-end gap-6">
                 <ScrollReveal>
                   <p className="text-caption text-electric-lime tracking-widest uppercase">
-                    {event.status === 'upcoming' ? 'Upcoming Event' : 'Past Event'}
+                    {event.status === 'UPCOMING' ? 'Upcoming Event' : 'Past Event'}
                   </p>
                 </ScrollReveal>
                 <SplitHeadline
@@ -118,7 +121,7 @@ function EventDetail() {
                   <div className="flex flex-col gap-2">
                     <p className="text-body text-pewter">
                       <span className="text-ghost-white">Date: </span>
-                      {formatDate(event.date)}
+                      {formatDate(event.eventDate)}
                     </p>
                     <p className="text-body text-pewter">
                       <span className="text-ghost-white">Venue: </span>
@@ -152,7 +155,7 @@ function EventDetail() {
             </ScrollReveal>
 
             {/* Ticket phases — only for upcoming events */}
-            {event.status === 'upcoming' && event.ticketPhases && event.ticketPhases.length > 0 && (
+            {event.status === 'UPCOMING' && event.ticketPhases && event.ticketPhases.length > 0 && (
               <EventTicketSection
                 eventId={event.id}
                 phases={event.ticketPhases}

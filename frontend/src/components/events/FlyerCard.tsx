@@ -5,7 +5,10 @@ import PlaceholderMedia from '@/components/ui/PlaceholderMedia'
 interface Props { event: Event }
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('en-LK', {
+  if (!iso) return 'Date TBA'
+  const d = new Date(iso)
+  if (isNaN(d.getTime())) return 'Date TBA'
+  return d.toLocaleDateString('en-LK', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -17,7 +20,7 @@ export default function FlyerCard({ event }: Props) {
     <Link
       href={`/events/view?slug=${event.slug}`}
       className="group block border border-pewter/20 hover:border-ghost-white/60 transition-colors duration-300 overflow-hidden"
-      aria-label={`${event.title} — ${formatDate(event.date)}`}
+      aria-label={`${event.title} — ${formatDate(event.eventDate)}`}
     >
       <div className="aspect-[3/4] relative bg-absolute-zero overflow-hidden">
         {event.flyerUrl ? (
@@ -39,7 +42,7 @@ export default function FlyerCard({ event }: Props) {
 
       <div className="p-5 border-t border-pewter/20 flex flex-col gap-1.5">
         <p className="text-caption text-electric-lime tracking-widest uppercase">
-          {formatDate(event.date)}
+          {formatDate(event.eventDate)}
         </p>
         <h3 className="text-body-lg text-ghost-white font-light group-hover:text-electric-lime transition-colors line-clamp-2">
           {event.title}
