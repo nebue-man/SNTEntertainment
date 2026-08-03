@@ -1,17 +1,14 @@
 import Link from 'next/link'
-import Image from 'next/image'
+import LogoSvg from '@/components/ui/LogoSvg'
 
 export default function Footer() {
   return (
     <footer className="border-t border-pewter/20 px-6 pt-14 pb-[96px] md:px-10 md:pt-20 md:pb-[96px]">
       <div className="max-w-7xl mx-auto flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
         <div className="flex flex-col gap-4">
-          <Image
-            src="/logo-white.png"
-            alt="SNT Events"
-            width={40}
-            height={40}
-            className="h-8 w-auto object-contain"
+          <LogoSvg
+            aria-label="SNT Events"
+            className="h-8 w-auto text-ghost-white"
           />
           <p className="text-body-sm text-pewter max-w-xs">
             Sri Lanka&apos;s premier live music event company. We bring the best bands to iconic stages.

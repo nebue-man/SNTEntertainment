@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import Link from 'next/link'
-import Image from 'next/image'
+import LogoSvg from '@/components/ui/LogoSvg'
 import { usePathname } from 'next/navigation'
 
 // ── Shared logo geometry constants ──────────────────────────────────────────
@@ -62,40 +62,35 @@ export default function PersistentLogo() {
           }}
         >
           {/* Front face */}
-          <Image
-            src="/logo-white.png"
-            alt="SNT Events"
-            width={LOGO_REST_H}
-            height={LOGO_REST_H}
+          <LogoSvg
+            aria-label="SNT Events"
             style={{
               height:                   LOGO_REST_H,
               width:                    'auto',
-              objectFit:                'contain',
+              color:                    'white',
               filter:                   LOGO_FILTER,
               backfaceVisibility:       'hidden',
               WebkitBackfaceVisibility: 'hidden',
+              display:                  'block',
             } as React.CSSProperties}
-            priority
           />
-          {/* Back face — rotateX(180deg) places it on the reverse side.
+          {/* Back face — rotateY(180deg) places it on the reverse side.
               At parent=180deg the combined transform = identity so it appears
               right-side-up with no additional mirror needed. */}
-          <Image
-            src="/logo-white.png"
-            alt=""
-            width={LOGO_REST_H}
-            height={LOGO_REST_H}
+          <LogoSvg
+            aria-hidden
             style={{
               position:                 'absolute',
               top:                      0,
               left:                     0,
               height:                   LOGO_REST_H,
               width:                    'auto',
-              objectFit:                'contain',
+              color:                    'white',
               filter:                   LOGO_FILTER,
               backfaceVisibility:       'hidden',
               WebkitBackfaceVisibility: 'hidden',
               transform:                'rotateY(180deg)',
+              display:                  'block',
             } as React.CSSProperties}
           />
         </div>
