@@ -254,7 +254,7 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
             ref={videoRef}
             style={{
               position:        'absolute',
-              inset:           0,
+              inset:           '-4%',
               transform:       'scale(0.94)',
               transformOrigin: 'center',
               willChange:      'transform',

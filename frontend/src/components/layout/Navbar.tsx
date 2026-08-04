@@ -2,40 +2,33 @@
 
 import { usePathname } from 'next/navigation'
 import VisitorClock from '@/components/layout/VisitorClock'
-import PersistentLogo, { LOGO_REST_TOP, LOGO_REST_LEFT } from '@/components/layout/PersistentLogo'
+import PersistentLogo, { LOGO_REST_LEFT } from '@/components/layout/PersistentLogo'
 import BottomNav from '@/components/layout/BottomNav'
+import { useLogoSettled } from '@/components/layout/LogoContext'
 
 export default function Navbar() {
-  const pathname = usePathname()
-  const isHome   = pathname === '/'
+  const pathname      = usePathname()
+  const isHome        = pathname === '/'
+  const { settled }   = useLogoSettled()
 
   return (
     <>
-      {/* ── Fixed logo — non-home pages only ──────────────────────────
-          On the home page HeroIntro owns and animates the logo.
-          On every other route PersistentLogo sits at the same resting
-          coordinates so the brand mark is always at top-left.         */}
-      {!isHome && (
-        <div
-          style={{
-            position:      'fixed',
-            top:           LOGO_REST_TOP,
-            left:          LOGO_REST_LEFT,
-            zIndex:        201,
-            pointerEvents: 'auto',
-          }}
-        >
+      {/* ── Unified header row — logo left, timestamp right ───────────
+          Both elements share the same flex row so they are always
+          vertically aligned at the same height.
+          On the home page the logo slot is hidden while HeroIntro's
+          scroll animation is active (settled=false); once the logo
+          reaches its resting position (settled=true) the header logo
+          appears at exactly the same coordinates for a seamless
+          handoff.  py-4 matches LOGO_REST_TOP so the logo's top edge
+          sits at 16px from the viewport top.                          */}
+      <header
+        className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-between py-4"
+        style={{ paddingLeft: LOGO_REST_LEFT, paddingRight: 'var(--headline-padding-x)' }}
+      >
+        <div style={{ visibility: (isHome && !settled) ? 'hidden' : 'visible' }}>
           <PersistentLogo />
         </div>
-      )}
-
-      {/* ── Header — visitor clock pinned to top-right ────────────────
-          justify-end pushes the single label to the right edge.
-          paddingRight mirrors the design system's headline rhythm.    */}
-      <header
-        className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-end py-4"
-        style={{ paddingRight: 'var(--headline-padding-x)' }}
-      >
         <VisitorClock />
       </header>
 
