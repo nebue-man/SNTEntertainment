@@ -10,17 +10,19 @@ import SplitHeadline from '@/components/ui/SplitHeadline'
 import { useLenis } from '@/components/layout/SmoothScrollProvider'
 import {
   LOGO_STAGE_H,
-  LOGO_REST_SCALE,
+  LOGO_STAGE_W,
   LOGO_REST_H,
   LOGO_REST_TOP,
   LOGO_REST_LEFT,
-  LOGO_FILTER,
+  LOGO_FILTER_HERO,
+  SPIN_RANGE,
+  SPIN_DURATION,
 } from '@/components/layout/PersistentLogo'
 import { useSetLogoScrollProgress } from '@/components/layout/LogoContext'
 
-const AUTOPLAY_MS  = 4500
-// scaleFactor: how many times larger the logo appears at p=0 vs p=1
-const SCALE_FACTOR = LOGO_STAGE_H / LOGO_REST_H  // 400/180 ≈ 2.22
+const AUTOPLAY_MS = 4500
+// Scale applied at p=1 (settled) — element is native LOGO_STAGE_H, shrinks to LOGO_REST_H
+const SCALE_DOWN  = LOGO_REST_H / LOGO_STAGE_H  // 40/300 ≈ 0.133
 
 interface Props {
   slides:  HeroSlide[]
@@ -29,11 +31,11 @@ interface Props {
 }
 
 export default function HeroIntro({ slides, heading, tagline }: Props) {
-  const wrapperRef   = useRef<HTMLDivElement>(null)
-  const logoRef      = useRef<HTMLDivElement>(null)   // outer fixed div — scroll animation target
-  const spinRef      = useRef<HTMLDivElement>(null)   // inner rotating div — GSAP spin target
-  const videoRef     = useRef<HTMLDivElement>(null)
-  const textRef      = useRef<HTMLDivElement>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const logoRef    = useRef<HTMLDivElement>(null)   // outer fixed div — scroll animation target
+  const spinRef    = useRef<HTMLDivElement>(null)   // inner rotating div — GSAP spin target
+  const videoRef   = useRef<HTMLDivElement>(null)
+  const textRef    = useRef<HTMLDivElement>(null)
 
   const [index, setIndex] = useState(0)
   const timerRef      = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -74,15 +76,14 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
     }, AUTOPLAY_MS)
   }
 
-  // ── Continuous logo spin (independent of scroll position) ────────
+  // ── Continuous logo spin — same parameters as PersistentLogo for seamless handoff ──
   useEffect(() => {
     if (!spinRef.current) return
-    const tween = gsap.to(spinRef.current, {
-      rotateY: 360,
-      duration: 7,
-      repeat: -1,
-      ease: 'none',
-    })
+    const tween = gsap.fromTo(
+      spinRef.current,
+      { rotateY: -SPIN_RANGE },
+      { rotateY: SPIN_RANGE, duration: SPIN_DURATION, repeat: -1, yoyo: true, ease: 'sine.inOut' },
+    )
     return () => { tween.kill() }
   }, [])
 
@@ -99,19 +100,19 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
       if (!logo || !video) return
 
       // ── Logo: diagonal center-screen (p=0) → top-left (p=1) ──────
-      // Element is fixed at (LOGO_REST_LEFT, LOGO_REST_TOP) with
-      // transformOrigin:'top left'. At rest (p=1) scale=1 → LOGO_REST_H px.
-      // At start (p=0) scale=SCALE_FACTOR → LOGO_STAGE_H px, centered via translate.
-      const visualSizeAtStart = LOGO_REST_H * SCALE_FACTOR  // = LOGO_STAGE_H
-      const tx_start = W / 2 - visualSizeAtStart / 2 - LOGO_REST_LEFT
-      const ty_start = H * 0.45 - visualSizeAtStart / 2 - LOGO_REST_TOP
+      // Element is fixed at (LOGO_REST_LEFT, LOGO_REST_TOP) with transformOrigin:'top left'.
+      // At p=0: scale=1, element is native LOGO_STAGE size, centred via translate.
+      // At p=1: scale=SCALE_DOWN, element visually matches LOGO_REST_H/W exactly.
+      // Scaling down from native size keeps SVG text crisp at p=0 (no scale-up blurring).
+      const tx_start = W / 2 - LOGO_STAGE_W / 2 - LOGO_REST_LEFT
+      const ty_start = H * 0.45 - LOGO_STAGE_H / 2 - LOGO_REST_TOP
       const tx    = tx_start * (1 - p)
       const ty    = ty_start * (1 - p)
-      const scale = SCALE_FACTOR + (1 - SCALE_FACTOR) * p  // SCALE_FACTOR → 1
+      const scale = 1 + (SCALE_DOWN - 1) * p  // 1 → SCALE_DOWN
 
-      logo.style.transform      = `translate(${tx}px, ${ty}px) scale(${scale})`
+      logo.style.transform     = `translate(${tx}px, ${ty}px) scale(${scale})`
       // Enable pointer events (click to home) only when settled at top-left
-      logo.style.pointerEvents  = p >= 1 ? 'auto' : 'none'
+      logo.style.pointerEvents = p >= 1 ? 'auto' : 'none'
 
       // ── Video: subtle push-in scale ───────────────────────────────
       video.style.transform = `scale(${0.94 + 0.06 * p})`
@@ -193,9 +194,9 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
         }}
       >
         <Link href="/" aria-label="SNT home" tabIndex={-1}>
-          {/* Perspective container — provides 3D depth for the rotateX spin */}
-          <div style={{ perspective: '900px', width: LOGO_REST_H, height: LOGO_REST_H }}>
-            {/* Rotating inner — GSAP drives rotateX; outer logoRef gets scroll translate/scale */}
+          {/* Perspective container — native hero size so SVG rasterises at full resolution */}
+          <div style={{ perspective: '1200px', width: LOGO_STAGE_W, height: LOGO_STAGE_H }}>
+            {/* Rotating inner — GSAP drives rotateY; outer logoRef gets scroll translate/scale */}
             <div
               ref={spinRef}
               style={{
@@ -209,10 +210,10 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
               <LogoSvg
                 aria-label="SNT Events"
                 style={{
-                  height:                   LOGO_REST_H,
+                  height:                   LOGO_STAGE_H,
                   width:                    'auto',
                   color:                    'white',
-                  filter:                   LOGO_FILTER,
+                  filter:                   LOGO_FILTER_HERO,
                   backfaceVisibility:       'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   display:                  'block',
@@ -226,10 +227,10 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
                   position:                 'absolute',
                   top:                      0,
                   left:                     0,
-                  height:                   LOGO_REST_H,
+                  height:                   LOGO_STAGE_H,
                   width:                    'auto',
                   color:                    'white',
-                  filter:                   LOGO_FILTER,
+                  filter:                   LOGO_FILTER_HERO,
                   backfaceVisibility:       'hidden',
                   WebkitBackfaceVisibility: 'hidden',
                   transform:                'rotateY(180deg)',
