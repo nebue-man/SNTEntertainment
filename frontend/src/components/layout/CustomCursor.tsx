@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from 'react'
 export default function CustomCursor() {
   const dotRef  = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
-  const [hovered, setHovered] = useState(false)
   const [isTouch, setIsTouch] = useState(false)
 
   useEffect(() => {
@@ -25,22 +24,7 @@ export default function CustomCursor() {
       y = e.clientY
     }
 
-    function onEnter() { setHovered(true)  }
-    function onLeave() { setHovered(false) }
-
     document.addEventListener('mousemove', onMove)
-
-    function attachListeners() {
-      document.querySelectorAll<HTMLElement>('a, button, [data-cursor-hover]').forEach((el) => {
-        el.addEventListener('mouseenter', onEnter)
-        el.addEventListener('mouseleave', onLeave)
-      })
-    }
-
-    attachListeners()
-
-    const observer = new MutationObserver(attachListeners)
-    observer.observe(document.body, { childList: true, subtree: true })
 
     function lerp(a: number, b: number, t: number) { return a + (b - a) * t }
 
@@ -62,7 +46,6 @@ export default function CustomCursor() {
       document.documentElement.classList.remove('custom-cursor')
       document.removeEventListener('mousemove', onMove)
       cancelAnimationFrame(rafId)
-      observer.disconnect()
     }
   }, [])
 
@@ -70,21 +53,22 @@ export default function CustomCursor() {
 
   return (
     <>
+      {/* mix-blend-mode: difference inverts the cursor against whatever content is beneath —
+          white on dark backgrounds, dark on light backgrounds, automatically. */}
       <div
         ref={dotRef}
         className="fixed top-0 left-0 z-[9999] w-2 h-2 rounded-full pointer-events-none"
         style={{
-          backgroundColor: hovered ? 'var(--color-electric-lime)' : 'var(--color-ghost-white)',
-          transition: 'background-color 0.2s',
+          backgroundColor: 'white',
+          mixBlendMode: 'difference',
         }}
       />
       <div
         ref={ringRef}
         className="fixed top-0 left-0 z-[9998] w-8 h-8 rounded-full border pointer-events-none"
         style={{
-          borderColor: hovered ? 'var(--color-electric-lime)' : 'var(--color-ghost-white)',
-          transform: `scale(${hovered ? 2 : 1})`,
-          transition: 'border-color 0.2s, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
+          borderColor: 'white',
+          mixBlendMode: 'difference',
         }}
       />
     </>
