@@ -356,7 +356,7 @@ export default function PastEventsCoverflow({ events, initialSlug }: { events: P
   }
 
   return (
-    <div className="relative bg-black overflow-hidden" style={{ minHeight: '80vh' }}>
+    <div className="relative bg-black overflow-hidden">
       {/* Page header */}
       <div
         className="pb-10"
@@ -367,7 +367,7 @@ export default function PastEventsCoverflow({ events, initialSlug }: { events: P
           className="text-ghost-white font-light"
           style={{ fontSize: 'var(--text-heading-sm)' }}
         >
-          Past Events
+          PAST EVENTS
         </h1>
       </div>
 

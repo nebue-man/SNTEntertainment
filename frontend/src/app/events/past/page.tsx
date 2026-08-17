@@ -41,16 +41,14 @@ function PastEventsContent() {
   return (
     <>
       <LoadingGate loading={loading} error={error} onRetry={fetchData} />
-      <main className="min-h-screen bg-black">
-        <PastEventsCoverflow events={events} initialSlug={initialSlug} />
-      </main>
+      <PastEventsCoverflow events={events} initialSlug={initialSlug} />
     </>
   )
 }
 
 export default function PastEventsPage() {
   return (
-    <Suspense fallback={<main className="min-h-screen bg-black" />}>
+    <Suspense fallback={<div className="bg-black" />}>
       <PastEventsContent />
     </Suspense>
   )

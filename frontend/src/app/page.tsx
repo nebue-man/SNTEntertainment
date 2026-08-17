@@ -79,7 +79,7 @@ export default function Home() {
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
         <ScrollReveal>
-          <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">About us</p>
+          <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">About Us</p>
         </ScrollReveal>
         <SplitHeadline
           text="We build nights worth remembering."
@@ -106,7 +106,7 @@ export default function Home() {
           style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
         >
           <ScrollReveal>
-            <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Past events</p>
+            <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Past Events</p>
           </ScrollReveal>
           <div className="flex items-end justify-between mb-10 gap-6">
             <SplitHeadline
@@ -175,7 +175,7 @@ export default function Home() {
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
         <ScrollReveal>
-          <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Upcoming events</p>
+          <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Upcoming Events</p>
         </ScrollReveal>
         <div className="flex items-end justify-between mb-10 gap-6">
           <SplitHeadline

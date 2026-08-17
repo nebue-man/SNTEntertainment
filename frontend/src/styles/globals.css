@@ -38,9 +38,9 @@
   --element-gap: 10px;
   --headline-padding-x: clamp(1.5rem, 8vw, 9rem);
   /* Vertical clearance for all non-hero page content.
-     = LOGO_REST_TOP (16px) + LOGO_REST_H (180px) + comfortable gap (32px).
-     Update here if LOGO_REST_SCALE changes in PersistentLogo.tsx. */
-  --page-top: 228px;
+     = header py-4 (16px) + LOGO_REST_H (50px) + header py-4 (16px) + gap (32px) = 114px.
+     Update here if LOGO_REST_H changes in PersistentLogo.tsx. */
+  --page-top: 114px;
 }
 
 /*

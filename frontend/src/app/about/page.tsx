@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
 import SplitHeadline from '@/components/ui/SplitHeadline'
 import ScrollReveal from '@/components/ui/ScrollReveal'
-import TeamMemberCard from '@/components/events/TeamMemberCard'
+import TeamMemberGrid from '@/components/events/TeamMemberGrid'
 import GhostButton from '@/components/ui/GhostButton'
-import { teamMembers } from '@/lib/teamConfig'
 
 export const metadata: Metadata = { title: 'About Us' }
 
@@ -30,7 +29,7 @@ const whyChoose = [
 
 export default function AboutPage() {
   return (
-    <div className="pb-24">
+    <div className="pb-12">
       <div style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
 
         {/* ── Company History ──────────────────────────────────────────── */}
@@ -153,7 +152,7 @@ export default function AboutPage() {
         {/* ── Team ─────────────────────────────────────────────────────── */}
         <div className="border-t border-pewter/20 pt-20 mb-20">
           <ScrollReveal>
-            <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Meet the leadership</p>
+            <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Meet the Leadership</p>
           </ScrollReveal>
           <SplitHeadline
             text="The people behind the sound."
@@ -162,13 +161,7 @@ export default function AboutPage() {
             style={{ fontSize: 'var(--text-heading-sm)' }}
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            {teamMembers.map((member, i) => (
-              <ScrollReveal key={member.id} delay={i * 0.08}>
-                <TeamMemberCard member={member} />
-              </ScrollReveal>
-            ))}
-          </div>
+          <TeamMemberGrid />
         </div>
 
         {/* ── CTA ──────────────────────────────────────────────────────── */}
