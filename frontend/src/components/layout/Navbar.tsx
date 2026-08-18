@@ -20,12 +20,10 @@ export default function Navbar() {
   const pathname    = usePathname()
   const isHome      = pathname === '/'
   const { settled } = useLogoSettled()
-  const [mounted,   setMounted]   = useState(false)
-  const [menuOpen,  setMenuOpen]  = useState(false)
+  const [mounted,   setMounted]  = useState(false)
+  const [menuOpen,  setMenuOpen] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
-
-  // Close overlay on route change
   useEffect(() => { setMenuOpen(false) }, [pathname])
 
   function isActive(href: string) {
@@ -35,9 +33,9 @@ export default function Navbar() {
   return (
     <>
       {/* ── Unified fixed header bar ────────────────────────────────────
-          Three elements in one row: logo (left), clock + menu button (right).
-          Gradient scrim fades from opaque black at the top edge to transparent
-          at the bottom so scrolling content doesn't clash with the header. */}
+          Logo left, ambient clock right. Gradient scrim fades from opaque
+          black at the top edge to transparent so scrolling content doesn't
+          visually clash with the header at any scroll position. */}
       <header
         className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-between py-4"
         style={{
@@ -51,23 +49,13 @@ export default function Navbar() {
           <PersistentLogo />
         </div>
 
-        {/* Right cluster: ambient clock + menu toggle */}
-        <div className="flex items-center gap-5">
-          <VisitorClock />
-          <button
-            onClick={() => setMenuOpen(prev => !prev)}
-            aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
-            className="text-caption tracking-widest uppercase font-light transition-colors duration-200"
-            style={{ color: menuOpen ? 'var(--color-ghost-white)' : 'rgba(255,255,255,0.45)' }}
-          >
-            {menuOpen ? 'Close' : 'Menu'}
-          </button>
-        </div>
+        {/* Ambient clock — sole right-side element */}
+        <VisitorClock />
       </header>
 
-      {/* ── Full-screen nav overlay ────────────────────────────────────
-          z-[199]: sits below the header (z-200) so the Close button
-          always renders on top of the overlay. */}
+      {/* ── Full-screen nav overlay (untriggered — reserved for future use) ──
+          Navigation is handled by the BottomNav pill. This overlay and its
+          state are kept in place for potential reactivation. */}
       {mounted && menuOpen && createPortal(
         <nav
           aria-label="Site navigation"

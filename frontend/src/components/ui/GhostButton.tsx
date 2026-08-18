@@ -1,5 +1,10 @@
+'use client'
+
+import { useState } from 'react'
 import type { ButtonHTMLAttributes, AnchorHTMLAttributes, ReactNode } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
+import LogoSvg from '@/components/ui/LogoSvg'
 
 type Variant = 'thin' | 'pill'
 
@@ -11,41 +16,150 @@ interface BaseProps {
 
 type ButtonProps = BaseProps & ButtonHTMLAttributes<HTMLButtonElement> & { href?: never }
 type LinkProps   = BaseProps & AnchorHTMLAttributes<HTMLAnchorElement>  & { href: string }
-
 type Props = ButtonProps | LinkProps
 
+// ── Pill-variant logo fly-in ───────────────────────────────────────────────
+// Each mark defines:
+//   left / top  — settled position (%) inside the clipping container
+//   fromX / fromY — enter/exit transform offset (px) placing the mark outside
+//                   the button boundary before the transition runs
+//   delay — stagger for the enter transition (s); exit always fires immediately
+const LOGO_MARKS = [
+  { left: '4%',  top: '8%',  fromX: -140, fromY: -70, delay: 0     },
+  { left: '53%', top: '4%',  fromX:   15, fromY: -85, delay: 0.06  },
+  { left: '84%', top: '9%',  fromX:  190, fromY: -65, delay: 0.03  },
+  { left: '88%', top: '53%', fromX:  190, fromY:  50, delay: 0.11  },
+  { left: '54%', top: '60%', fromX:   15, fromY:  85, delay: 0.08  },
+  { left: '7%',  top: '55%', fromX: -140, fromY:  55, delay: 0.15  },
+  { left: '33%', top: '28%', fromX:  -55, fromY: -85, delay: 0.19  },
+]
+
 // Design spec (design.md — K72):
-//   thin  — 1px Ghost White border, 0px radius, 25px h-pad, 0px v-pad
-//   pill  — 3px Ghost White border, pill radius, 28px h-pad, ~21px v-pad
+//   thin — 1px Ghost White border, 0px radius, 34px h-pad, 14px v-pad
+//   pill — 3px Ghost White border, pill radius, 44px h-pad, 28px v-pad
 function variantClasses(variant: Variant) {
-  const shared = 'inline-flex items-center justify-center transition-opacity hover:opacity-70 focus:outline-none text-body-sm font-light tracking-widest uppercase text-ghost-white'
+  const base = 'inline-flex items-center justify-center focus:outline-none font-light tracking-widest uppercase text-ghost-white'
   if (variant === 'thin') {
-    return `${shared} border border-ghost-white px-[34px] py-[14px] rounded-none`
+    return `${base} text-body-sm transition-opacity hover:opacity-70 border border-ghost-white px-[34px] py-[14px] rounded-none`
   }
-  return `${shared} border-[3px] border-ghost-white px-[44px] py-[28px] rounded-pill`
+  // Pill: 20% smaller than original (44→35px, 28→22px, 16px font→13px, 3px border→2px)
+  return `${base} text-[13px] border-[2px] border-ghost-white px-[35px] py-[22px] rounded-pill`
 }
 
+// Shared float transition for the idle bob
+const FLOAT = {
+  duration: 3.2,
+  repeat: Infinity,
+  ease: 'easeInOut',
+} as const
+
 export default function GhostButton({ variant = 'pill', className = '', children, ...props }: Props) {
+  const [hovered, setHovered] = useState(false)
   const classes = `${variantClasses(variant)} ${className}`
 
-  if ('href' in props && props.href) {
-    const { href, ...rest } = props as LinkProps
+  // ── Thin variant: static, no changes ──────────────────────────────────────
+  if (variant === 'thin') {
+    if ('href' in props && props.href) {
+      const { href, ...rest } = props as LinkProps
+      return <Link href={href} className={classes} {...rest}>{children}</Link>
+    }
     return (
-      <Link href={href} className={classes} {...rest}>
+      <button type="button" className={classes} {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}>
         {children}
-      </Link>
+      </button>
     )
   }
 
-  return (
-    // appearance-none in globals.css handles UA chrome; explicit bg-transparent + border
-    // here makes the element own all visible styling with no UA interference
-    <button
-      type="button"
-      className={classes}
-      {...(props as ButtonHTMLAttributes<HTMLButtonElement>)}
+  // ── Pill variant: idle float + hover logo fly-in ───────────────────────────
+  //
+  // DOM structure:
+  //   motion.div  ← float bob (translateY oscillation)
+  //   └── Link / button  (position:relative)
+  //       ├── span  ← logo clipping container (absolute inset-0, overflow:hidden,
+  //       │           border-radius:pill — clips logos to the exact pill shape)
+  //       │   └── motion.span × 7  ← each logo mark, animated on hover state
+  //       └── span  ← button text (relative z-10, renders above logos)
+
+  const logoClipContainer = (
+    <span
+      aria-hidden
+      style={{
+        position:     'absolute',
+        inset:        0,
+        overflow:     'hidden',
+        borderRadius: 'var(--radius-pill)',
+        pointerEvents:'none',
+      }}
     >
-      {children}
-    </button>
+      {LOGO_MARKS.map((mark, i) => (
+        <motion.span
+          key={i}
+          style={{ position: 'absolute', left: mark.left, top: mark.top, display: 'block' }}
+          initial={{ x: mark.fromX, y: mark.fromY, opacity: 0 }}
+          animate={
+            hovered
+              ? { x: 0, y: 0, opacity: 0.38 }
+              : { x: mark.fromX, y: mark.fromY, opacity: 0 }
+          }
+          transition={{
+            duration: hovered ? 0.58 : 0.28,
+            ease:     [0.22, 1, 0.36, 1],
+            delay:    hovered ? mark.delay : 0,
+          }}
+        >
+          <LogoSvg
+            style={{
+              height:  18,
+              width:   'auto',
+              color:   'var(--color-electric-lime)',
+              display: 'block',
+            }}
+          />
+        </motion.span>
+      ))}
+    </span>
+  )
+
+  const hoverHandlers = {
+    onMouseEnter: () => setHovered(true),
+    onMouseLeave: () => setHovered(false),
+  }
+
+  if ('href' in props && props.href) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { href, onMouseEnter: _ome, onMouseLeave: _oml, ...rest } = props as LinkProps
+    return (
+      <motion.div
+        animate={{ y: [0, -5, 0] }}
+        transition={FLOAT}
+        style={{ display: 'inline-block', willChange: 'transform' }}
+      >
+        <Link href={href} className={`${classes} relative`} {...hoverHandlers} {...rest}>
+          {logoClipContainer}
+          <span className="relative z-10">{children}</span>
+        </Link>
+      </motion.div>
+    )
+  }
+
+  // Button form
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { onMouseEnter: _ome, onMouseLeave: _oml, ...restProps } = props as ButtonProps
+  return (
+    <motion.div
+      animate={{ y: [0, -5, 0] }}
+      transition={FLOAT}
+      style={{ display: 'inline-block', willChange: 'transform' }}
+    >
+      <button
+        type="button"
+        className={`${classes} relative`}
+        {...hoverHandlers}
+        {...(restProps as ButtonHTMLAttributes<HTMLButtonElement>)}
+      >
+        {logoClipContainer}
+        <span className="relative z-10">{children}</span>
+      </button>
+    </motion.div>
   )
 }

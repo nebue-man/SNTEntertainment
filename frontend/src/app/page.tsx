@@ -69,7 +69,7 @@ export default function Home() {
       {/* ── Hero intro — scroll-driven logo transition + video reveal ── */}
       <HeroIntro
         slides={heroSlides}
-        heading="Sri Lanka Sounds Live"
+        heading="S N T Entertainments & Management (Pvt) Ltd"
         tagline="World-class live music, iconic venues, unforgettable nights."
       />
 

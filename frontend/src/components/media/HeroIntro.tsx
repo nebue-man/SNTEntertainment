@@ -333,7 +333,7 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
                 text={heading}
                 as="h1"
                 className="text-ghost-white font-light leading-none mb-6"
-                style={{ fontSize: 'var(--text-display-sm)' }}
+                style={{ fontSize: 'clamp(1.5rem, 5.5vw, 5rem)' }}
                 once={false}
               />
               <p className="text-body-lg text-ghost-white/80 font-light max-w-lg mb-10">

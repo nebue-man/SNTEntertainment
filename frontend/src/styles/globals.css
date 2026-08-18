@@ -3,7 +3,7 @@
 @theme {
   --color-absolute-zero: #000000;
   --color-ghost-white: #ffffff;
-  --color-pewter: #4d4d4d;
+  --color-pewter: #808080;
   --color-electric-lime: #d3fd50;
 
   --font-lausanne: 'Lausanne', ui-sans-serif, system-ui, -apple-system,
@@ -27,7 +27,7 @@
 :root {
   --color-absolute-zero: #000000;
   --color-ghost-white: #ffffff;
-  --color-pewter: #4d4d4d;
+  --color-pewter: #808080;
   --color-electric-lime: #d3fd50;
 
   --font-lausanne: 'Lausanne', ui-sans-serif, system-ui, -apple-system,
