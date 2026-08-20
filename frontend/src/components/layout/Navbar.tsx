@@ -11,8 +11,8 @@ import { useLogoSettled } from '@/components/layout/LogoContext'
 
 const NAV_LINKS = [
   { label: 'Home',            href: '/' },
-  { label: 'Upcoming Events', href: '/events/upcoming' },
-  { label: 'Past Events',     href: '/events/past' },
+  { label: 'Upcoming Event', href: '/events/upcoming' },
+  { label: 'Past Event',     href: '/events/past' },
   { label: 'About Us',        href: '/about' },
 ]
 

@@ -8,8 +8,8 @@ import { useLogoSettled } from '@/components/layout/LogoContext'
 
 const NAV_LINKS = [
   { label: 'Home',            short: 'Home',     href: '/' },
-  { label: 'Upcoming Events', short: 'Upcoming', href: '/events/upcoming' },
-  { label: 'Past Events',     short: 'Past',     href: '/events/past' },
+  { label: 'Upcoming Event', short: 'Upcoming', href: '/events/upcoming' },
+  { label: 'Past Event',     short: 'Past',     href: '/events/past' },
   { label: 'About Us',        short: 'About',    href: '/about' },
 ]
 
