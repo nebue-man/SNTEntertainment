@@ -38,7 +38,7 @@ export default function NewEventPage() {
     try {
       const form = new FormData()
       form.append('title', fields.title)
-      form.append('slug', fields.slug || autoSlug(fields.title))
+      form.append('slug', autoSlug(fields.slug) || autoSlug(fields.title))
       form.append('description', fields.description)
       form.append('venue', fields.venue)
       form.append('eventDate', new Date(dateRef.current?.value || '').toISOString())
@@ -84,6 +84,14 @@ export default function NewEventPage() {
               className={inputCls}
               placeholder={fields.title ? autoSlug(fields.title) : 'sound-of-colombo-2026'}
             />
+            {fields.slug && autoSlug(fields.slug) !== fields.slug && (
+              <p className="mt-1.5 text-[11px] text-white/30">
+                Will be saved as: <span className="text-white/60">{autoSlug(fields.slug)}</span>
+              </p>
+            )}
+            {!fields.slug && (
+              <p className="mt-1.5 text-[11px] text-white/30">Lowercase and hyphens only — auto-formatted on save</p>
+            )}
           </div>
 
           <div>
