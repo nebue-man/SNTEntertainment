@@ -116,7 +116,7 @@ export default function Home() {
               style={{ fontSize: 'var(--text-heading-sm)' }}
             />
             <ScrollReveal delay={0.1}>
-              <GhostButton href="/events/past" variant="thin">
+              <GhostButton href="/events/past" variant="accent">
                 View All
               </GhostButton>
             </ScrollReveal>
@@ -185,7 +185,7 @@ export default function Home() {
             style={{ fontSize: 'var(--text-heading-sm)' }}
           />
           <ScrollReveal delay={0.1}>
-            <GhostButton href="/events/upcoming" variant="thin">
+            <GhostButton href="/events/upcoming" variant="accent">
               All Events
             </GhostButton>
           </ScrollReveal>
