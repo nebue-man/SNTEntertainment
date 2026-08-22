@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
@@ -20,11 +21,26 @@ export default function Navbar() {
   const pathname    = usePathname()
   const isHome      = pathname === '/'
   const { settled } = useLogoSettled()
-  const [mounted,   setMounted]  = useState(false)
-  const [menuOpen,  setMenuOpen] = useState(false)
+  const [mounted,      setMounted]      = useState(false)
+  const [menuOpen,     setMenuOpen]     = useState(false)
+  const [lineRevealed, setLineRevealed] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
   useEffect(() => { setMenuOpen(false) }, [pathname])
+
+  // Reveal the gradient underline on first scroll past 16px — one-shot,
+  // never reverses even if the user scrolls back to the top.
+  useEffect(() => {
+    if (window.scrollY > 16) { setLineRevealed(true); return }
+    function onScroll() {
+      if (window.scrollY > 16) {
+        setLineRevealed(true)
+        window.removeEventListener('scroll', onScroll)
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   function isActive(href: string) {
     return href === '/' ? pathname === '/' : pathname.startsWith(href)
@@ -41,7 +57,6 @@ export default function Navbar() {
           paddingLeft:  LOGO_REST_LEFT,
           paddingRight: 'var(--headline-padding-x)',
           background:   'var(--color-absolute-zero)',
-          borderBottom: '1px solid rgba(255,255,255,0.07)',
         }}
       >
         {/* Logo — hidden on home until the intro animation settles */}
@@ -51,6 +66,26 @@ export default function Navbar() {
 
         {/* Ambient clock — sole right-side element */}
         <VisitorClock />
+
+        {/* Electric-lime gradient underline — draws in left-to-right on first
+            scroll past 16px. scaleX grows from the logo's left anchor; the
+            line never hides again once revealed. */}
+        <motion.div
+          aria-hidden="true"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: lineRevealed ? 1 : 0 }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            position:        'absolute',
+            bottom:          0,
+            left:            0,
+            right:           0,
+            height:          2,
+            background:      'linear-gradient(to right, var(--color-electric-lime) 0%, transparent 55%)',
+            transformOrigin: 'left center',
+            pointerEvents:   'none',
+          }}
+        />
       </header>
 
       {/* ── Full-screen nav overlay (untriggered — reserved for future use) ──
