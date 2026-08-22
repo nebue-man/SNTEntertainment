@@ -33,15 +33,15 @@ export default function Navbar() {
   return (
     <>
       {/* ── Unified fixed header bar ────────────────────────────────────
-          Logo left, ambient clock right. Gradient scrim fades from opaque
-          black at the top edge to transparent so scrolling content doesn't
-          visually clash with the header at any scroll position. */}
+          Logo left, ambient clock right. Solid black bar, same on every
+          page — homepage hero video begins cleanly below it. */}
       <header
         className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-between py-4"
         style={{
           paddingLeft:  LOGO_REST_LEFT,
           paddingRight: 'var(--headline-padding-x)',
-          background:   'linear-gradient(to bottom, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0) 100%)',
+          background:   'var(--color-absolute-zero)',
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
         }}
       >
         {/* Logo — hidden on home until the intro animation settles */}

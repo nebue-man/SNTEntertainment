@@ -100,7 +100,8 @@ export default function Home() {
       </section>
 
       {/* ── Featured Past Work ────────────────────────────────── */}
-      {pastFeatured.length > 0 && (
+      {/* Temporarily hidden — remove `false &&` to restore */}
+      {false && pastFeatured.length > 0 && (
         <section
           className="py-24 md:py-32 border-b border-pewter/20"
           style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
