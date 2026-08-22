@@ -19,6 +19,23 @@ services:
     # postgres via Docker's internal network (hostname "postgres").
     # To inspect manually: docker compose exec postgres psql -U snt -d snt_events
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      # Persist AOF log across container restarts to avoid cold-cache on restart.
+      # Safe to lose (it's a cache) but avoids unnecessary DB hammering after deploys.
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    # 6379 is intentionally NOT published to the host — only reachable from
+    # other containers on Docker's internal network (hostname "redis").
+    # To inspect manually: docker compose exec redis redis-cli
+
   backend:
     build: .
     ports:
@@ -27,13 +44,18 @@ services:
     environment:
       # Overrides the DATABASE_URL in .env to use Docker's internal network.
       DATABASE_URL: "postgresql://${POSTGRES_USER:-snt}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-snt_events}?schema=public"
+      # Overrides REDIS_URL in .env to use Docker's internal network.
+      REDIS_URL: "redis://redis:6379"
     volumes:
       - uploads:/app/dist/uploads
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
   postgres_data:
+  redis_data:
   uploads:

@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 
 import { ticketRequestLimiter, loginLimiter } from './middleware/rateLimiter'
 import { errorHandler } from './middleware/errorHandler'
+import { cacheMiddleware } from './middleware/cache'
 
 import publicEventsRouter from './routes/public/events'
 import publicSettingsRouter from './routes/public/settings'
@@ -52,9 +53,10 @@ app.use(cookieParser())
 app.get('/health', (_req, res) => res.json({ status: 'ok' }))
 
 // ── Public API ────────────────────────────────────────────────────────────────
-app.use('/api/events', publicEventsRouter)
-app.use('/api/settings', publicSettingsRouter)
-app.use('/api/hero-videos', publicHeroVideosRouter)
+const cache = cacheMiddleware(60)
+app.use('/api/events', cache, publicEventsRouter)
+app.use('/api/settings', cache, publicSettingsRouter)
+app.use('/api/hero-videos', cache, publicHeroVideosRouter)
 app.use(
   '/api/ticket-requests',
   ticketRequestLimiter,
