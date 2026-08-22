@@ -10,7 +10,8 @@ import SplitHeadline from '@/components/ui/SplitHeadline'
 import { useLenis } from '@/components/layout/SmoothScrollProvider'
 import {
   LOGO_STAGE_H,
-  LOGO_STAGE_W,
+  LOGO_STAGE_H_MOBILE,
+  LG_BREAKPOINT,
   LOGO_REST_H,
   LOGO_REST_TOP,
   LOGO_REST_LEFT,
@@ -21,8 +22,6 @@ import {
 import { useSetLogoScrollProgress } from '@/components/layout/LogoContext'
 
 const AUTOPLAY_MS = 4500
-// Scale applied at p=1 (settled) — element is native LOGO_STAGE_H, shrinks to LOGO_REST_H
-const SCALE_DOWN  = LOGO_REST_H / LOGO_STAGE_H  // 40/300 ≈ 0.133
 
 interface Props {
   slides:  HeroSlide[]
@@ -43,6 +42,12 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
   // Prevents the intro animation from playing; logo jumps straight to settled state.
   const skipIntroRef  = useRef(false)
 
+  // Responsive stage height — 300px on desktop (≥ lg/1024px), 180px on mobile.
+  // Dual ref+state: ref is read inside effect closures for scroll math;
+  // state triggers a re-render so the DOM layout (perspective + SVG) matches.
+  const [stageH, setStageH] = useState(LOGO_STAGE_H)
+  const stageHRef = useRef(LOGO_STAGE_H)
+
   const lenis = useLenis()
   const setScrollProgress = useSetLogoScrollProgress()
 
@@ -52,6 +57,12 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
     // Always reset progress on mount so stale settled=true from a previous
     // session doesn't bleed through when navigating back to the homepage.
     setScrollProgress(0)
+
+    // Initialise responsive stage size before first paint — avoids any visible
+    // flash of the desktop 300px size on mobile viewports.
+    const h = window.innerWidth < LG_BREAKPOINT ? LOGO_STAGE_H_MOBILE : LOGO_STAGE_H
+    stageHRef.current = h
+    setStageH(h)
 
     if (sessionStorage.getItem('snt-skip-intro') === '1') {
       sessionStorage.removeItem('snt-skip-intro')
@@ -99,16 +110,21 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
       const text  = textRef.current
       if (!logo || !video) return
 
+      // Read responsive stage dimensions from ref — always current after resize.
+      const sh = stageHRef.current
+      const sw = Math.round(sh * (383 / 421))
+      const scaleDown = LOGO_REST_H / sh
+
       // ── Logo: diagonal center-screen (p=0) → top-left (p=1) ──────
       // Element is fixed at (LOGO_REST_LEFT, LOGO_REST_TOP) with transformOrigin:'top left'.
-      // At p=0: scale=1, element is native LOGO_STAGE size, centred via translate.
-      // At p=1: scale=SCALE_DOWN, element visually matches LOGO_REST_H/W exactly.
-      // Scaling down from native size keeps SVG text crisp at p=0 (no scale-up blurring).
-      const tx_start = W / 2 - LOGO_STAGE_W / 2 - LOGO_REST_LEFT
-      const ty_start = H * 0.45 - LOGO_STAGE_H / 2 - LOGO_REST_TOP
+      // At p=0: scale=1, element is native stage size, centred via translate.
+      // At p=1: scale=scaleDown, element visually matches LOGO_REST_H/W exactly.
+      // Scaling down from native size keeps SVG crisp at p=0 (no scale-up blurring).
+      const tx_start = W / 2 - sw / 2 - LOGO_REST_LEFT
+      const ty_start = H * 0.45 - sh / 2 - LOGO_REST_TOP
       const tx    = tx_start * (1 - p)
       const ty    = ty_start * (1 - p)
-      const scale = 1 + (SCALE_DOWN - 1) * p  // 1 → SCALE_DOWN
+      const scale = 1 + (scaleDown - 1) * p
 
       logo.style.transform     = `translate(${tx}px, ${ty}px) scale(${scale})`
       // Enable pointer events (click to home) only when settled at top-left
@@ -150,6 +166,12 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
     function onResize() {
       H = window.innerHeight
       W = window.innerWidth
+      // Keep stage size in sync when the window crosses the lg breakpoint.
+      const newH = W < LG_BREAKPOINT ? LOGO_STAGE_H_MOBILE : LOGO_STAGE_H
+      if (newH !== stageHRef.current) {
+        stageHRef.current = newH
+        setStageH(newH)
+      }
       computeAndApply(window.scrollY)
     }
     window.addEventListener('resize', onResize, { passive: true })
@@ -171,6 +193,7 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
   }, [lenis, setScrollProgress])
 
   const slide = slides[index] ?? null
+  const stageW = Math.round(stageH * (383 / 421))
 
   return (
     <>
@@ -194,8 +217,8 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
         }}
       >
         <Link href="/" aria-label="SNT home" tabIndex={-1}>
-          {/* Perspective container — native hero size so SVG rasterises at full resolution */}
-          <div style={{ perspective: '1200px', width: LOGO_STAGE_W, height: LOGO_STAGE_H }}>
+          {/* Perspective container — native hero size (responsive) so SVG rasterises at full resolution */}
+          <div style={{ perspective: '1200px', width: stageW, height: stageH }}>
             {/* Rotating inner — GSAP drives rotateY; outer logoRef gets scroll translate/scale */}
             <div
               ref={spinRef}
@@ -210,7 +233,7 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
               <LogoSvg
                 aria-label="SNT Events"
                 style={{
-                  height:                   LOGO_STAGE_H,
+                  height:                   stageH,
                   width:                    'auto',
                   color:                    'white',
                   filter:                   LOGO_FILTER_HERO,
@@ -227,7 +250,7 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
                   position:                 'absolute',
                   top:                      0,
                   left:                     0,
-                  height:                   LOGO_STAGE_H,
+                  height:                   stageH,
                   width:                    'auto',
                   color:                    'white',
                   filter:                   LOGO_FILTER_HERO,

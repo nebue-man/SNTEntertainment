@@ -11,9 +11,14 @@ import { usePathname } from 'next/navigation'
 //   Sized natively so the SVG rasterises at full resolution — no scale-up blurring.
 // LOGO_REST_H/W:  Settled header logo dimensions (independent of STAGE values).
 // LOGO_REST_TOP/LEFT: Fixed header offset — TOP matches header py-4 (16px).
-export const LOGO_STAGE_H    = 300
-export const LOGO_STAGE_W    = Math.round(LOGO_STAGE_H * (383 / 421))  // 273
-export const LOGO_REST_H     = 50
+export const LOGO_STAGE_H        = 300
+export const LOGO_STAGE_W        = Math.round(LOGO_STAGE_H * (383 / 421))  // 273
+// Mobile hero logo — used below the lg breakpoint (< 1024px).
+// 180px keeps the logo prominent on ~390px viewports without crowding the screen.
+export const LOGO_STAGE_H_MOBILE = 180
+export const LOGO_STAGE_W_MOBILE = Math.round(LOGO_STAGE_H_MOBILE * (383 / 421))  // 164
+export const LG_BREAKPOINT       = 1024
+export const LOGO_REST_H         = 50
 export const LOGO_REST_W     = Math.round(LOGO_REST_H  * (383 / 421))  // 36
 export const LOGO_REST_TOP   = 16
 export const LOGO_REST_LEFT  = 24
