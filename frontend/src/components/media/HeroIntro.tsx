@@ -6,7 +6,6 @@ import LogoSvg from '@/components/ui/LogoSvg'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { HeroSlide } from '@/lib/types'
 import PlaceholderMedia from '@/components/ui/PlaceholderMedia'
-import SplitHeadline from '@/components/ui/SplitHeadline'
 import { useLenis } from '@/components/layout/SmoothScrollProvider'
 import {
   LOGO_STAGE_H,
@@ -24,12 +23,10 @@ import { useSetLogoScrollProgress } from '@/components/layout/LogoContext'
 const AUTOPLAY_MS = 4500
 
 interface Props {
-  slides:  HeroSlide[]
-  heading: string
-  tagline: string
+  slides: HeroSlide[]
 }
 
-export default function HeroIntro({ slides, heading, tagline }: Props) {
+export default function HeroIntro({ slides }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null)
   const logoRef    = useRef<HTMLDivElement>(null)   // outer fixed div — scroll animation target
   const spinRef    = useRef<HTMLDivElement>(null)   // inner rotating div — GSAP spin target
@@ -352,16 +349,54 @@ export default function HeroIntro({ slides, heading, tagline }: Props) {
             }}
           >
             <div style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
-              <SplitHeadline
-                text={heading}
-                as="h1"
-                className="text-ghost-white font-light leading-none mb-6"
-                style={{ fontSize: 'clamp(1.5rem, 5.5vw, 5rem)' }}
-                once={false}
-              />
-              <p className="text-body-lg text-ghost-white/80 font-light max-w-lg mb-10">
-                {tagline}
-              </p>
+              {/* ── Three-line hero text block ─────────────────────── */}
+              <div className="mb-10">
+                {/* Line 1 — dominant brand mark, bold */}
+                <h1
+                  style={{
+                    fontSize:      'clamp(2rem, 7.5vw, 5rem)',
+                    fontWeight:    700,
+                    letterSpacing: '0.08em',
+                    lineHeight:    1,
+                    color:         'var(--color-ghost-white)',
+                    marginBottom:  '0.4em',
+                  }}
+                >
+                  S N T ENTERTAINMENTS
+                </h1>
+
+                {/* Line 2 — full legal name, fluid size, never wraps.
+                    clamp floor (0.5rem) only kicks in below ~250px;
+                    at 320px the vw value (10.24px) is what renders,
+                    keeping all 44 chars within the padded container. */}
+                <p
+                  style={{
+                    fontSize:      'clamp(0.5rem, 3.2vw, 1rem)',
+                    fontWeight:    300,
+                    letterSpacing: '0.04em',
+                    whiteSpace:    'nowrap',
+                    lineHeight:    1.5,
+                    color:         'rgba(255,255,255,0.65)',
+                    marginBottom:  '1.5rem',
+                  }}
+                >
+                  SNT ENTERTAINMENTS AND MANAGEMENT (Pvt) Ltd
+                </p>
+
+                {/* Line 3 — italic closing accent, pewter tone */}
+                <p
+                  style={{
+                    fontSize:      'clamp(0.9rem, 1.5vw, 1.15rem)',
+                    fontStyle:     'italic',
+                    fontWeight:    300,
+                    letterSpacing: '0.03em',
+                    lineHeight:    1.4,
+                    color:         'var(--color-pewter)',
+                  }}
+                >
+                  Designed for prestige
+                </p>
+              </div>
               {slides.length > 1 && (
                 <div className="flex gap-3" role="tablist" aria-label="Carousel slides">
                   {slides.map((s, i) => (

@@ -9,6 +9,7 @@ import SplitHeadline from '@/components/ui/SplitHeadline'
 import GhostButton from '@/components/ui/GhostButton'
 import FlyerCard from '@/components/events/FlyerCard'
 import LoadingGate from '@/components/ui/LoadingGate'
+import WhyChooseSNT from '@/components/ui/WhyChooseSNT'
 import { upcomingEventsPlaceholder } from '@/lib/eventsConfig'
 import { getUpcomingEvents, getHeroVideos, getPastEventsWithMedia } from '@/lib/api'
 import type { Event, HeroSlide, PastApiEvent } from '@/lib/types'
@@ -67,14 +68,11 @@ export default function Home() {
       <LoadingGate loading={loading} error={error} onRetry={fetchAll} />
 
       {/* ── Hero intro — scroll-driven logo transition + video reveal ── */}
-      <HeroIntro
-        slides={heroSlides}
-        heading="S N T Entertainments & Management (Pvt) Ltd"
-        tagline="World-class live music, iconic venues, unforgettable nights."
-      />
+      <HeroIntro slides={heroSlides} />
 
       {/* ── About teaser ──────────────────────────────────────── */}
-      <section
+      {/* Temporarily hidden — remove `false &&` to restore */}
+      {false && <section
         className="py-24 md:py-32 border-b border-pewter/20"
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
@@ -97,7 +95,7 @@ export default function Home() {
             Learn More
           </GhostButton>
         </ScrollReveal>
-      </section>
+      </section>}
 
       {/* ── Featured Past Work ────────────────────────────────── */}
       {/* Temporarily hidden — remove `false &&` to restore */}
@@ -169,6 +167,14 @@ export default function Home() {
           </div>
         </section>
       )}
+
+      {/* ── Why Choose SNT ───────────────────────────────────── */}
+      <section
+        className="py-24 md:py-32 border-b border-pewter/20"
+        style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
+      >
+        <WhyChooseSNT />
+      </section>
 
       {/* ── Upcoming Events ───────────────────────────────────── */}
       <section
