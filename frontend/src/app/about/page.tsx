@@ -3,7 +3,6 @@ import SplitHeadline from '@/components/ui/SplitHeadline'
 import ScrollReveal from '@/components/ui/ScrollReveal'
 import WhyChooseSNT from '@/components/ui/WhyChooseSNT'
 import TeamMemberGrid from '@/components/events/TeamMemberGrid'
-import GhostButton from '@/components/ui/GhostButton'
 
 export const metadata: Metadata = { title: 'About Us' }
 
@@ -134,18 +133,6 @@ export default function AboutPage() {
 
           <TeamMemberGrid />
         </div>
-
-        {/* ── CTA ──────────────────────────────────────────────────────── */}
-        <ScrollReveal>
-          <div className="border-t border-pewter/20 pt-20 flex flex-col sm:flex-row items-start sm:items-center gap-8">
-            <p className="text-body text-pewter max-w-sm">
-              Interested in working with us or bringing an artist to Sri Lanka?
-            </p>
-            <GhostButton href="mailto:hello@sntevents.lk" variant="pill">
-              Get in touch
-            </GhostButton>
-          </div>
-        </ScrollReveal>
 
       </div>
     </div>

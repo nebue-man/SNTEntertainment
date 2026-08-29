@@ -10,8 +10,16 @@ export default function Footer() {
             aria-label="SNT Events"
             className="h-8 w-auto text-ghost-white"
           />
-          <p className="text-body-sm text-pewter max-w-xs">
-            Sri Lanka&apos;s premier live music event company. We bring the best bands to iconic stages.
+          <p className="text-body-sm text-pewter max-w-xs leading-relaxed">
+            From the{' '}
+            <Link href="/" className="text-ghost-white hover:text-electric-lime transition-colors">Home</Link>
+            {' '}stage to the{' '}
+            <Link href="/events/upcoming" className="text-ghost-white hover:text-electric-lime transition-colors">Events</Link>
+            {' '}lineup, get the full story on{' '}
+            <Link href="/about" className="text-ghost-white hover:text-electric-lime transition-colors">About</Link>
+            , or just reach out —{' '}
+            <a href="mailto:hello@sntevents.lk" className="text-ghost-white hover:text-electric-lime transition-colors">Get In Touch</a>
+            .
           </p>
         </div>
 

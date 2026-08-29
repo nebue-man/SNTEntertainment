@@ -1,6 +1,25 @@
 import type { Metadata } from 'next'
+import { Bungee, Hanken_Grotesk, Space_Mono } from 'next/font/google'
 import '@/styles/globals.css'
 import ClientShell from '@/components/layout/ClientShell'
+
+const bungee = Bungee({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-display',
+})
+
+const hankenGrotesk = Hanken_Grotesk({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  variable: '--font-body',
+})
+
+const spaceMono = Space_Mono({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-mono',
+})
 
 export const metadata: Metadata = {
   title: {
@@ -25,8 +44,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-absolute-zero text-ghost-white font-lausanne">
+    <html
+      lang="en"
+      className={`${bungee.variable} ${hankenGrotesk.variable} ${spaceMono.variable}`}
+    >
+      <body className="bg-absolute-zero text-ghost-white">
         <ClientShell>{children}</ClientShell>
       </body>
     </html>

@@ -23,7 +23,7 @@ const word: Variants = {
 export default function SplitHeadline({ text, as: Tag = 'h2', className = '', style, once = true }: Props) {
   const words = text.split(' ')
   return (
-    <Tag className={`overflow-hidden ${className}`} aria-label={text} style={style}>
+    <Tag className={`overflow-hidden font-display ${className}`} aria-label={text} style={style}>
       <motion.span
         className="flex flex-wrap gap-x-[0.3em]"
         initial="hidden"

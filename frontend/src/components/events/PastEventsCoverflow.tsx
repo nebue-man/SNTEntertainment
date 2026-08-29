@@ -362,9 +362,8 @@ export default function PastEventsCoverflow({ events, initialSlug }: { events: P
         className="pb-10"
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
-        <p className="text-[13px] text-electric-lime tracking-[0.25em] uppercase mb-4">Portfolio</p>
         <h1
-          className="text-ghost-white font-light"
+          className="text-ghost-white font-display font-light"
           style={{ fontSize: 'var(--text-heading-sm)' }}
         >
           PAST EVENTS
