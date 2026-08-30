@@ -25,7 +25,7 @@ export default function AllEventsButton({ href = '/events/upcoming' }: { href?: 
         onMouseLeave={() => setHovered(false)}
         className="inline-flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d3fd50] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         style={{
-          fontFamily:      'var(--font-mono)',
+          fontFamily:      'var(--font-body)',
           fontSize:        'var(--text-body-sm)',
           letterSpacing:   '0.12em',
           textTransform:   'uppercase',

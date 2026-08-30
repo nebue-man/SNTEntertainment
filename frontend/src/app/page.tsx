@@ -12,13 +12,22 @@ import FlyerCard from '@/components/events/FlyerCard'
 import LoadingGate from '@/components/ui/LoadingGate'
 import WhyChooseSNT from '@/components/ui/WhyChooseSNT'
 import { upcomingEventsPlaceholder } from '@/lib/eventsConfig'
-import { getUpcomingEvents, getHeroVideos, getPastEventsWithMedia } from '@/lib/api'
+import { getUpcomingEvents, getPastEventsWithMedia } from '@/lib/api'
 import type { Event, HeroSlide, PastApiEvent } from '@/lib/types'
 import { resolveMediaUrl } from '@/lib/mediaUrl'
 
+const CDN = 'https://res.cloudinary.com/symnmlab/image/upload/f_auto,q_auto:good,w_1400/snt/events'
+
+const ICONS_PHOTOS: HeroSlide[] = [
+  { id: '1', type: 'image', src: `${CDN}/icons_1.jpg`, alt: 'Icons at the Lake — live performance', label: '' },
+  { id: '2', type: 'image', src: `${CDN}/icons_2.jpg`, alt: 'Icons at the Lake — drums', label: '' },
+  { id: '3', type: 'image', src: `${CDN}/icons_3.jpg`, alt: 'Icons at the Lake — guitar and vocals', label: '' },
+  { id: '4', type: 'image', src: `${CDN}/icons_4.jpg`, alt: 'Icons at the Lake — on stage moment', label: '' },
+  { id: '5', type: 'image', src: `${CDN}/icons_5.jpg`, alt: 'Icons at the Lake — crowd energy', label: '' },
+]
+
 export default function Home() {
   const [upcoming, setUpcoming] = useState<Event[]>([])
-  const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([])
   const [pastFeatured, setPastFeatured] = useState<PastApiEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -32,20 +41,11 @@ export default function Home() {
     )
 
     Promise.race([
-      Promise.all([getUpcomingEvents(), getHeroVideos(), getPastEventsWithMedia()]),
+      Promise.all([getUpcomingEvents(), getPastEventsWithMedia()]),
       timeout,
     ])
-      .then(([upcomingData, heroData, pastData]) => {
+      .then(([upcomingData, pastData]) => {
         setUpcoming(upcomingData.length > 0 ? upcomingData : upcomingEventsPlaceholder)
-        setHeroSlides(
-          heroData.map((s) => ({
-            id: String(s.slotNumber),
-            type: 'video' as const,
-            src: resolveMediaUrl(s.videoUrl),
-            alt: `Hero video ${s.slotNumber}`,
-            label: '',
-          }))
-        )
         setPastFeatured(
           pastData
             .slice()
@@ -68,8 +68,8 @@ export default function Home() {
     <>
       <LoadingGate loading={loading} error={error} onRetry={fetchAll} />
 
-      {/* ── Hero intro — scroll-driven logo transition + video reveal ── */}
-      <HeroIntro slides={heroSlides} />
+      {/* ── Hero intro — scroll-driven logo transition + photo reveal ── */}
+      <HeroIntro slides={ICONS_PHOTOS} />
 
       {/* ── About teaser ──────────────────────────────────────── */}
       {/* Temporarily hidden — remove `false &&` to restore */}

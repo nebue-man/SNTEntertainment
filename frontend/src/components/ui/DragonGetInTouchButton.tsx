@@ -215,7 +215,7 @@ export default function DragonGetInTouchButton({
         className="select-none font-bold uppercase"
         style={{
           color:         "#d3fd50",
-          fontFamily:    "var(--font-mono)",
+          fontFamily:    "var(--font-body)",
           fontSize:      10,
           letterSpacing: "0.15em",
           lineHeight:    1,

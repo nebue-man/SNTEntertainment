@@ -20,7 +20,7 @@ import {
 } from '@/components/layout/PersistentLogo'
 import { useSetLogoScrollProgress } from '@/components/layout/LogoContext'
 
-const AUTOPLAY_MS = 4500
+const AUTOPLAY_MS = 5000
 
 interface Props {
   slides: HeroSlide[]
@@ -290,20 +290,17 @@ export default function HeroIntro({ slides }: Props) {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 1.2, ease: 'easeInOut' }}
+                    transition={{ duration: 1.5, ease: 'easeInOut' }}
                   >
                     {slide.src ? (
-                      slide.type === 'video' ? (
-                        <video
-                          src={slide.src}
-                          autoPlay muted loop playsInline
-                          className="w-full h-full object-cover"
-                          aria-label={slide.alt}
-                        />
-                      ) : (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={slide.src} alt={slide.alt} className="w-full h-full object-cover" />
-                      )
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={slide.src}
+                        alt={slide.alt}
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                        className="w-full h-full object-cover"
+                        style={{ objectPosition: 'center 20%' }}
+                      />
                     ) : (
                       <div className="w-full h-full flex">
                         <PlaceholderMedia
@@ -316,7 +313,7 @@ export default function HeroIntro({ slides }: Props) {
                     )}
                   </motion.div>
                 </AnimatePresence>
-                <div className="absolute inset-0 bg-absolute-zero/50" />
+                <div className="absolute inset-0 bg-absolute-zero/35" />
               </>
             ) : (
               <div className="absolute inset-0 bg-absolute-zero" />
@@ -332,6 +329,19 @@ export default function HeroIntro({ slides }: Props) {
               right:         0,
               height:        220,
               background:    'linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.28) 50%, transparent 100%)',
+              zIndex:        2,
+              pointerEvents: 'none',
+            }}
+          />
+          {/* ── Bottom gradient scrim — anchors text legibility ──────── */}
+          <div
+            style={{
+              position:      'absolute',
+              bottom:        0,
+              left:          0,
+              right:         0,
+              height:        '65%',
+              background:    'linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.48) 35%, transparent 70%)',
               zIndex:        2,
               pointerEvents: 'none',
             }}
@@ -354,7 +364,7 @@ export default function HeroIntro({ slides }: Props) {
                 {/* Line 1 — dominant brand mark, bold */}
                 <h1
                   style={{
-                    fontSize:      'clamp(2rem, 7.5vw, 5rem)',
+                    fontSize:      'clamp(1.5rem, 6.5vw, 3.75rem)',
                     fontWeight:    700,
                     letterSpacing: '0.08em',
                     lineHeight:    1,
