@@ -8,6 +8,7 @@ import Link from 'next/link'
 import VisitorClock from '@/components/layout/VisitorClock'
 import PersistentLogo, { LOGO_REST_LEFT } from '@/components/layout/PersistentLogo'
 import BottomNav from '@/components/layout/BottomNav'
+import NavbarGraffitiLayer from '@/components/layout/NavbarGraffitiLayer'
 import { useLogoSettled } from '@/components/layout/LogoContext'
 
 const NAV_LINKS = [
@@ -59,13 +60,25 @@ export default function Navbar() {
           background:   'var(--color-absolute-zero)',
         }}
       >
-        {/* Logo — hidden on home until the intro animation settles */}
-        <div style={{ visibility: (isHome && !settled) ? 'hidden' : 'visible', alignSelf: 'flex-start' }}>
+        {/* Graffiti texture layer — z-index 1, purely decorative, behind all header content */}
+        <NavbarGraffitiLayer />
+
+        {/* Logo — hidden on home until the intro animation settles; z-index 2 clears texture */}
+        <div
+          style={{
+            visibility: (isHome && !settled) ? 'hidden' : 'visible',
+            alignSelf:  'flex-start',
+            position:   'relative',
+            zIndex:     2,
+          }}
+        >
           <PersistentLogo />
         </div>
 
-        {/* Ambient clock — sole right-side element */}
-        <VisitorClock />
+        {/* Ambient clock — z-index 2 ensures it's above the graffiti texture */}
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <VisitorClock />
+        </div>
 
         {/* Electric-lime gradient underline — draws in left-to-right on first
             scroll past 16px. scaleX grows from the logo's left anchor; the
@@ -84,6 +97,7 @@ export default function Navbar() {
             background:      'linear-gradient(to right, var(--color-electric-lime) 0%, transparent 55%)',
             transformOrigin: 'left center',
             pointerEvents:   'none',
+            zIndex:          3,
           }}
         />
       </header>

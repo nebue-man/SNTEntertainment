@@ -9,6 +9,12 @@ const dmSans = localFont({
   display: 'swap',
 })
 
+const bangers = localFont({
+  src: [{ path: '../../public/fonts/bangers-latin.woff2', weight: '400' }],
+  variable: '--font-graffiti',
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
   title: {
     default: "SNT Live Events — Sri Lanka's Premier Live Music Company",
@@ -32,7 +38,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={dmSans.variable}>
+    <html lang="en" className={`${dmSans.variable} ${bangers.variable}`}>
       <body className="bg-absolute-zero text-ghost-white">
         <ClientShell>{children}</ClientShell>
       </body>

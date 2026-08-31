@@ -6,7 +6,7 @@ import ScrollLines from './ScrollLines'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import { LogoProvider } from './LogoContext'
-import DragonGetInTouchButton from '@/components/ui/DragonGetInTouchButton'
+import GetInTouchButton from '@/components/ui/GetInTouchButton'
 import AmbientDiveBackground from '@/components/AmbientDiveBackground'
 
 export default function ClientShell({ children }: { children: React.ReactNode }) {
@@ -29,13 +29,13 @@ export default function ClientShell({ children }: { children: React.ReactNode })
         </main>
         <Footer />
 
-        {/* ── Dragon "Get In Touch" CTA — fixed floating, persists all pages ──
+        {/* ── "Get In Touch" CTA — fixed floating, persists all pages ──
             z-[155] sits above BottomNav (z-[150]) but below Navbar (z-[200]).
             bottom-[88px] on mobile/tablet keeps it above BottomNav's 32px base
             + ~40px height; at lg the viewport is wide enough that right-8
             clears BottomNav's centered footprint entirely. */}
         <div className="fixed bottom-[88px] right-4 z-[155] lg:bottom-8 lg:right-8">
-          <DragonGetInTouchButton
+          <GetInTouchButton
             onClick={() => { window.location.href = 'mailto:hello@sntevents.lk' }}
           />
         </div>
