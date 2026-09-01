@@ -3,9 +3,9 @@ import LogoSvg from '@/components/ui/LogoSvg'
 
 export default function Footer() {
   return (
-    <footer className="border-t border-pewter/20 px-6 pt-14 pb-[96px] md:px-10 md:pt-20 md:pb-[96px]">
-      <div className="max-w-7xl mx-auto flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
-        <div className="flex flex-col gap-4">
+    <footer className="border-t border-pewter/20 px-6 pt-4 pb-[64px] md:px-10 md:pt-6 md:pb-10">
+      <div className="max-w-7xl mx-auto flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div className="flex flex-col gap-2">
           <LogoSvg
             aria-label="SNT Events"
             className="h-8 w-auto text-ghost-white"
@@ -24,7 +24,7 @@ export default function Footer() {
         </div>
 
         <nav aria-label="Footer navigation">
-          <ul className="flex flex-col gap-3">
+          <ul className="flex flex-col gap-2">
             {[
               { label: 'Home',            href: '/' },
               { label: 'Upcoming Event', href: '/events/upcoming' },
@@ -51,13 +51,13 @@ export default function Footer() {
           >
             hello@sntevents.lk
           </a>
-          <p className="text-caption text-pewter mt-4">
+          <p className="text-caption text-pewter mt-1">
             Colombo, Sri Lanka
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto mt-14 pt-8 border-t border-pewter/20">
+      <div className="max-w-7xl mx-auto mt-4 pt-3 border-t border-pewter/20">
         <p className="text-caption text-pewter/50">
           © {new Date().getFullYear()} SNT Live Events. All rights reserved.
         </p>
