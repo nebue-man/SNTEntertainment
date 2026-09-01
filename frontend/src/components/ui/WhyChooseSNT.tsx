@@ -16,13 +16,13 @@ export default function WhyChooseSNT() {
   return (
     <>
       <ScrollReveal>
-        <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Why Choose SNT</p>
+        <p className="text-electric-lime tracking-widest uppercase mb-6" style={{ fontSize: 'var(--text-heading-sm)' }}>Why Choose SNT</p>
       </ScrollReveal>
       <SplitHeadline
         text="Built to deliver."
         as="h2"
-        className="text-ghost-white font-light mb-12"
-        style={{ fontSize: 'var(--text-heading-sm)' }}
+        className="text-ghost-white font-light mb-6"
+        style={{ fontSize: 'var(--text-caption)' }}
       />
       <ScrollReveal delay={0.1}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-6 max-w-4xl">

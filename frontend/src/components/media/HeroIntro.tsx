@@ -364,10 +364,11 @@ export default function HeroIntro({ slides }: Props) {
                 {/* Line 1 — dominant brand mark, bold */}
                 <h1
                   style={{
-                    fontSize:      'clamp(1.5rem, 6.5vw, 3.75rem)',
+                    fontSize:      'clamp(1.05rem, 5.5vw, 3.75rem)',
                     fontWeight:    700,
                     letterSpacing: '0.08em',
                     lineHeight:    1,
+                    whiteSpace:    'nowrap',
                     color:         'var(--color-ghost-white)',
                     marginBottom:  '0.4em',
                   }}
