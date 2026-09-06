@@ -18,10 +18,11 @@ export function cacheMiddleware(ttlSeconds = 60) {
     }
 
     const key = `cache:${req.originalUrl}`
+    const client = redis
 
     // ── Cache read ──────────────────────────────────────────────────────────
     try {
-      const hit = await redis.get(key)
+      const hit = await client.get(key)
       if (hit !== null) {
         res.setHeader('X-Cache', 'HIT')
         res.json(JSON.parse(hit))
@@ -37,7 +38,7 @@ export function cacheMiddleware(ttlSeconds = 60) {
     res.json = (body: unknown): Response => {
       // Only cache successful responses
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        redis
+        client
           .set(key, JSON.stringify(body), 'EX', ttlSeconds)
           .catch((err: Error) => {
             console.warn('[redis] cache write failed:', err.message)

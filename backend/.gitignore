@@ -9,3 +9,4 @@ prisma/dev.db-journal
 
 # Database backups — kept on the Droplet, never committed
 backups/
+docker-compose.override.yml
