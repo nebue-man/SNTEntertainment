@@ -78,7 +78,7 @@ router.post(
       const body = CreateEventSchema.safeParse(req.body)
       if (!body.success) return next(body.error)
 
-      const { title, description, venue, eventDate, status, flyerUrl } = body.data
+      const { title, description, venue, eventDate, status, flyerUrl, ticketUrl } = body.data
       let { slug } = body.data
       slug = slug ?? makeSlug(title)
 
@@ -103,6 +103,7 @@ router.post(
             status,
             flyerUrl: resolvedFlyerUrl,
             flyerPublicId: resolvedFlyerPublicId,
+            ticketUrl: ticketUrl ?? null,
           },
         })
       } catch (err) {

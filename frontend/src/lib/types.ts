@@ -24,6 +24,7 @@ export interface Event {
   venue: string
   description: string
   flyerUrl?: string | null
+  ticketUrl?: string | null
   lineup?: string[]
   status: 'UPCOMING' | 'PAST'
   media?: EventMedia[]

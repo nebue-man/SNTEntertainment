@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
+import { Cormorant_Garamond } from 'next/font/google'
 import '@/styles/globals.css'
 import ClientShell from '@/components/layout/ClientShell'
 
@@ -9,9 +10,11 @@ const dmSans = localFont({
   display: 'swap',
 })
 
-const bangers = localFont({
-  src: [{ path: '../../public/fonts/bangers-latin.woff2', weight: '400' }],
-  variable: '--font-graffiti',
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400'],
+  style: ['normal', 'italic'],
+  variable: '--font-display',
   display: 'swap',
 })
 
@@ -38,7 +41,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${bangers.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${cormorant.variable}`}>
       <body className="bg-absolute-zero text-ghost-white">
         <ClientShell>{children}</ClientShell>
       </body>

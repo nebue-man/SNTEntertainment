@@ -21,6 +21,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
         eventDate: true,
         status: true,
         flyerUrl: true,
+        ticketUrl: true,
         artists: { select: { name: true, role: true }, orderBy: { name: 'asc' } },
         media: {
           where: { type: 'PHOTO' },
@@ -64,6 +65,7 @@ router.get('/:slug', async (req: Request, res: Response, next: NextFunction) => 
         eventDate: true,
         status: true,
         flyerUrl: true,
+        ticketUrl: true,
         artists: { select: { name: true, role: true }, orderBy: { name: 'asc' } },
         media: {
           select: { id: true, type: true, url: true, sortOrder: true },

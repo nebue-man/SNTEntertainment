@@ -30,6 +30,7 @@ function DetailsTab({ event, onSaved }: { event: AdminEventDetail; onSaved: () =
     description: event.description,
     venue: event.venue,
     status: event.status,
+    ticketUrl: event.ticketUrl ?? '',
   })
   const dateRef = useRef<HTMLInputElement>(null)
   const [flyer, setFlyer] = useState<File | null>(null)
@@ -111,6 +112,16 @@ function DetailsTab({ event, onSaved }: { event: AdminEventDetail; onSaved: () =
           accept="image/jpeg,image/png,image/webp"
           onChange={e => setFlyer(e.target.files?.[0] ?? null)}
           className="w-full text-sm text-white/50 file:mr-4 file:py-2 file:px-4 file:border file:border-[#4d4d4d] file:bg-transparent file:text-white/50 file:text-xs file:tracking-widest file:uppercase hover:file:border-white hover:file:text-white file:transition-colors"
+        />
+      </div>
+      <div>
+        <label className={labelCls}>Ticket Purchase URL <span className="normal-case text-white/20">(leave blank for Coming Soon)</span></label>
+        <input
+          value={fields.ticketUrl}
+          onChange={set('ticketUrl')}
+          type="url"
+          placeholder="https://tickets.example.com/event"
+          className={inputCls}
         />
       </div>
       <div className="flex items-center gap-4">

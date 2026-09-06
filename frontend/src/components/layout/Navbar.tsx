@@ -8,7 +8,6 @@ import Link from 'next/link'
 import VisitorClock from '@/components/layout/VisitorClock'
 import PersistentLogo, { LOGO_REST_LEFT } from '@/components/layout/PersistentLogo'
 import BottomNav from '@/components/layout/BottomNav'
-import NavbarGraffitiLayer from '@/components/layout/NavbarGraffitiLayer'
 import { useLogoSettled } from '@/components/layout/LogoContext'
 
 const NAV_LINKS = [
@@ -60,10 +59,7 @@ export default function Navbar() {
           background:   'var(--color-absolute-zero)',
         }}
       >
-        {/* Graffiti texture layer — z-index 1, purely decorative, behind all header content */}
-        <NavbarGraffitiLayer />
-
-        {/* Logo — hidden on home until the intro animation settles; z-index 2 clears texture */}
+        {/* Logo — hidden on home until the intro animation settles */}
         <div
           style={{
             visibility: (isHome && !settled) ? 'hidden' : 'visible',
@@ -75,7 +71,6 @@ export default function Navbar() {
           <PersistentLogo />
         </div>
 
-        {/* Ambient clock — z-index 2 ensures it's above the graffiti texture */}
         <div style={{ position: 'relative', zIndex: 2 }}>
           <VisitorClock />
         </div>

@@ -20,6 +20,7 @@ export default function NewEventPage() {
     description: '',
     venue: '',
     status: 'UPCOMING',
+    ticketUrl: '',
   })
 
   function set(k: keyof typeof fields) {
@@ -43,6 +44,7 @@ export default function NewEventPage() {
       form.append('venue', fields.venue)
       form.append('eventDate', new Date(dateRef.current?.value || '').toISOString())
       form.append('status', fields.status)
+      form.append('ticketUrl', fields.ticketUrl)
       if (flyer) form.append('flyer', flyer)
 
       const res = await createEvent(form)
@@ -136,6 +138,17 @@ export default function NewEventPage() {
               accept="image/jpeg,image/png,image/webp"
               onChange={e => setFlyer(e.target.files?.[0] ?? null)}
               className="w-full text-sm text-white/50 file:mr-4 file:py-2 file:px-4 file:border file:border-[#4d4d4d] file:bg-transparent file:text-white/50 file:text-xs file:tracking-widest file:uppercase hover:file:border-white hover:file:text-white file:transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className={labelCls}>Ticket Purchase URL <span className="normal-case text-white/20">(optional — leave blank for Coming Soon)</span></label>
+            <input
+              value={fields.ticketUrl}
+              onChange={set('ticketUrl')}
+              type="url"
+              placeholder="https://tickets.example.com/event"
+              className={inputCls}
             />
           </div>
 

@@ -355,61 +355,62 @@ export default function HeroIntro({ slides }: Props) {
               opacity:       0,
               transform:     'translateY(20px)',
               willChange:    'transform, opacity',
-              paddingBottom: '4rem',
+              paddingBottom: '6rem',
             }}
           >
             <div style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
               {/* ── Three-line hero text block ─────────────────────── */}
-              <div className="mb-10">
-                {/* Line 1 — dominant brand mark, bold */}
+              {/* text-center on mobile creates a cinematic full-width statement;
+                  sm:text-left restores editorial left-alignment on wider screens */}
+              <div className="mb-10 text-center sm:text-left">
+                {/* Line 1 — dominant brand mark, ultra-light wide tracking for prestige */}
                 <h1
                   style={{
                     fontSize:      'clamp(1.15rem, 5.5vw, 3.75rem)',
-                    fontWeight:    700,
-                    letterSpacing: '0.05em',
-                    lineHeight:    1,
-                    whiteSpace:    'nowrap',
+                    fontWeight:    200,
+                    letterSpacing: '0.22em',
+                    lineHeight:    1.15,
                     color:         'var(--color-ghost-white)',
-                    marginBottom:  '0.4em',
+                    marginBottom:  '0.35em',
+                    fontFamily:    'var(--font-body)',
+                    wordBreak:     'break-word',
                   }}
                 >
                   S N T ENTERTAINMENTS
                 </h1>
 
-                {/* Line 2 — full legal name, fluid size, never wraps.
-                    clamp floor (0.5rem) only kicks in below ~250px;
-                    at 320px the vw value (10.24px) is what renders,
-                    keeping all 44 chars within the padded container. */}
+                {/* Line 2 — full legal name, fluid size, wraps naturally on small screens */}
                 <p
                   style={{
                     fontSize:      'clamp(0.5rem, 3.2vw, 1rem)',
                     fontWeight:    300,
-                    letterSpacing: '0.04em',
-                    whiteSpace:    'nowrap',
-                    lineHeight:    1.5,
-                    color:         'rgba(255,255,255,0.65)',
-                    marginBottom:  '1.5rem',
+                    letterSpacing: '0.1em',
+                    lineHeight:    1.6,
+                    color:         'rgba(255,255,255,0.4)',
+                    marginBottom:  '0.85rem',
+                    fontFamily:    'var(--font-body)',
                   }}
                 >
                   SNT ENTERTAINMENTS AND MANAGEMENT (Pvt) Ltd
                 </p>
 
-                {/* Line 3 — italic closing accent, pewter tone */}
+                {/* Line 3 — Cormorant italic accent, refined prestige note */}
                 <p
                   style={{
-                    fontSize:      'clamp(0.9rem, 1.5vw, 1.15rem)',
+                    fontSize:      'clamp(1rem, 1.6vw, 1.25rem)',
                     fontStyle:     'italic',
                     fontWeight:    300,
-                    letterSpacing: '0.03em',
+                    letterSpacing: '0.01em',
                     lineHeight:    1.4,
-                    color:         'var(--color-pewter)',
+                    color:         'rgba(255,255,255,0.72)',
+                    fontFamily:    'var(--font-display, var(--font-body))',
                   }}
                 >
                   Designed for prestige
                 </p>
               </div>
               {slides.length > 1 && (
-                <div className="flex gap-3" role="tablist" aria-label="Carousel slides">
+                <div className="flex gap-3 justify-center sm:justify-start" role="tablist" aria-label="Carousel slides">
                   {slides.map((s, i) => (
                     <button
                       key={s.id}

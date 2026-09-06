@@ -129,6 +129,24 @@ function EventDetail() {
                     </p>
                   </div>
                 </ScrollReveal>
+                {event.status === 'UPCOMING' && (
+                  <ScrollReveal delay={0.15}>
+                    {event.ticketUrl ? (
+                      <a
+                        href={event.ticketUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-8 py-3 bg-electric-lime text-absolute-zero text-[11px] tracking-[0.2em] uppercase font-medium hover:opacity-85 transition-opacity"
+                      >
+                        Buy Tickets
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-center px-8 py-3 border border-pewter/25 text-pewter/50 text-[11px] tracking-[0.2em] uppercase cursor-not-allowed select-none">
+                        Coming Soon
+                      </span>
+                    )}
+                  </ScrollReveal>
+                )}
                 {(event.lineup?.length ?? 0) > 0 && (
                   <ScrollReveal delay={0.15}>
                     <div>

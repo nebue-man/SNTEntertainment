@@ -2,7 +2,6 @@
 import { usePathname } from 'next/navigation'
 import SmoothScrollProvider from './SmoothScrollProvider'
 import CustomCursor from './CustomCursor'
-import ScrollLines from './ScrollLines'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import { LogoProvider } from './LogoContext'
@@ -20,7 +19,6 @@ export default function ClientShell({ children }: { children: React.ReactNode })
             by the early return above so it never renders on /admin/* routes. */}
         <AmbientDiveBackground />
         <CustomCursor />
-        <ScrollLines />
         <Navbar />
         {/* Non-home pages: push content below the fixed logo's bottom edge.
             Home page keeps zero top padding — HeroIntro starts at the viewport top. */}

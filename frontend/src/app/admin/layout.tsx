@@ -14,7 +14,7 @@ const NAV = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
-  const isLoginPage = pathname === '/admin/login'
+  const isLoginPage = pathname === '/admin/login' || pathname === '/admin/login/'
   const [ready, setReady] = useState(false)
 
   useEffect(() => {

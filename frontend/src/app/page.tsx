@@ -11,6 +11,7 @@ import AllEventsButton from '@/components/ui/AllEventsButton'
 import FlyerCard from '@/components/events/FlyerCard'
 import LoadingGate from '@/components/ui/LoadingGate'
 import WhyChooseSNT from '@/components/ui/WhyChooseSNT'
+import CapabilitiesMarquee from '@/components/ui/CapabilitiesMarquee'
 import { upcomingEventsPlaceholder } from '@/lib/eventsConfig'
 import { getUpcomingEvents, getPastEventsWithMedia } from '@/lib/api'
 import type { Event, HeroSlide, PastApiEvent } from '@/lib/types'
@@ -55,7 +56,9 @@ export default function Home() {
         setLoading(false)
       })
       .catch(() => {
-        setError(true)
+        // Backend offline — fall back to placeholders so the frontend is previewable
+        setUpcoming(upcomingEventsPlaceholder)
+        setPastFeatured([])
         setLoading(false)
       })
   }, [])
@@ -71,32 +74,8 @@ export default function Home() {
       {/* ── Hero intro — scroll-driven logo transition + photo reveal ── */}
       <HeroIntro slides={ICONS_PHOTOS} />
 
-      {/* ── About teaser ──────────────────────────────────────── */}
-      {/* Temporarily hidden — remove `false &&` to restore */}
-      {false && <section
-        className="py-24 md:py-32 border-b border-pewter/20"
-        style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
-      >
-        <ScrollReveal>
-          <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">About Us</p>
-        </ScrollReveal>
-        <SplitHeadline
-          text="We build nights worth remembering."
-          as="h2"
-          className="text-ghost-white font-light mb-10 max-w-4xl"
-          style={{ fontSize: 'clamp(2.25rem, 5vw, 4rem)' }}
-        />
-        <ScrollReveal delay={0.2}>
-          <p className="text-body text-pewter max-w-2xl mb-12 leading-relaxed">
-            SNT is Sri Lanka&apos;s premier live music event company. We partner with the
-            island&apos;s top-tier bands and international acts to deliver electrifying
-            experiences at iconic venues nationwide.
-          </p>
-          <GhostButton href="/about" variant="pill">
-            Learn More
-          </GhostButton>
-        </ScrollReveal>
-      </section>}
+      {/* ── Capabilities ticker ──────────────────────────────── */}
+      <CapabilitiesMarquee />
 
       {/* ── Featured Past Work ────────────────────────────────── */}
       {/* Temporarily hidden — remove `false &&` to restore */}

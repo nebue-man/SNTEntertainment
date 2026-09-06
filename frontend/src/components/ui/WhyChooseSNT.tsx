@@ -1,5 +1,4 @@
 import ScrollReveal from '@/components/ui/ScrollReveal'
-import SplitHeadline from '@/components/ui/SplitHeadline'
 
 const items = [
   'End-to-end event planning and production solutions.',
@@ -16,20 +15,37 @@ export default function WhyChooseSNT() {
   return (
     <>
       <ScrollReveal>
-        <p className="text-electric-lime tracking-wide uppercase mb-6" style={{ fontSize: 'var(--text-heading-sm)', lineHeight: 1.1 }}>Why Choose SNT</p>
+        <p
+          className="text-electric-lime tracking-widest uppercase mb-3"
+          style={{ fontSize: 'var(--text-heading-sm)', fontWeight: 400 }}
+        >
+          Why Choose SNT
+        </p>
       </ScrollReveal>
-      <SplitHeadline
-        text="Built to deliver."
-        as="h2"
-        className="text-ghost-white font-normal mb-6"
-        style={{ fontSize: 'var(--text-body-lg)', lineHeight: 1.4 }}
-      />
+      <ScrollReveal delay={0.05}>
+        <p
+          className="text-ghost-white font-light mb-10"
+          style={{
+            fontSize: '0.875rem',
+            fontFamily: 'var(--font-display, var(--font-body))',
+            fontStyle: 'italic',
+            letterSpacing: '0.02em',
+          }}
+        >
+          Built to deliver.
+        </p>
+      </ScrollReveal>
       <ScrollReveal delay={0.1}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-6 max-w-4xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 max-w-4xl">
           {items.map((item, i) => (
-            <div key={i} className="flex gap-4 items-start">
-              <span className="text-electric-lime shrink-0" style={{ fontSize: '14px', marginTop: '3px' }}>✓</span>
-              <p className="text-body-sm text-pewter leading-relaxed">{item}</p>
+            <div key={i} className="flex gap-5 py-5 border-t border-pewter/20 items-start">
+              <span
+                className="shrink-0 text-electric-lime font-mono tracking-wider"
+                style={{ fontSize: '10px', paddingTop: '3px' }}
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <p className="text-body-sm text-ghost-white leading-relaxed">{item}</p>
             </div>
           ))}
         </div>

@@ -23,14 +23,24 @@ export default function AboutPage() {
 
         {/* ── Company History ──────────────────────────────────────────── */}
         <ScrollReveal>
-          <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Company History</p>
+          <p
+            className="text-electric-lime tracking-widest uppercase mb-3"
+            style={{ fontSize: 'var(--text-heading-sm)', fontWeight: 400 }}
+          >
+            Company History
+          </p>
         </ScrollReveal>
-        <SplitHeadline
-          text="We build nights worth remembering."
-          as="h1"
+        <p
           className="text-ghost-white font-light mb-12 max-w-4xl"
-          style={{ fontSize: 'var(--text-heading-sm)' }}
-        />
+          style={{
+            fontSize: '0.875rem',
+            fontFamily: 'var(--font-display, var(--font-body))',
+            fontStyle: 'italic',
+            letterSpacing: '0.02em',
+          }}
+        >
+          We build nights worth remembering.
+        </p>
 
         <ScrollReveal delay={0.1}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-24 max-w-4xl">
@@ -51,14 +61,24 @@ export default function AboutPage() {
         {/* ── Mission & Vision ─────────────────────────────────────────── */}
         <div className="border-t border-pewter/20 pt-20 mb-20">
           <ScrollReveal>
-            <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Mission &amp; Vision</p>
+            <p
+              className="text-electric-lime tracking-widest uppercase mb-3"
+              style={{ fontSize: 'var(--text-heading-sm)', fontWeight: 400 }}
+            >
+              Mission &amp; Vision
+            </p>
           </ScrollReveal>
-          <SplitHeadline
-            text="What we stand for."
-            as="h2"
+          <p
             className="text-ghost-white font-light mb-12"
-            style={{ fontSize: 'var(--text-heading-sm)' }}
-          />
+            style={{
+              fontSize: '0.875rem',
+              fontFamily: 'var(--font-display, var(--font-body))',
+              fontStyle: 'italic',
+              letterSpacing: '0.02em',
+            }}
+          >
+            What we stand for.
+          </p>
 
           <ScrollReveal delay={0.1}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
@@ -85,14 +105,24 @@ export default function AboutPage() {
         {/* ── Core Values ──────────────────────────────────────────────── */}
         <div className="border-t border-pewter/20 pt-20 mb-20">
           <ScrollReveal>
-            <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Core Values</p>
+            <p
+              className="text-electric-lime tracking-widest uppercase mb-3"
+              style={{ fontSize: 'var(--text-heading-sm)', fontWeight: 400 }}
+            >
+              Core Values
+            </p>
           </ScrollReveal>
-          <SplitHeadline
-            text="What drives us."
-            as="h2"
+          <p
             className="text-ghost-white font-light mb-12"
-            style={{ fontSize: 'var(--text-heading-sm)' }}
-          />
+            style={{
+              fontSize: '0.875rem',
+              fontFamily: 'var(--font-display, var(--font-body))',
+              fontStyle: 'italic',
+              letterSpacing: '0.02em',
+            }}
+          >
+            What drives us.
+          </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-10 max-w-4xl">
             {coreValues.map((v, i) => (

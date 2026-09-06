@@ -86,6 +86,7 @@ export interface MediaItem {
 
 export interface AdminEventDetail extends AdminEvent {
   description: string
+  ticketUrl: string | null
   artists: Artist[]
   media: MediaItem[]
   phases: Phase[]
