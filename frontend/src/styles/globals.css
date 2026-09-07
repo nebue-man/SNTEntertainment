@@ -58,7 +58,10 @@
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     scrollbar-width: none; /* Firefox */
-    overflow-x: hidden; /* prevents negative-x absolute children from shifting the viewport */
+    /* clip (not hidden): clips x overflow without creating a scroll container.
+       hidden forces overflow-y:auto, making <html> a scroll container which
+       breaks position:sticky on the hero. clip avoids that side-effect. */
+    overflow-x: clip;
   }
 
   html::-webkit-scrollbar {
@@ -67,7 +70,8 @@
 
   body {
     min-height: 100vh;
-    overflow-x: hidden;
+    /* clip instead of hidden for the same reason as <html> above */
+    overflow-x: clip;
   }
 
   /* Remove all browser UA button chrome so GhostButton owns every pixel */
