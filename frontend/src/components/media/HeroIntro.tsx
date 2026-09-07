@@ -3,9 +3,8 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import Link from 'next/link'
 import LogoSvg from '@/components/ui/LogoSvg'
-import { AnimatePresence, motion } from 'framer-motion'
 import type { HeroSlide } from '@/lib/types'
-import PlaceholderMedia from '@/components/ui/PlaceholderMedia'
+import RippleDistortion from './RippleDistortion'
 import { useLenis } from '@/components/layout/SmoothScrollProvider'
 import {
   LOGO_STAGE_H,
@@ -19,8 +18,6 @@ import {
 } from '@/components/layout/PersistentLogo'
 import { useSetLogoScrollProgress } from '@/components/layout/LogoContext'
 
-const AUTOPLAY_MS = 5000
-
 interface Props {
   slides: HeroSlide[]
 }
@@ -32,8 +29,6 @@ export default function HeroIntro({ slides }: Props) {
   const videoRef   = useRef<HTMLDivElement>(null)
   const textRef    = useRef<HTMLDivElement>(null)
 
-  const [index, setIndex] = useState(0)
-  const timerRef      = useRef<ReturnType<typeof setInterval> | null>(null)
   // One-shot: set when arriving via logo click (skip-intro sessionStorage signal).
   // Prevents the intro animation from playing; logo jumps straight to settled state.
   const skipIntroRef  = useRef(false)
@@ -65,23 +60,6 @@ export default function HeroIntro({ slides }: Props) {
       skipIntroRef.current = true
     }
   }, [setScrollProgress])
-
-  // ── Carousel autoplay ─────────────────────────────────────────────
-  useEffect(() => {
-    if (slides.length <= 1) return
-    timerRef.current = setInterval(() => {
-      setIndex(i => (i + 1) % slides.length)
-    }, AUTOPLAY_MS)
-    return () => { if (timerRef.current) clearInterval(timerRef.current) }
-  }, [slides.length])
-
-  function goTo(i: number) {
-    if (timerRef.current) clearInterval(timerRef.current)
-    setIndex(i)
-    timerRef.current = setInterval(() => {
-      setIndex(n => (n + 1) % slides.length)
-    }, AUTOPLAY_MS)
-  }
 
   // ── Continuous logo spin — same parameters as PersistentLogo for seamless handoff ──
   useEffect(() => {
@@ -199,7 +177,7 @@ export default function HeroIntro({ slides }: Props) {
     }
   }, [lenis, setScrollProgress])
 
-  const slide = slides[index] ?? null
+  const heroSrc = slides[0]?.src ?? ''
   const stageW = Math.round(stageH * (383 / 421))
 
   return (
@@ -280,7 +258,7 @@ export default function HeroIntro({ slides }: Props) {
           className="bg-absolute-zero"
           style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}
         >
-          {/* ── Video carousel layer ──────────────────────────────── */}
+          {/* ── Hero image — RippleDistortion WebGL layer ─────────── */}
           <div
             ref={videoRef}
             style={{
@@ -291,44 +269,33 @@ export default function HeroIntro({ slides }: Props) {
               willChange:      'transform',
             }}
           >
-            {slide ? (
-              <>
-                <AnimatePresence mode="sync">
-                  <motion.div
-                    key={slide.id}
-                    className="absolute inset-0"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1.5, ease: 'easeInOut' }}
-                  >
-                    {slide.src ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={slide.src}
-                        alt={slide.alt}
-                        loading={index === 0 ? 'eager' : 'lazy'}
-                        className="w-full h-full object-cover"
-                        style={{ objectPosition: 'center 20%' }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex">
-                        <PlaceholderMedia
-                          label={slide.label}
-                          aspectRatio="16/9"
-                          type={slide.type}
-                          className="flex-1"
-                        />
-                      </div>
-                    )}
-                  </motion.div>
-                </AnimatePresence>
-                <div className="absolute inset-0 bg-absolute-zero/35" />
-              </>
-            ) : (
-              <div className="absolute inset-0 bg-absolute-zero" />
-            )}
+            <RippleDistortion
+              src={heroSrc}
+              brushSize={130}
+              strength={0.18}
+              swirl={1}
+              rings={3}
+              spread={5}
+              fade={4}
+              spacing={12}
+              grayscale
+              tint="#d3fd50"
+              tintAmount={0.07}
+              quality="medium"
+              trigger="hover"
+            />
           </div>
+
+          {/* Dim overlay — keeps scrims and text legible over the bright image */}
+          <div
+            style={{
+              position:      'absolute',
+              inset:         0,
+              background:    'rgba(0,0,0,0.28)',
+              zIndex:        1,
+              pointerEvents: 'none',
+            }}
+          />
 
           {/* ── Top gradient scrim — keeps header row legible ──────── */}
           <div
@@ -419,25 +386,6 @@ export default function HeroIntro({ slides }: Props) {
                   Designed for prestige
                 </p>
               </div>
-              {slides.length > 1 && (
-                <div className="flex gap-3 justify-center sm:justify-start" role="tablist" aria-label="Carousel slides">
-                  {slides.map((s, i) => (
-                    <button
-                      key={s.id}
-                      role="tab"
-                      aria-selected={i === index}
-                      aria-label={`Slide ${i + 1}`}
-                      onClick={() => goTo(i)}
-                      className="h-[1.5px] w-10 transition-all duration-300"
-                      style={{
-                        backgroundColor: i === index
-                          ? 'var(--color-ghost-white)'
-                          : 'var(--color-pewter)',
-                      }}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
           </div>
         </div>
