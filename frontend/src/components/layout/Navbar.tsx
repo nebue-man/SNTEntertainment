@@ -1,12 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
-import VisitorClock from '@/components/layout/VisitorClock'
-import PersistentLogo, { LOGO_REST_LEFT } from '@/components/layout/PersistentLogo'
+import PersistentLogo from '@/components/layout/PersistentLogo'
 import BottomNav from '@/components/layout/BottomNav'
 import { useLogoSettled } from '@/components/layout/LogoContext'
 
@@ -21,20 +19,22 @@ export default function Navbar() {
   const pathname    = usePathname()
   const isHome      = pathname === '/'
   const { settled } = useLogoSettled()
-  const [mounted,      setMounted]      = useState(false)
-  const [menuOpen,     setMenuOpen]     = useState(false)
-  const [lineRevealed, setLineRevealed] = useState(false)
+  const [mounted,    setMounted]    = useState(false)
+  const [menuOpen,   setMenuOpen]   = useState(false)
+  const [glowActive, setGlowActive] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
   useEffect(() => { setMenuOpen(false) }, [pathname])
 
-  // Reveal the gradient underline on first scroll past 16px — one-shot,
-  // never reverses even if the user scrolls back to the top.
+  // Glow activates on first scroll past 16 px — one-shot, never reverses.
+  // On the homepage the glow is additionally gated on `settled` (logo has
+  // reached its top-centre resting position); on other pages the logo is
+  // already at rest so the scroll threshold alone is sufficient.
   useEffect(() => {
-    if (window.scrollY > 16) { setLineRevealed(true); return }
+    if (window.scrollY > 16) { setGlowActive(true); return }
     function onScroll() {
       if (window.scrollY > 16) {
-        setLineRevealed(true)
+        setGlowActive(true)
         window.removeEventListener('scroll', onScroll)
       }
     }
@@ -42,28 +42,26 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Homepage: glow only once the hero scroll animation has fully settled
+  // so the underglow and the resting logo arrive at the same moment.
+  // Other pages: show as soon as the user has scrolled at all.
+  const showGlow = isHome ? settled : glowActive
+
   function isActive(href: string) {
     return href === '/' ? pathname === '/' : pathname.startsWith(href)
   }
 
   return (
     <>
-      {/* ── Unified fixed header bar ────────────────────────────────────
-          Logo left, ambient clock right. Solid black bar, same on every
-          page — homepage hero video begins cleanly below it. */}
+      {/* ── Unified fixed header — logo centred, no flanking elements ─ */}
       <header
-        className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-between py-4"
-        style={{
-          paddingLeft:  LOGO_REST_LEFT,
-          paddingRight: 'var(--headline-padding-x)',
-          background:   'var(--color-absolute-zero)',
-        }}
+        className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-center py-4"
+        style={{ background: 'var(--color-absolute-zero)' }}
       >
         {/* Logo — hidden on home until the intro animation settles */}
         <div
           style={{
             visibility: (isHome && !settled) ? 'hidden' : 'visible',
-            alignSelf:  'flex-start',
             position:   'relative',
             zIndex:     2,
           }}
@@ -71,28 +69,24 @@ export default function Navbar() {
           <PersistentLogo />
         </div>
 
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <VisitorClock />
-        </div>
-
-        {/* Electric-lime gradient underline — draws in left-to-right on first
-            scroll past 16px. scaleX grows from the logo's left anchor; the
-            line never hides again once revealed. */}
-        <motion.div
+        {/* Lime under-glow — soft radial light beneath the settled logo.
+            Fades in once the logo reaches its top-centre resting position. */}
+        <div
           aria-hidden="true"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: lineRevealed ? 1 : 0 }}
-          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           style={{
-            position:        'absolute',
-            bottom:          0,
-            left:            0,
-            right:           0,
-            height:          2,
-            background:      'linear-gradient(to right, var(--color-electric-lime) 0%, transparent 55%)',
-            transformOrigin: 'left center',
-            pointerEvents:   'none',
-            zIndex:          3,
+            position:      'absolute',
+            bottom:        0,
+            left:          '50%',
+            transform:     'translateX(-50%)',
+            width:           300,
+            height:          1,
+            background:      'rgba(211,253,80,0.85)',
+            boxShadow:       '0 0 12px 3px rgba(211,253,80,0.4), 0 0 32px 10px rgba(211,253,80,0.15), 0 0 64px 24px rgba(211,253,80,0.06)',
+            maskImage:       'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
+            opacity:       showGlow ? 1 : 0,
+            transition:    'opacity 0.9s ease',
+            pointerEvents: 'none',
           }}
         />
       </header>

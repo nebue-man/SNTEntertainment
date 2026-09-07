@@ -21,15 +21,23 @@ const LABEL_CLASS = 'text-caption text-electric-lime tracking-widest uppercase m
 export default function Footer() {
   return (
     <footer className="relative">
-      {/* Top accent divider — flush at the outer top edge, before any padding */}
-      <div
-        aria-hidden
-        className="h-px w-full"
-        style={{
-          background:
-            'linear-gradient(90deg, transparent 0%, rgba(211,253,80,0.2) 20%, rgba(211,253,80,0.8) 50%, rgba(211,253,80,0.2) 80%, transparent 100%)',
-        }}
-      />
+      {/* Top accent — soft lime glow consistent with the header under-glow */}
+      <div aria-hidden className="relative h-px w-full">
+        <div
+          style={{
+            position:        'absolute',
+            top:             0,
+            left:            '50%',
+            transform:       'translateX(-50%)',
+            width:           600,
+            height:          1,
+            background:      'rgba(211,253,80,0.7)',
+            boxShadow:       '0 0 16px 4px rgba(211,253,80,0.35), 0 0 48px 16px rgba(211,253,80,0.12), 0 0 80px 32px rgba(211,253,80,0.05)',
+            maskImage:       'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%)',
+          }}
+        />
+      </div>
 
       <div className="px-6 pt-10 pb-[64px] md:px-10 md:pt-14 md:pb-14">
         <div className="max-w-7xl mx-auto flex flex-col gap-10 md:flex-row md:items-start md:justify-between">

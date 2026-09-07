@@ -13,7 +13,6 @@ import {
   LG_BREAKPOINT,
   LOGO_REST_H,
   LOGO_REST_TOP,
-  LOGO_REST_LEFT,
   LOGO_FILTER_HERO,
   SPIN_RANGE,
   SPIN_DURATION,
@@ -112,14 +111,17 @@ export default function HeroIntro({ slides }: Props) {
       const sw = Math.round(sh * (383 / 421))
       const scaleDown = LOGO_REST_H / sh
 
-      // ── Logo: diagonal center-screen (p=0) → top-left (p=1) ──────
-      // Element is fixed at (LOGO_REST_LEFT, LOGO_REST_TOP) with transformOrigin:'top left'.
+      // ── Logo: center-screen (p=0) → top-center (p=1) ─────────────
+      // Element is fixed at (left:0, LOGO_REST_TOP) with transformOrigin:'top left'.
       // At p=0: scale=1, element is native stage size, centred via translate.
-      // At p=1: scale=scaleDown, element visually matches LOGO_REST_H/W exactly.
+      // At p=1: scale=scaleDown, element is horizontally centred at the top.
       // Scaling down from native size keeps SVG crisp at p=0 (no scale-up blurring).
-      const tx_start = W / 2 - sw / 2 - LOGO_REST_LEFT
-      const ty_start = H * 0.45 - sh / 2 - LOGO_REST_TOP
-      const tx    = tx_start * (1 - p)
+      const restW    = sw * scaleDown                      // visual width at rest ≈ LOGO_REST_W
+      const tx_start = W / 2 - sw / 2                     // p=0: centre screen
+      const ty_start = H * 0.45 - sh / 2 - LOGO_REST_TOP // p=0: 45 % down
+      const tx_end   = W / 2 - restW / 2                  // p=1: centre header
+
+      const tx    = tx_start + (tx_end - tx_start) * p
       const ty    = ty_start * (1 - p)
       const scale = 1 + (scaleDown - 1) * p
 
@@ -214,7 +216,7 @@ export default function HeroIntro({ slides }: Props) {
         style={{
           position:        'fixed',
           top:             LOGO_REST_TOP,
-          left:            LOGO_REST_LEFT,
+          left:            0,
           zIndex:          205,
           transformOrigin: 'top left',
           willChange:      'transform',
