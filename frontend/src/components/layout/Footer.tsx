@@ -29,7 +29,7 @@ export default function Footer() {
             top:             0,
             left:            '50%',
             transform:       'translateX(-50%)',
-            width:           600,
+            width:           'min(600px, 100vw)',
             height:          1,
             background:      'rgba(211,253,80,0.7)',
             boxShadow:       '0 0 16px 4px rgba(211,253,80,0.35), 0 0 48px 16px rgba(211,253,80,0.12), 0 0 80px 32px rgba(211,253,80,0.05)',

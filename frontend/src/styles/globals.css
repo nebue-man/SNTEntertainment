@@ -58,6 +58,7 @@
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     scrollbar-width: none; /* Firefox */
+    overflow-x: hidden; /* prevents negative-x absolute children from shifting the viewport */
   }
 
   html::-webkit-scrollbar {
