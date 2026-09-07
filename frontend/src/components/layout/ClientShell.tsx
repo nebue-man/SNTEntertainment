@@ -32,7 +32,7 @@ export default function ClientShell({ children }: { children: React.ReactNode })
             bottom-[88px] on mobile/tablet keeps it above BottomNav's 32px base
             + ~40px height; at lg the viewport is wide enough that right-8
             clears BottomNav's centered footprint entirely. */}
-        <div className="fixed bottom-[88px] right-4 z-[155] lg:bottom-8 lg:right-8">
+        <div className="hidden lg:block fixed bottom-8 right-8 z-[155]">
           <GetInTouchButton
             onClick={() => { window.location.href = 'mailto:hello@sntevents.lk' }}
           />
