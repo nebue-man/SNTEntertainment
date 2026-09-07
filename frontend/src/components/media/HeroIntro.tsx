@@ -173,18 +173,26 @@ export default function HeroIntro({ slides }: Props) {
     }
     window.addEventListener('resize', onResize, { passive: true })
 
-    if (!lenis) {
-      return () => window.removeEventListener('resize', onResize)
+    // Lenis v1 with smoothTouch:false (default) does not intercept touch events,
+    // so its scroll events never fire on mobile. Use a native listener instead
+    // so scrollProgress is always updated by real touch scroll.
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+
+    if (isTouch || !lenis) {
+      const handleNativeScroll = () => computeAndApply(window.scrollY)
+      window.addEventListener('scroll', handleNativeScroll, { passive: true })
+      return () => {
+        window.removeEventListener('scroll', handleNativeScroll)
+        window.removeEventListener('resize', onResize)
+      }
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    function handleScroll(e: any) {
-      computeAndApply(e.scroll as number)
-    }
-    lenis.on('scroll', handleScroll)
+    const handleLenisScroll = (e: any) => computeAndApply(e.scroll as number)
+    lenis.on('scroll', handleLenisScroll)
 
     return () => {
-      lenis.off('scroll', handleScroll)
+      lenis.off('scroll', handleLenisScroll)
       window.removeEventListener('resize', onResize)
     }
   }, [lenis, setScrollProgress])
