@@ -1,0 +1,96 @@
+.dock-outer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+  z-index: 150;
+}
+
+.dock-panel {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: flex-end;
+  width: fit-content;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  background: rgba(8, 8, 8, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  padding: 0.375rem 0.625rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  pointer-events: auto;
+}
+
+.dock-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.38);
+  cursor: pointer;
+  outline: none;
+  transition: color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.dock-item:hover,
+.dock-item:focus-visible {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dock-item.active {
+  color: #d3fd50;
+}
+
+.dock-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Text-mode items: pill shape, auto width, no overflow */
+.dock-item--text {
+  border-radius: 9999px;
+  padding: 0 0.625rem;
+  white-space: nowrap;
+}
+
+.dock-label {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  width: fit-content;
+  white-space: pre;
+  border-radius: 0.375rem;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(8, 8, 8, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 0.15rem 0.5rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  pointer-events: none;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* Desktop: constrained centred dock, items spread within a refined width */
+@media (min-width: 1024px) {
+  .dock-panel {
+    left: 50%;
+    transform: translateX(-50%);
+    width: clamp(440px, 38vw, 540px);
+    justify-content: space-between;
+    padding: 0.375rem 1.75rem;
+  }
+}
