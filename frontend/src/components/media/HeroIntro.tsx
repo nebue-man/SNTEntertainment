@@ -104,8 +104,10 @@ export default function HeroIntro({ slides }: Props) {
       const scale = 1 + (scaleDown - 1) * p
 
       logo.style.transform     = `translate(${tx}px, ${ty}px) scale(${scale})`
-      // Enable pointer events (click to home) only when settled at top-left
-      logo.style.pointerEvents = p >= 1 ? 'auto' : 'none'
+      // Hide hero logo once settled — PersistentLogo takes over at that point.
+      // Keeping both visible causes a double-logo overlap at p=1.
+      logo.style.opacity       = p >= 1 ? '0' : '1'
+      logo.style.pointerEvents = 'none'
 
       // ── Video: subtle push-in scale ───────────────────────────────
       video.style.transform = `scale(${0.94 + 0.06 * p})`

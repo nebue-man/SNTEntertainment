@@ -15,9 +15,9 @@
 
   --text-caption:     11px;
   --text-body-sm:     13px;
-  --text-body:        14px;
+  --text-body:        1.2rem;
   --text-body-lg:     16px;
-  --text-heading-sm:  clamp(1.75rem, 5vw, 2.5rem);
+  --text-heading-sm:  clamp(2.75rem, 5vw, 3rem);
   --text-heading:     clamp(2rem, 6vw, 3rem);
   --text-heading-lg:  clamp(2.25rem, 7vw, 3.75rem);
   --text-display-sm:  clamp(2.5rem, 9vw, 4.5rem);

@@ -33,7 +33,7 @@ export default function AboutPage() {
         <p
           className="text-ghost-white font-light mb-12 max-w-4xl"
           style={{
-            fontSize: '0.875rem',
+            fontSize: '1.3125rem',
             fontFamily: 'var(--font-display, var(--font-body))',
             fontStyle: 'italic',
             letterSpacing: '0.02em',
@@ -71,7 +71,7 @@ export default function AboutPage() {
           <p
             className="text-ghost-white font-light mb-12"
             style={{
-              fontSize: '0.875rem',
+              fontSize: '1.3125rem',
               fontFamily: 'var(--font-display, var(--font-body))',
               fontStyle: 'italic',
               letterSpacing: '0.02em',
@@ -83,7 +83,7 @@ export default function AboutPage() {
           <ScrollReveal delay={0.1}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
               <div className="border border-pewter/20 p-8 md:p-10">
-                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Mission</p>
+                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6" style={{ fontSize: '1.3125rem' }}>Mission</p>
                 <p className="text-body text-pewter leading-relaxed">
                   To deliver world-class event production and entertainment management services
                   by combining creativity, innovation, and operational excellence, ensuring every
@@ -91,7 +91,7 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="border border-pewter/20 p-8 md:p-10">
-                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Vision</p>
+                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6" style={{ fontSize: '1.3125rem' }}>Vision</p>
                 <p className="text-body text-pewter leading-relaxed">
                   To become Sri Lanka&apos;s leading event production and entertainment management
                   company, recognized internationally for excellence, innovation, and delivering
@@ -115,7 +115,7 @@ export default function AboutPage() {
           <p
             className="text-ghost-white font-light mb-12"
             style={{
-              fontSize: '0.875rem',
+              fontSize: '1.3125rem',
               fontFamily: 'var(--font-display, var(--font-body))',
               fontStyle: 'italic',
               letterSpacing: '0.02em',

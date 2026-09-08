@@ -26,7 +26,7 @@ export default function WhyChooseSNT() {
         <p
           className="text-ghost-white font-light mb-10"
           style={{
-            fontSize: '0.875rem',
+            fontSize: '1.3125rem',
             fontFamily: 'var(--font-display, var(--font-body))',
             fontStyle: 'italic',
             letterSpacing: '0.02em',
