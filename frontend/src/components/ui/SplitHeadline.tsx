@@ -26,7 +26,7 @@ export default function SplitHeadline({ text, as: Tag = 'h2', className = '', st
     <Tag
       className={`overflow-hidden ${className}`}
       aria-label={text}
-      style={{ fontFamily: 'var(--font-display, var(--font-body))', ...style }}
+      style={{ fontFamily: 'var(--font-body)', ...style }}
     >
       <motion.span
         className="flex flex-wrap gap-x-[0.3em]"
@@ -37,8 +37,7 @@ export default function SplitHeadline({ text, as: Tag = 'h2', className = '', st
         aria-hidden
       >
         {words.map((w, i) => (
-          /* pb/mb pair reserves clearance for italic descenders (Cormorant Garamond g, y, p, q) */
-          <span key={i} className="overflow-hidden inline-block pb-[0.18em] -mb-[0.18em]">
+          <span key={i} className="overflow-hidden inline-block pb-[0.12em] -mb-[0.12em]">
             <motion.span className="inline-block" variants={word}>
               {w}
             </motion.span>

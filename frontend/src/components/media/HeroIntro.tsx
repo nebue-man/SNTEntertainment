@@ -373,16 +373,15 @@ export default function HeroIntro({ slides }: Props) {
                   SNT ENTERTAINMENTS AND MANAGEMENT (Pvt) Ltd
                 </p>
 
-                {/* Line 3 — Cormorant italic accent, refined prestige note */}
+                {/* Line 3 — refined prestige note */}
                 <p
                   style={{
                     fontSize:      'clamp(1rem, 1.6vw, 1.25rem)',
-                    fontStyle:     'italic',
                     fontWeight:    300,
-                    letterSpacing: '0.01em',
+                    letterSpacing: '0.08em',
                     lineHeight:    1.4,
                     color:         'rgba(255,255,255,0.72)',
-                    fontFamily:    'var(--font-display, var(--font-body))',
+                    fontFamily:    'var(--font-body)',
                   }}
                 >
                   Designed for prestige

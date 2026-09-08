@@ -34,8 +34,7 @@ export default function AboutPage() {
           className="text-ghost-white font-light mb-12 max-w-4xl"
           style={{
             fontSize: '1.3125rem',
-            fontFamily: 'var(--font-display, var(--font-body))',
-            fontStyle: 'italic',
+            fontFamily: 'var(--font-body)',
             letterSpacing: '0.02em',
           }}
         >
@@ -72,8 +71,7 @@ export default function AboutPage() {
             className="text-ghost-white font-light mb-12"
             style={{
               fontSize: '1.3125rem',
-              fontFamily: 'var(--font-display, var(--font-body))',
-              fontStyle: 'italic',
+              fontFamily: 'var(--font-body)',
               letterSpacing: '0.02em',
             }}
           >
@@ -116,8 +114,7 @@ export default function AboutPage() {
             className="text-ghost-white font-light mb-12"
             style={{
               fontSize: '1.3125rem',
-              fontFamily: 'var(--font-display, var(--font-body))',
-              fontStyle: 'italic',
+              fontFamily: 'var(--font-body)',
               letterSpacing: '0.02em',
             }}
           >

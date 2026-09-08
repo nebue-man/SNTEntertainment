@@ -27,8 +27,7 @@ export default function WhyChooseSNT() {
           className="text-ghost-white font-light mb-10"
           style={{
             fontSize: '1.3125rem',
-            fontFamily: 'var(--font-display, var(--font-body))',
-            fontStyle: 'italic',
+            fontFamily: 'var(--font-body)',
             letterSpacing: '0.02em',
           }}
         >
