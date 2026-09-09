@@ -1,4 +1,5 @@
 'use client'
+import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import SmoothScrollProvider from './SmoothScrollProvider'
 import CustomCursor from './CustomCursor'
@@ -10,31 +11,46 @@ import AmbientDiveBackground from '@/components/AmbientDiveBackground'
 
 export default function ClientShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const footerRef = useRef<HTMLDivElement>(null)
+  const [footerVisible, setFooterVisible] = useState(false)
+
+  useEffect(() => {
+    const el = footerRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setFooterVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
   if (pathname?.startsWith('/admin')) return <>{children}</>
   const isHome = pathname === '/'
   return (
     <LogoProvider>
       <SmoothScrollProvider>
-        {/* WebGL ambient layer — z-index:-1, behind all content, admin-guarded
-            by the early return above so it never renders on /admin/* routes. */}
         <AmbientDiveBackground />
         <CustomCursor />
         <Navbar />
-        {/* Non-home pages: push content below the fixed logo's bottom edge.
-            Home page keeps zero top padding — HeroIntro starts at the viewport top. */}
         <main style={isHome ? undefined : { paddingTop: 'var(--page-top)' }}>
           {children}
         </main>
-        <Footer />
+        <div ref={footerRef}>
+          <Footer />
+        </div>
 
-        {/* ── "Get In Touch" CTA — fixed floating, persists all pages ──
-            z-[155] sits above BottomNav (z-[150]) but below Navbar (z-[200]).
-            bottom-[88px] on mobile/tablet keeps it above BottomNav's 32px base
-            + ~40px height; at lg the viewport is wide enough that right-8
-            clears BottomNav's centered footprint entirely. */}
-        <div className="hidden lg:block fixed bottom-8 right-8 z-[155]">
+        {/* Fixed CTA — fades out when footer enters view to avoid overlapping social icons */}
+        <div
+          className="hidden lg:block fixed bottom-8 right-8 z-[155]"
+          style={{
+            opacity:       footerVisible ? 0 : 1,
+            pointerEvents: footerVisible ? 'none' : 'auto',
+            transition:    'opacity 0.3s ease',
+          }}
+        >
           <GetInTouchButton
-            onClick={() => { window.location.href = 'mailto:hello@sntevents.lk' }}
+            onClick={() => { window.location.href = 'mailto:info.sntentertainments@gmail.com' }}
           />
         </div>
       </SmoothScrollProvider>
