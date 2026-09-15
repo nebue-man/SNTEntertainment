@@ -36,6 +36,19 @@ const SOCIAL_LINKS = [
   },
 ]
 
+const CONTACT_ITEMS = [
+  {
+    label: '+94 70 554 2542',
+    href:  'tel:+94705542542',
+    icon:  PhoneIcon,
+  },
+  {
+    label: 'info.sntentertainments@gmail.com',
+    href:  'mailto:info.sntentertainments@gmail.com',
+    icon:  MailIcon,
+  },
+]
+
 export default function Footer() {
   return (
     <footer className="relative">
@@ -89,50 +102,28 @@ export default function Footer() {
             </span>
           </Link>
 
-          {/* Social icons — large, platform brand colors on hover */}
-          <div className="flex items-center gap-8">
+          {/* Single horizontal row — social icons + separator + contact items */}
+          <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
+
             {SOCIAL_LINKS.map((s) => (
               <SocialIcon key={s.label} {...s} />
             ))}
-          </div>
 
-          {/* Contact details — phone + email, touch-safe targets */}
-          <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-            <a
-              href="tel:+94705542542"
-              className="hover:!text-electric-lime transition-colors duration-200"
+            {/* Pipe separator */}
+            <span
+              aria-hidden
               style={{
-                display:       'flex',
-                alignItems:    'center',
-                gap:           '0.5rem',
-                color:         'rgba(255,255,255,0.45)',
-                fontFamily:    'var(--font-body)',
-                fontSize:      '0.75rem',
-                letterSpacing: '0.06em',
-                minHeight:     '44px',
+                display:    'inline-block',
+                width:      1,
+                height:     18,
+                background: 'rgba(255,255,255,0.15)',
               }}
-            >
-              <PhoneIcon style={{ width: 14, height: 14, flexShrink: 0 }} />
-              +94 70 554 2542
-            </a>
+            />
 
-            <a
-              href="mailto:info.sntentertainments@gmail.com"
-              className="hover:!text-electric-lime transition-colors duration-200"
-              style={{
-                display:       'flex',
-                alignItems:    'center',
-                gap:           '0.5rem',
-                color:         'rgba(255,255,255,0.45)',
-                fontFamily:    'var(--font-body)',
-                fontSize:      '0.75rem',
-                letterSpacing: '0.06em',
-                minHeight:     '44px',
-              }}
-            >
-              <MailIcon style={{ width: 14, height: 14, flexShrink: 0 }} />
-              info.sntentertainments@gmail.com
-            </a>
+            {CONTACT_ITEMS.map((c) => (
+              <ContactItem key={c.href} {...c} />
+            ))}
+
           </div>
 
           {/* Dashed divider */}
@@ -160,11 +151,11 @@ export default function Footer() {
 function SocialIcon({
   label, href, icon: Icon, hoverColor, glow,
 }: {
-  label: string
-  href: string
-  icon: (props: SVGProps<SVGSVGElement>) => React.ReactElement
+  label:      string
+  href:       string
+  icon:       (props: SVGProps<SVGSVGElement>) => React.ReactElement
   hoverColor: string
-  glow: string
+  glow:       string
 }) {
   const [hovered, setHovered] = useState(false)
   return (
@@ -182,7 +173,39 @@ function SocialIcon({
         display:    'flex',
       }}
     >
-      <Icon style={{ width: 26, height: 26 }} />
+      <Icon style={{ width: 22, height: 22 }} />
+    </a>
+  )
+}
+
+function ContactItem({
+  label, href, icon: Icon,
+}: {
+  label: string
+  href:  string
+  icon:  (props: SVGProps<SVGSVGElement>) => React.ReactElement
+}) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <a
+      href={href}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display:        'flex',
+        alignItems:     'center',
+        gap:            '0.45rem',
+        color:          hovered ? 'var(--color-electric-lime)' : 'rgba(255,255,255,0.45)',
+        transition:     'color 0.2s ease',
+        fontFamily:     'var(--font-body)',
+        fontSize:       '0.72rem',
+        letterSpacing:  '0.05em',
+        minHeight:      '44px',
+        textDecoration: 'none',
+      }}
+    >
+      <Icon style={{ width: 13, height: 13, flexShrink: 0 }} />
+      {label}
     </a>
   )
 }
