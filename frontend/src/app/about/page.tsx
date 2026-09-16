@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import SplitHeadline from '@/components/ui/SplitHeadline'
 import ScrollReveal from '@/components/ui/ScrollReveal'
-import WhyChooseSNT from '@/components/ui/WhyChooseSNT'
 import TeamMemberGrid from '@/components/events/TeamMemberGrid'
 
 export const metadata: Metadata = { title: 'About Us' }
@@ -118,11 +117,6 @@ export default function AboutPage() {
               </ScrollReveal>
             ))}
           </div>
-        </div>
-
-        {/* ── Why Choose SNT ───────────────────────────────────────────── */}
-        <div className="border-t border-pewter/20 pt-20 mb-20">
-          <WhyChooseSNT />
         </div>
 
         {/* ── Team ─────────────────────────────────────────────────────── */}
