@@ -148,17 +148,9 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── Why Choose SNT ───────────────────────────────────── */}
-      <section
-        className="py-24 md:py-32 border-b border-pewter/20"
-        style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
-      >
-        <WhyChooseSNT />
-      </section>
-
       {/* ── Upcoming Events ───────────────────────────────────── */}
       <section
-        className="py-24 md:py-32"
+        className="py-24 md:py-32 border-b border-pewter/20"
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
         <ScrollReveal>
@@ -182,6 +174,14 @@ export default function Home() {
             </ScrollReveal>
           ))}
         </div>
+      </section>
+
+      {/* ── Why Choose SNT ───────────────────────────────────── */}
+      <section
+        className="py-24 md:py-32"
+        style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
+      >
+        <WhyChooseSNT />
       </section>
     </>
   )
