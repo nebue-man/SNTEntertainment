@@ -23,23 +23,16 @@ export default function AboutPage() {
 
         {/* ── Company History ──────────────────────────────────────────── */}
         <ScrollReveal>
-          <p
-            className="text-electric-lime tracking-widest uppercase mb-3"
-            style={{ fontSize: 'var(--text-heading-sm)', fontWeight: 400 }}
-          >
+          <p className="text-caption text-electric-lime tracking-widest uppercase mb-4">
             Company History
           </p>
         </ScrollReveal>
-        <p
+        <SplitHeadline
+          text="We build nights worth remembering."
+          as="h1"
           className="text-ghost-white font-light mb-12 max-w-4xl"
-          style={{
-            fontSize: '1.3125rem',
-            fontFamily: 'var(--font-body)',
-            letterSpacing: '0.02em',
-          }}
-        >
-          We build nights worth remembering.
-        </p>
+          style={{ fontSize: 'var(--text-heading-sm)' }}
+        />
 
         <ScrollReveal delay={0.1}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-24 max-w-4xl">
@@ -60,28 +53,21 @@ export default function AboutPage() {
         {/* ── Mission & Vision ─────────────────────────────────────────── */}
         <div className="border-t border-pewter/20 pt-20 mb-20">
           <ScrollReveal>
-            <p
-              className="text-electric-lime tracking-widest uppercase mb-3"
-              style={{ fontSize: 'var(--text-heading-sm)', fontWeight: 400 }}
-            >
+            <p className="text-caption text-electric-lime tracking-widest uppercase mb-4">
               Mission &amp; Vision
             </p>
           </ScrollReveal>
-          <p
+          <SplitHeadline
+            text="What we stand for."
+            as="h2"
             className="text-ghost-white font-light mb-12"
-            style={{
-              fontSize: '1.3125rem',
-              fontFamily: 'var(--font-body)',
-              letterSpacing: '0.02em',
-            }}
-          >
-            What we stand for.
-          </p>
+            style={{ fontSize: 'var(--text-heading-sm)' }}
+          />
 
           <ScrollReveal delay={0.1}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
               <div className="border border-pewter/20 p-8 md:p-10">
-                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6" style={{ fontSize: '1.3125rem' }}>Mission</p>
+                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Mission</p>
                 <p className="text-body text-pewter leading-relaxed">
                   To deliver world-class event production and entertainment management services
                   by combining creativity, innovation, and operational excellence, ensuring every
@@ -89,7 +75,7 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="border border-pewter/20 p-8 md:p-10">
-                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6" style={{ fontSize: '1.3125rem' }}>Vision</p>
+                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Vision</p>
                 <p className="text-body text-pewter leading-relaxed">
                   To become Sri Lanka&apos;s leading event production and entertainment management
                   company, recognized internationally for excellence, innovation, and delivering
@@ -103,23 +89,16 @@ export default function AboutPage() {
         {/* ── Core Values ──────────────────────────────────────────────── */}
         <div className="border-t border-pewter/20 pt-20 mb-20">
           <ScrollReveal>
-            <p
-              className="text-electric-lime tracking-widest uppercase mb-3"
-              style={{ fontSize: 'var(--text-heading-sm)', fontWeight: 400 }}
-            >
+            <p className="text-caption text-electric-lime tracking-widest uppercase mb-4">
               Core Values
             </p>
           </ScrollReveal>
-          <p
+          <SplitHeadline
+            text="What drives us."
+            as="h2"
             className="text-ghost-white font-light mb-12"
-            style={{
-              fontSize: '1.3125rem',
-              fontFamily: 'var(--font-body)',
-              letterSpacing: '0.02em',
-            }}
-          >
-            What drives us.
-          </p>
+            style={{ fontSize: 'var(--text-heading-sm)' }}
+          />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-10 max-w-4xl">
             {coreValues.map((v, i) => (

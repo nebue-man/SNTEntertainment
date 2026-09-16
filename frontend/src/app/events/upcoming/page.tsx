@@ -43,10 +43,13 @@ export default function UpcomingEventsPage() {
       <LoadingGate loading={loading} error={error} onRetry={fetchData} />
 
       <div className="pb-12" style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
+        <ScrollReveal>
+          <p className="text-caption text-electric-lime tracking-widest uppercase mb-4">Upcoming Event</p>
+        </ScrollReveal>
         <SplitHeadline
-          text="UPCOMING EVENT"
+          text="What's next."
           as="h1"
-          className="text-ghost-white font-light mb-16"
+          className="text-ghost-white font-light mb-14"
           style={{ fontSize: 'var(--text-heading-sm)' }}
         />
 

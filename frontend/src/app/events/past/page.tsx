@@ -54,12 +54,12 @@ function PastEventsContent() {
           style={{
             paddingLeft:   'var(--headline-padding-x)',
             paddingRight:  'var(--headline-padding-x)',
-            paddingTop:    '3rem',
-            paddingBottom: '5rem',
+            paddingTop:    '1.5rem',
+            paddingBottom: '4rem',
           }}
         >
           {/* ── Page heading ─────────────────────────────────────── */}
-          <div style={{ marginBottom: '3.5rem' }}>
+          <div style={{ marginBottom: '2rem' }}>
             <p
               style={{
                 fontSize:      '11px',

@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import type { Event } from '@/lib/types'
 import PlaceholderMedia from '@/components/ui/PlaceholderMedia'
 
@@ -16,19 +15,17 @@ function formatDate(iso: string) {
 }
 
 export default function FlyerCard({ event }: Props) {
-  return (
-    <Link
-      href={`/events/view?slug=${event.slug}`}
-      className="group block border border-pewter/20 hover:border-ghost-white/60 transition-colors duration-300 overflow-hidden"
-      aria-label={`${event.title} — ${formatDate(event.eventDate)}`}
-    >
+  const hasLink = !!event.ticketUrl
+
+  const inner = (
+    <>
       <div className="aspect-[3/4] relative bg-absolute-zero overflow-hidden">
         {event.flyerUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={event.flyerUrl}
             alt={`${event.title} event flyer`}
-            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+            className={`w-full h-full object-contain transition-transform duration-500${hasLink ? ' group-hover:scale-105' : ''}`}
           />
         ) : (
           <PlaceholderMedia
@@ -44,11 +41,34 @@ export default function FlyerCard({ event }: Props) {
         <p className="text-caption text-electric-lime tracking-widest uppercase">
           {formatDate(event.eventDate)}
         </p>
-        <h3 className="text-body-lg text-ghost-white font-light group-hover:text-electric-lime transition-colors line-clamp-2">
+        <h3 className={`text-body-lg text-ghost-white font-light line-clamp-2${hasLink ? ' group-hover:text-electric-lime transition-colors' : ''}`}>
           {event.title}
         </h3>
         <p className="text-body-sm text-pewter truncate">{event.venue}</p>
       </div>
-    </Link>
+    </>
+  )
+
+  if (hasLink) {
+    return (
+      <a
+        href={event.ticketUrl!}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group block border border-pewter/20 hover:border-ghost-white/60 transition-colors duration-300 overflow-hidden"
+        aria-label={`${event.title} — ${formatDate(event.eventDate)} — buy tickets`}
+      >
+        {inner}
+      </a>
+    )
+  }
+
+  return (
+    <div
+      className="block border border-pewter/20 overflow-hidden cursor-default"
+      aria-label={`${event.title} — ${formatDate(event.eventDate)}`}
+    >
+      {inner}
+    </div>
   )
 }

@@ -35,7 +35,10 @@ export default function Navbar() {
       {/* ── Fixed header — logo centred, floating pill nav below ───── */}
       <header
         className="fixed top-0 left-0 right-0 z-[200] flex flex-col items-center pt-4 pb-3"
-        style={{ background: 'var(--color-absolute-zero)' }}
+        style={{
+          background: (isHome && !settled) ? 'transparent' : 'var(--color-absolute-zero)',
+          transition: 'background 0.5s ease',
+        }}
       >
         {/* Logo — hidden on home until the intro animation settles */}
         <div
