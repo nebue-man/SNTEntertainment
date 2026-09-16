@@ -43,7 +43,7 @@ const NAV_ITEMS = [
   },
 ]
 
-export default function BottomNav() {
+export default function BottomNav({ inline = false }: { inline?: boolean }) {
   const pathname      = usePathname()
   const router        = useRouter()
   const [mounted, setMounted] = useState(false)
@@ -86,6 +86,7 @@ export default function BottomNav() {
         dockHeight={160}
         textMode
         showTooltips={false}
+        inline={inline}
       />
     </div>
   )

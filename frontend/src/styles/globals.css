@@ -39,9 +39,9 @@
   --element-gap: 10px;
   --headline-padding-x: clamp(1.5rem, 8vw, 9rem);
   /* Vertical clearance for all non-hero page content.
-     = header py-4 (16px) + LOGO_REST_H (50px) + header py-4 (16px) + gap (32px) = 114px.
-     Update here if LOGO_REST_H changes in PersistentLogo.tsx. */
-  --page-top: 114px;
+     = header pt-4 (16px) + LOGO_REST_H (50px) + gap (14px) + pill nav (48px) + pb-3 (12px) + clearance (18px) ≈ 158px.
+     Update here if LOGO_REST_H or the pill nav height changes in Navbar.tsx / BottomNav.tsx. */
+  --page-top: 158px;
 }
 
 @layer base {

@@ -107,6 +107,7 @@ export default function Dock({
   baseItemSize = 50,
   showTooltips = true,
   textMode = false,
+  inline = false,
 }) {
   const mouseX = useMotionValue(Infinity);
   const isHovered = useMotionValue(0);
@@ -117,6 +118,42 @@ export default function Dock({
   );
   const heightRow = useTransform(isHovered, [0, 1], [panelHeight, maxHeight]);
   const height = useSpring(heightRow, spring);
+
+  const dockItems = items.map((item, index) => (
+    <DockItem
+      key={index}
+      onClick={item.onClick}
+      className={item.className}
+      mouseX={mouseX}
+      spring={spring}
+      distance={distance}
+      magnification={magnification}
+      baseItemSize={baseItemSize}
+      label={item.label}
+      showTooltip={showTooltips}
+      textMode={textMode}
+    >
+      <DockIcon>{item.icon}</DockIcon>
+      <DockLabel>{item.label}</DockLabel>
+    </DockItem>
+  ));
+
+  // Inline mode — render the pill directly in the document flow (no fixed wrapper).
+  // Used when the dock lives inside a fixed header rather than floating over the page.
+  if (inline) {
+    return (
+      <motion.div
+        onMouseMove={({ pageX }) => { isHovered.set(1); mouseX.set(pageX); }}
+        onMouseLeave={() => { isHovered.set(0); mouseX.set(Infinity); }}
+        className={`dock-panel dock-panel--inline ${className}`}
+        style={{ height: panelHeight }}
+        role="toolbar"
+        aria-label="Application dock"
+      >
+        {dockItems}
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div style={{ height, scrollbarWidth: 'none' }} className="dock-outer">
@@ -134,24 +171,7 @@ export default function Dock({
         role="toolbar"
         aria-label="Application dock"
       >
-        {items.map((item, index) => (
-          <DockItem
-            key={index}
-            onClick={item.onClick}
-            className={item.className}
-            mouseX={mouseX}
-            spring={spring}
-            distance={distance}
-            magnification={magnification}
-            baseItemSize={baseItemSize}
-            label={item.label}
-            showTooltip={showTooltips}
-            textMode={textMode}
-          >
-            <DockIcon>{item.icon}</DockIcon>
-            <DockLabel>{item.label}</DockLabel>
-          </DockItem>
-        ))}
+        {dockItems}
       </motion.div>
     </motion.div>
   );
