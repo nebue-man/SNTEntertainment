@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import SmoothScrollProvider from './SmoothScrollProvider'
-import CustomCursor from './CustomCursor'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import { LogoProvider } from './LogoContext'
@@ -31,7 +30,6 @@ export default function ClientShell({ children }: { children: React.ReactNode })
     <LogoProvider>
       <SmoothScrollProvider>
         <AmbientDiveBackground />
-        <CustomCursor />
         <Navbar />
         <main style={isHome ? undefined : { paddingTop: 'var(--page-top)' }}>
           {children}

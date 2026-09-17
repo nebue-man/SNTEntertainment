@@ -64,7 +64,7 @@ export default function Footer() {
           paddingBottom: '3rem',
         }}
       >
-        <div className="flex flex-col items-center gap-10">
+        <div className="flex flex-col items-center gap-5">
 
           {/* Contact heading */}
           <p

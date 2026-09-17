@@ -1,0 +1,56 @@
+.gooey-nav-container nav {
+  display: flex;
+}
+
+.gooey-nav-container ul {
+  display: flex;
+  gap: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.gooey-nav-container li {
+  border-radius: 0;
+  position: relative;
+  color: rgba(255, 255, 255, 0.65);
+  transition: color 0.25s ease;
+}
+
+.gooey-nav-container li a {
+  display: inline-block;
+  padding: 0.5em 0.75em;
+}
+
+.gooey-nav-container li:focus-within:has(:focus-visible) {
+  outline: 2px solid rgba(211, 253, 80, 0.8);
+  outline-offset: 2px;
+}
+
+/* Active-page fill — sharp lime rectangle */
+.gooey-nav-container li::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+  background: #d3fd50;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: -1;
+}
+
+.gooey-nav-container li.active {
+  color: #000000;
+}
+
+.gooey-nav-container li.active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}

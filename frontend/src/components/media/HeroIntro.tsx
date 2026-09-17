@@ -12,6 +12,7 @@ import {
   LG_BREAKPOINT,
   LOGO_REST_H,
   LOGO_REST_TOP,
+  LOGO_REST_LEFT,
   LOGO_FILTER_HERO,
   SPIN_RANGE,
   SPIN_DURATION,
@@ -89,15 +90,15 @@ export default function HeroIntro({ slides }: Props) {
       const sw = Math.round(sh * (383 / 421))
       const scaleDown = LOGO_REST_H / sh
 
-      // ── Logo: center-screen (p=0) → top-center (p=1) ─────────────
+      // ── Logo: center-screen (p=0) → top-left (p=1) ──────────────
       // Element is fixed at (left:0, LOGO_REST_TOP) with transformOrigin:'top left'.
       // At p=0: scale=1, element is native stage size, centred via translate.
-      // At p=1: scale=scaleDown, element is horizontally centred at the top.
+      // At p=1: scale=scaleDown, element sits at LOGO_REST_LEFT from viewport left.
       // Scaling down from native size keeps SVG crisp at p=0 (no scale-up blurring).
       const restW    = sw * scaleDown                      // visual width at rest ≈ LOGO_REST_W
       const tx_start = W / 2 - sw / 2                     // p=0: centre screen
       const ty_start = H * 0.45 - sh / 2 - LOGO_REST_TOP // p=0: 45 % down
-      const tx_end   = W / 2 - restW / 2                  // p=1: centre header
+      const tx_end   = LOGO_REST_LEFT                      // p=1: left-aligned in header
 
       const tx    = tx_start + (tx_end - tx_start) * p
       const ty    = ty_start * (1 - p)
@@ -377,8 +378,8 @@ export default function HeroIntro({ slides }: Props) {
                 <p
                   style={{
                     fontSize:      'clamp(1rem, 1.6vw, 1.25rem)',
-                    fontWeight:    300,
-                    letterSpacing: '0.08em',
+                    fontWeight:    400,
+                    letterSpacing: '0.12em',
                     lineHeight:    1.4,
                     color:         'rgba(255,255,255,0.72)',
                     fontFamily:    'var(--font-body)',
