@@ -34,18 +34,6 @@ const SOCIAL_LINKS = [
   },
 ]
 
-const CONTACT_ITEMS = [
-  {
-    label: '+94 70 554 2542',
-    href:  'tel:+94705542542',
-    icon:  PhoneIcon,
-  },
-  {
-    label: 'info.sntentertainments@gmail.com',
-    href:  'mailto:info.sntentertainments@gmail.com',
-    icon:  MailIcon,
-  },
-]
 
 export default function Footer() {
   return (
@@ -92,27 +80,23 @@ export default function Footer() {
             Contact Us
           </p>
 
-          {/* Single horizontal row — social icons + separator + contact items */}
-          <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
+          {/* Two-row contact layout */}
+          <div className="flex flex-col items-center gap-3">
 
-            {SOCIAL_LINKS.map((s) => (
-              <SocialIcon key={s.label} {...s} />
-            ))}
+            {/* Row 1 — Hotline */}
+            <HotlineRow />
 
-            {/* Pipe separator */}
-            <span
-              aria-hidden
-              style={{
-                display:    'inline-block',
-                width:      1,
-                height:     18,
-                background: 'rgba(255,255,255,0.15)',
-              }}
-            />
-
-            {CONTACT_ITEMS.map((c) => (
-              <ContactItem key={c.href} {...c} />
-            ))}
+            {/* Row 2 — Social icons + email */}
+            <div className="flex items-center justify-center gap-x-7">
+              {SOCIAL_LINKS.map((s) => (
+                <SocialIcon key={s.label} {...s} />
+              ))}
+              <ContactItem
+                label="info.sntentertainments@gmail.com"
+                href="mailto:info.sntentertainments@gmail.com"
+                icon={MailIcon}
+              />
+            </div>
 
           </div>
 
@@ -164,6 +148,62 @@ function SocialIcon({
       }}
     >
       <Icon style={{ width: 22, height: 22 }} />
+    </a>
+  )
+}
+
+function HotlineRow() {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <a
+      href="tel:+94705542542"
+      aria-label="Call SNT hotline: +94 70 554 2542"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display:    'flex',
+        alignItems: 'center',
+        gap:        '0.6rem',
+        minHeight:  '44px',
+        textDecoration: 'none',
+        color:      hovered ? 'var(--color-electric-lime)' : 'inherit',
+        filter:     hovered ? 'drop-shadow(0 0 10px rgba(211,253,80,0.35))' : 'none',
+        transition: 'color 0.2s ease, filter 0.2s ease',
+      }}
+    >
+      <PhoneIcon
+        style={{
+          width:  18,
+          height: 18,
+          color:  hovered ? 'var(--color-electric-lime)' : 'var(--color-electric-lime)',
+          flexShrink: 0,
+        }}
+      />
+      <span
+        style={{
+          fontSize:      '0.68rem',
+          fontWeight:    400,
+          letterSpacing: '0.22em',
+          textTransform: 'uppercase',
+          color:         hovered ? 'var(--color-electric-lime)' : 'rgba(255,255,255,0.45)',
+          fontFamily:    'var(--font-body)',
+          transition:    'color 0.2s ease',
+        }}
+      >
+        Hotline:
+      </span>
+      <span
+        style={{
+          fontSize:      '0.8rem',
+          fontWeight:    300,
+          letterSpacing: '0.08em',
+          color:         hovered ? 'var(--color-electric-lime)' : 'rgba(255,255,255,0.82)',
+          fontFamily:    'var(--font-body)',
+          transition:    'color 0.2s ease',
+        }}
+      >
+        +94 70 554 2542
+      </span>
     </a>
   )
 }
