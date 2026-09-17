@@ -2,8 +2,6 @@
 import React from 'react'
 import type { SVGProps } from 'react'
 import { useState } from 'react'
-import Link from 'next/link'
-import LogoSvg from '@/components/ui/LogoSvg'
 
 const SOCIAL_LINKS = [
   {
@@ -80,27 +78,19 @@ export default function Footer() {
       >
         <div className="flex flex-col items-center gap-10">
 
-          {/* Brand — logo + wordmark centred */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <LogoSvg
-              aria-label="SNT Events"
-              style={{ height: 26, width: 'auto', color: 'white' }}
-            />
-            <span
-              style={{
-                fontSize:      '0.68rem',
-                fontWeight:    400,
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                color:         'rgba(255,255,255,0.82)',
-                fontFamily:    'var(--font-body)',
-                transition:    'color 0.2s ease',
-              }}
-              className="group-hover:!text-electric-lime"
-            >
-              SNT Entertainments
-            </span>
-          </Link>
+          {/* Contact heading */}
+          <p
+            style={{
+              fontSize:      '0.68rem',
+              fontWeight:    400,
+              letterSpacing: '0.28em',
+              textTransform: 'uppercase',
+              color:         'rgba(255,255,255,0.55)',
+              fontFamily:    'var(--font-body)',
+            }}
+          >
+            Contact Us
+          </p>
 
           {/* Single horizontal row — social icons + separator + contact items */}
           <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
@@ -189,23 +179,19 @@ function ContactItem({
   return (
     <a
       href={href}
+      aria-label={label}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        display:        'flex',
-        alignItems:     'center',
-        gap:            '0.45rem',
-        color:          hovered ? 'var(--color-electric-lime)' : 'rgba(255,255,255,0.45)',
-        transition:     'color 0.2s ease',
-        fontFamily:     'var(--font-body)',
-        fontSize:       '0.72rem',
-        letterSpacing:  '0.05em',
-        minHeight:      '44px',
-        textDecoration: 'none',
+        display:      'flex',
+        alignItems:   'center',
+        color:        hovered ? 'var(--color-electric-lime)' : 'rgba(255,255,255,0.38)',
+        filter:       hovered ? 'drop-shadow(0 0 8px rgba(211,253,80,0.4))' : 'none',
+        transition:   'color 0.2s ease, filter 0.2s ease',
+        minHeight:    '44px',
       }}
     >
-      <Icon style={{ width: 13, height: 13, flexShrink: 0 }} />
-      {label}
+      <Icon style={{ width: 22, height: 22 }} />
     </a>
   )
 }
