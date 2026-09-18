@@ -346,14 +346,14 @@ export default function HeroIntro({ slides }: Props) {
                 {/* Line 1 — dominant brand mark, ultra-light wide tracking for prestige */}
                 <h1
                   style={{
-                    fontSize:      'clamp(1.15rem, 5.5vw, 3.75rem)',
+                    fontSize:      'clamp(1.1rem, 4.5vw, 2.75rem)',
                     fontWeight:    200,
                     letterSpacing: '0.22em',
                     lineHeight:    1.15,
                     color:         'var(--color-ghost-white)',
                     marginBottom:  '0.35em',
                     fontFamily:    'var(--font-body)',
-                    wordBreak:     'break-word',
+                    whiteSpace:    'nowrap',
                   }}
                 >
                   S N T ENTERTAINMENTS

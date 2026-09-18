@@ -27,14 +27,9 @@ const NAV_ITEMS = [
     icon:  <span style={labelStyle}>UPCOMING</span>,
   },
   {
-    label: 'Past Events',
+    label: 'Past',
     href:  '/events/past',
-    icon:  (
-      <>
-        <span style={labelStyle} className="hidden lg:inline">PAST EVENTS</span>
-        <span style={labelStyle} className="lg:hidden">PAST</span>
-      </>
-    ),
+    icon:  <span style={labelStyle}>PAST</span>,
   },
   {
     label: 'About',
@@ -43,11 +38,22 @@ const NAV_ITEMS = [
   },
 ]
 
-export default function BottomNav({ inline = false }: { inline?: boolean }) {
-  const pathname      = usePathname()
-  const router        = useRouter()
+// Floating pill nav, fixed to the bottom of the viewport — overlays whatever
+// content (hero or otherwise) is beneath it rather than sitting in normal
+// document flow. Active tab is driven by the current route.
+//
+// Visibility is synced to the same `settled` state (LogoContext) that drives
+// the hero logo's move-to-top-left scroll animation, rather than an
+// independent scroll threshold — so the nav appears at exactly the moment
+// the logo finishes settling into the header, and hides again if the user
+// scrolls back up past that point. On non-home pages there's no hero/logo
+// animation to sync to, so the nav is simply always visible there (mirrors
+// how Navbar shows the settled header logo on those pages).
+export default function BottomNav() {
+  const pathname    = usePathname()
+  const router      = useRouter()
+  const { settled } = useLogoSettled()
   const [mounted, setMounted] = useState(false)
-  const { settled }   = useLogoSettled()
 
   useEffect(() => { setMounted(true) }, [])
 
@@ -57,6 +63,9 @@ export default function BottomNav({ inline = false }: { inline?: boolean }) {
 
   if (!mounted) return null
 
+  const isHome  = pathname === '/'
+  const visible = !isHome || settled
+
   const dockItems = NAV_ITEMS.map(({ label, href, icon }) => ({
     icon,
     label,
@@ -64,30 +73,21 @@ export default function BottomNav({ inline = false }: { inline?: boolean }) {
     onClick:   () => router.push(href),
   }))
 
-  // On the home page the dock is hidden until the logo settles into the
-  // header (scrollProgress >= 1). On all other pages it's always visible.
-  const isHome  = pathname === '/'
-  const visible = !isHome || settled
-
   return (
-    <div
+    <Dock
+      items={dockItems}
+      panelHeight={44}
+      baseItemSize={40}
+      magnification={54}
+      distance={150}
+      dockHeight={160}
+      textMode
+      showTooltips={false}
       style={{
         opacity:       visible ? 1 : 0,
         pointerEvents: visible ? 'auto' : 'none',
-        transition:    'opacity 0.5s ease-out',
+        transition:    'opacity 0.4s ease',
       }}
-    >
-      <Dock
-        items={dockItems}
-        panelHeight={48}
-        baseItemSize={40}
-        magnification={54}
-        distance={150}
-        dockHeight={160}
-        textMode
-        showTooltips={false}
-        inline={inline}
-      />
-    </div>
+    />
   )
 }

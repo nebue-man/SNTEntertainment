@@ -49,7 +49,7 @@ export default function UpcomingEventsPage() {
         <SplitHeadline
           text="What's next."
           as="h1"
-          className="text-ghost-white font-light mb-14"
+          className="text-ghost-white font-bold mb-14"
           style={{ fontSize: 'var(--text-heading-sm)' }}
         />
 

@@ -48,7 +48,7 @@ export default function HeroCarousel({ slides, heading, tagline }: Props) {
           <SplitHeadline
             text={heading}
             as="h1"
-            className="text-ghost-white font-light leading-none mb-6"
+            className="text-ghost-white font-bold leading-none mb-6"
             style={{ fontSize: 'var(--text-display-sm)' }}
             once={false}
           />
@@ -111,7 +111,7 @@ export default function HeroCarousel({ slides, heading, tagline }: Props) {
         <SplitHeadline
           text={heading}
           as="h1"
-          className="text-ghost-white font-light leading-none mb-6"
+          className="text-ghost-white font-bold leading-none mb-6"
           style={{ fontSize: 'var(--text-display-sm)' }}
           once={false}
         />

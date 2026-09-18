@@ -99,6 +99,7 @@ function DockIcon({ children, className = '' }) {
 export default function Dock({
   items,
   className = '',
+  style = {},
   spring = { mass: 0.1, stiffness: 150, damping: 12 },
   magnification = 70,
   distance = 200,
@@ -146,7 +147,7 @@ export default function Dock({
         onMouseMove={({ pageX }) => { isHovered.set(1); mouseX.set(pageX); }}
         onMouseLeave={() => { isHovered.set(0); mouseX.set(Infinity); }}
         className={`dock-panel dock-panel--inline ${className}`}
-        style={{ height: panelHeight }}
+        style={{ height: panelHeight, ...style }}
         role="toolbar"
         aria-label="Application dock"
       >
@@ -167,7 +168,7 @@ export default function Dock({
           mouseX.set(Infinity);
         }}
         className={`dock-panel ${className}`}
-        style={{ height: panelHeight }}
+        style={{ height: panelHeight, ...style }}
         role="toolbar"
         aria-label="Application dock"
       >

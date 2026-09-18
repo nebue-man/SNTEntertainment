@@ -91,7 +91,7 @@ export default function Home() {
             <SplitHeadline
               text="Our work speaks."
               as="h2"
-              className="text-ghost-white font-light"
+              className="text-ghost-white font-bold"
               style={{ fontSize: 'var(--text-heading-sm)' }}
             />
             <ScrollReveal delay={0.1}>
@@ -160,7 +160,7 @@ export default function Home() {
           <SplitHeadline
             text="What's next."
             as="h2"
-            className="text-ghost-white font-light"
+            className="text-ghost-white font-bold"
             style={{ fontSize: 'var(--text-heading-sm)' }}
           />
           <ScrollReveal delay={0.1}>
