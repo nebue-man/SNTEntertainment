@@ -20,6 +20,7 @@ export default function NewEventPage() {
     description: '',
     venue: '',
     status: 'UPCOMING',
+    ticketUrl: '',
   })
 
   function set(k: keyof typeof fields) {
@@ -38,15 +39,16 @@ export default function NewEventPage() {
     try {
       const form = new FormData()
       form.append('title', fields.title)
-      form.append('slug', fields.slug || autoSlug(fields.title))
+      form.append('slug', autoSlug(fields.slug) || autoSlug(fields.title))
       form.append('description', fields.description)
       form.append('venue', fields.venue)
       form.append('eventDate', new Date(dateRef.current?.value || '').toISOString())
       form.append('status', fields.status)
+      form.append('ticketUrl', fields.ticketUrl)
       if (flyer) form.append('flyer', flyer)
 
       const res = await createEvent(form)
-      router.push(`/admin/events/${res.data.id}`)
+      router.push(`/admin/events/edit?id=${res.data.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create event')
     } finally {
@@ -84,6 +86,14 @@ export default function NewEventPage() {
               className={inputCls}
               placeholder={fields.title ? autoSlug(fields.title) : 'sound-of-colombo-2026'}
             />
+            {fields.slug && autoSlug(fields.slug) !== fields.slug && (
+              <p className="mt-1.5 text-[11px] text-white/30">
+                Will be saved as: <span className="text-white/60">{autoSlug(fields.slug)}</span>
+              </p>
+            )}
+            {!fields.slug && (
+              <p className="mt-1.5 text-[11px] text-white/30">Lowercase and hyphens only — auto-formatted on save</p>
+            )}
           </div>
 
           <div>
@@ -128,6 +138,17 @@ export default function NewEventPage() {
               accept="image/jpeg,image/png,image/webp"
               onChange={e => setFlyer(e.target.files?.[0] ?? null)}
               className="w-full text-sm text-white/50 file:mr-4 file:py-2 file:px-4 file:border file:border-[#4d4d4d] file:bg-transparent file:text-white/50 file:text-xs file:tracking-widest file:uppercase hover:file:border-white hover:file:text-white file:transition-colors"
+            />
+          </div>
+
+          <div>
+            <label className={labelCls}>Ticket Purchase URL <span className="normal-case text-white/20">(optional — leave blank for Coming Soon)</span></label>
+            <input
+              value={fields.ticketUrl}
+              onChange={set('ticketUrl')}
+              type="url"
+              placeholder="https://tickets.example.com/event"
+              className={inputCls}
             />
           </div>
 

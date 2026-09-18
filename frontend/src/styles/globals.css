@@ -3,57 +3,46 @@
 @theme {
   --color-absolute-zero: #000000;
   --color-ghost-white: #ffffff;
-  --color-pewter: #4d4d4d;
+  --color-pewter: #808080;
   --color-electric-lime: #d3fd50;
 
-  --font-lausanne: 'Lausanne', ui-sans-serif, system-ui, -apple-system,
+  /* next/font variable (set on <html> via injected class) */
+  --font-body: var(--font-body);
+
+  /* Legacy — kept for admin layout which uses font-lausanne class */
+  --font-lausanne: ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  --text-caption: 11px;
-  --text-body-sm: 14px;
-  --text-body: 16px;
-  --text-body-lg: 20px;
-  --text-heading-sm: 35px;
-  --text-heading: clamp(2.5rem, 8vw, 5.875rem);
-  --text-heading-lg: clamp(3rem, 10vw, 7.1875rem);
-  --text-display-sm: clamp(2.5rem, 11vw, 8.5625rem);
+  --text-caption:     11px;
+  --text-body-sm:     13px;
+  --text-body:        1.2rem;
+  --text-body-lg:     16px;
+  --text-heading-sm:  clamp(2.75rem, 5vw, 3rem);
+  --text-heading:     clamp(2rem, 6vw, 3rem);
+  --text-heading-lg:  clamp(2.25rem, 7vw, 3.75rem);
+  --text-display-sm:  clamp(2.5rem, 9vw, 4.5rem);
 
   --radius-full: 34965px;
   --radius-pill: 93506.4px;
+
+  --animate-progress-shimmer: progress-shimmer 1.8s ease-in-out infinite;
 }
 
 :root {
   --color-absolute-zero: #000000;
   --color-ghost-white: #ffffff;
-  --color-pewter: #4d4d4d;
+  --color-pewter: #808080;
   --color-electric-lime: #d3fd50;
-
-  --font-lausanne: 'Lausanne', ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   --section-gap: clamp(2.5rem, 5vw, 4rem);
   --card-padding: clamp(1.25rem, 2vw, 1.75rem);
   --element-gap: 10px;
   --headline-padding-x: clamp(1.5rem, 8vw, 9rem);
+  /* Vertical clearance for all non-hero page content.
+     = LOGO_REST_TOP (16px) + LOGO_REST_H (50px) + LOGO_REST_TOP (16px) + clearance (12px) = 94px.
+     Update if LOGO_REST_TOP or LOGO_REST_H change in PersistentLogo.tsx. */
+  --page-top: 94px;
 }
-
-/*
-  Lausanne @font-face — drop your .woff2 files into public/fonts/
-  and uncomment these rules. Until then, system-ui is the fallback.
-
-  @font-face {
-    font-family: 'Lausanne';
-    src: url('/fonts/Lausanne-300.woff2') format('woff2');
-    font-weight: 300;
-    font-display: swap;
-  }
-  @font-face {
-    font-family: 'Lausanne';
-    src: url('/fonts/Lausanne-400.woff2') format('woff2');
-    font-weight: 400;
-    font-display: swap;
-  }
-*/
 
 @layer base {
   *, *::before, *::after {
@@ -65,14 +54,24 @@
   html {
     background-color: var(--color-absolute-zero);
     color: var(--color-ghost-white);
-    font-family: var(--font-lausanne);
-    font-weight: 300;
+    font-family: var(--font-body, ui-sans-serif, system-ui, sans-serif);
+    font-weight: 400;
     -webkit-font-smoothing: antialiased;
+    scrollbar-width: none; /* Firefox */
+    /* clip (not hidden): clips x overflow without creating a scroll container.
+       hidden forces overflow-y:auto, making <html> a scroll container which
+       breaks position:sticky on the hero. clip avoids that side-effect. */
+    overflow-x: clip;
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
   }
 
   body {
     min-height: 100vh;
-    overflow-x: hidden;
+    /* clip instead of hidden for the same reason as <html> above */
+    overflow-x: clip;
   }
 
   /* Remove all browser UA button chrome so GhostButton owns every pixel */
@@ -93,6 +92,37 @@
   }
 }
 
+@keyframes nav-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Header responsive visibility ───────────────────────────────── */
+.nav-desktop { display: none; }
+.nav-mobile  { display: flex; align-items: center; }
+
+@media (min-width: 768px) {
+  .nav-desktop { display: block; }
+  .nav-mobile  { display: none;  }
+}
+
+@keyframes progress-shimmer {
+  0%   { transform: translateX(-300%); }
+  100% { transform: translateX(500%); }
+}
+
+@keyframes snt-marquee {
+  from { transform: translateX(0) }
+  to   { transform: translateX(-50%) }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snt-marquee-track {
+    animation-play-state: paused !important;
+  }
+}
+
+
 .custom-cursor *, .custom-cursor *::before, .custom-cursor *::after {
   cursor: none !important;
 }
@@ -101,4 +131,113 @@
   .custom-cursor *, .custom-cursor *::before, .custom-cursor *::after {
     cursor: auto !important;
   }
+}
+
+/* ── DepthCarousel ───────────────────────────────────────────────── */
+.depth-carousel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: var(--dc-perspective, 1400px);
+  perspective-origin: 50% 50%;
+  touch-action: pan-y;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+.depth-carousel:active { cursor: grabbing; }
+.depth-carousel:focus-visible { outline: 2px solid rgba(255,255,255,0.5); outline-offset: 4px; border-radius: 12px; }
+
+.depth-carousel__stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.depth-carousel__card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+  overflow: hidden;
+  background: #0b0d12;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.65), 0 8px 20px -10px rgba(0,0,0,0.5);
+  will-change: transform, opacity, filter;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+
+.depth-carousel__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.depth-carousel__tint {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.depth-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3000;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 999px;
+  background: rgba(18,20,26,0.55);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+.depth-carousel__arrow:hover { background: rgba(28,31,40,0.85); border-color: rgba(255,255,255,0.4); }
+.depth-carousel__arrow:active { transform: translateY(-50%) scale(0.94); }
+.depth-carousel__arrow--prev { left: 16px; }
+.depth-carousel__arrow--next { right: 16px; }
+
+.depth-carousel__dots {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3000;
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(14,16,22,0.4);
+  backdrop-filter: blur(6px);
+}
+
+.depth-carousel__dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.32);
+  cursor: pointer;
+  transition: width 0.25s ease, background 0.25s ease;
+}
+.depth-carousel__dot.is-active { width: 20px; background: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .depth-carousel__card { will-change: auto; }
+  .depth-carousel__arrow, .depth-carousel__dot { transition: none; }
 }

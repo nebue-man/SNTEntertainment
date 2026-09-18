@@ -10,6 +10,10 @@ export const CreateEventSchema = z.object({
   eventDate: z.string().datetime({ offset: true }),
   status: z.enum(['UPCOMING', 'PAST']),
   flyerUrl: z.string().url().nullable().optional(),
+  ticketUrl: z.preprocess(
+    (val) => (val === '' ? null : val),
+    z.string().url().nullable().optional(),
+  ),
 })
 
 export const UpdateEventSchema = CreateEventSchema.partial()

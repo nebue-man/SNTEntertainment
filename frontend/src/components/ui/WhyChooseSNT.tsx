@@ -1,0 +1,60 @@
+import ScrollReveal from '@/components/ui/ScrollReveal'
+import {
+  ClipboardCheck,
+  Users,
+  CalendarCheck,
+  SlidersHorizontal,
+  Lightbulb,
+  Target,
+  Handshake,
+  Sparkles,
+  type LucideIcon,
+} from 'lucide-react'
+
+const items: { text: string; icon: LucideIcon }[] = [
+  { text: 'End-to-end event planning and production solutions.', icon: ClipboardCheck },
+  { text: 'Experienced team with a proven record of successful event execution.', icon: Users },
+  { text: 'Professional coordination of concerts, corporate events, and entertainment programs.', icon: CalendarCheck },
+  { text: 'High-quality production standards, including stage, sound, lighting, and event logistics.', icon: SlidersHorizontal },
+  { text: "Creative concepts tailored to each client's requirements.", icon: Lightbulb },
+  { text: 'Reliable project management with attention to every detail.', icon: Target },
+  { text: 'Strong industry relationships with artists, entertainers, suppliers, and venues.', icon: Handshake },
+  { text: 'Commitment to delivering memorable experiences on time and within budget.', icon: Sparkles },
+]
+
+export default function WhyChooseSNT() {
+  return (
+    <>
+      <ScrollReveal>
+        <p
+          className="text-electric-lime tracking-widest uppercase mb-3"
+          style={{ fontSize: 'var(--text-heading-sm)', fontWeight: 400 }}
+        >
+          Why Choose SNT
+        </p>
+      </ScrollReveal>
+      <ScrollReveal delay={0.05}>
+        <p
+          className="text-ghost-white font-bold mb-10"
+          style={{
+            fontSize: '1.3125rem',
+            fontFamily: 'var(--font-body)',
+            letterSpacing: '0.02em',
+          }}
+        >
+          Built to deliver.
+        </p>
+      </ScrollReveal>
+      <ScrollReveal delay={0.1}>
+        <div className="grid grid-cols-2 gap-3 max-w-4xl">
+          {items.map(({ text, icon: Icon }, i) => (
+            <div key={i} className="border border-pewter/20 rounded-xl p-4">
+              <Icon className="text-electric-lime" size={20} />
+              <p className="text-body-sm text-ghost-white leading-relaxed mt-3">{text}</p>
+            </div>
+          ))}
+        </div>
+      </ScrollReveal>
+    </>
+  )
+}

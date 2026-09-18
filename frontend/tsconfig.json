@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "next/types.js": ["./node_modules/next/types.d.ts"]
     }
   },
   "include": [

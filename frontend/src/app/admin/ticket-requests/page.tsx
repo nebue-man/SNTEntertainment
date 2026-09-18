@@ -148,7 +148,7 @@ export default function TicketRequestsPage() {
                       </div>
                     )}
                     {req.adminNotes && req.status !== 'PENDING' && (
-                      <span className="text-white/20 text-[11px] italic truncate max-w-[120px] block" title={req.adminNotes}>
+                      <span className="text-white/20 text-[11px] truncate max-w-[120px] block" title={req.adminNotes}>
                         {req.adminNotes}
                       </span>
                     )}

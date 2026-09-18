@@ -21,17 +21,39 @@ export function uploadBuffer(
   options: Record<string, unknown> = {}
 ): Promise<UploadResult> {
   return new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { resource_type: resourceType, ...options },
-      (error, result) => {
-        if (error || !result) {
-          return reject(error ?? new Error('Cloudinary upload returned no result'))
-        }
-        resolve({ url: result.secure_url, publicId: result.public_id })
+    let settled = false
+    const done = (err: unknown, result?: UploadResult) => {
+      if (settled) return
+      settled = true
+      if (err || !result) {
+        reject(err instanceof Error ? err : new Error(JSON.stringify(err) || 'Cloudinary upload failed'))
+      } else {
+        resolve(result)
       }
-    )
+    }
+
+    let uploadStream: ReturnType<typeof cloudinary.uploader.upload_stream>
+    try {
+      // timeout: 600000 extends the socket inactivity timeout to 10 min for large video uploads.
+      // The v2 SDK adapter signature is upload_stream(options, callback).
+      uploadStream = cloudinary.uploader.upload_stream(
+        { resource_type: resourceType, timeout: 600000, ...options },
+        (error, result) => {
+          if (error || !result) {
+            done(error ?? new Error('Cloudinary upload returned no result'))
+          } else {
+            done(null, { url: result.secure_url, publicId: result.public_id })
+          }
+        }
+      )
+    } catch (err) {
+      return done(err)
+    }
+
+    uploadStream.on('error', (err) => done(err))
 
     const readable = new Readable()
+    readable.on('error', (err) => done(err))
     readable.push(buffer)
     readable.push(null)
     readable.pipe(uploadStream)

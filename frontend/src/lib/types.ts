@@ -20,12 +20,13 @@ export interface Event {
   id: string
   slug: string
   title: string
-  date: string          // ISO 8601, e.g. "2026-09-20T19:00:00Z"
+  eventDate: string     // ISO 8601, e.g. "2026-09-20T12:30:00.000Z"
   venue: string
   description: string
-  flyerUrl?: string
-  lineup: string[]
-  status: 'upcoming' | 'past'
+  flyerUrl?: string | null
+  ticketUrl?: string | null
+  lineup?: string[]
+  status: 'UPCOMING' | 'PAST'
   media?: EventMedia[]
   ticketPhases?: TicketPhase[]
 }

@@ -2,10 +2,10 @@ import express from 'express'
 import helmet from 'helmet'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
-import path from 'path'
 
 import { ticketRequestLimiter, loginLimiter } from './middleware/rateLimiter'
 import { errorHandler } from './middleware/errorHandler'
+import { cacheMiddleware } from './middleware/cache'
 
 import publicEventsRouter from './routes/public/events'
 import publicSettingsRouter from './routes/public/settings'
@@ -16,12 +16,31 @@ import adminRouter from './routes/admin'
 const app = express()
 
 // ── Security headers ──────────────────────────────────────────────────────────
-app.use(helmet())
+// crossOriginResourcePolicy must be 'cross-origin' because the frontend and
+// backend run on different origins (different ports locally, different subdomains
+// in production). The Helmet default 'same-origin' would block the browser from
+// loading videos/images served by this backend from the frontend's origin.
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}))
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+// FRONTEND_URL may be a comma-separated list of allowed origins (useful for
+// local dev where the static-export preview server runs on a different port
+// than the Next.js dev server). In production this should be a single origin.
+const allowedOrigins = (process.env.FRONTEND_URL ?? '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean)
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: (incoming, cb) => {
+      // Allow requests with no Origin header (same-origin / server-to-server)
+      if (!incoming) return cb(null, true)
+      if (allowedOrigins.includes(incoming)) return cb(null, true)
+      cb(new Error(`Origin ${incoming} not allowed by CORS`))
+    },
     credentials: true,
   })
 )
@@ -30,22 +49,14 @@ app.use(
 app.use(express.json())
 app.use(cookieParser())
 
-// ── Static uploads ────────────────────────────────────────────────────────────
-// Override Helmet's default CORP: same-origin so the Next.js frontend (different
-// port) can embed images served from this backend.
-app.use('/uploads', (_req, res, next) => {
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
-  next()
-})
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
-
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) => res.json({ status: 'ok' }))
 
 // ── Public API ────────────────────────────────────────────────────────────────
-app.use('/api/events', publicEventsRouter)
-app.use('/api/settings', publicSettingsRouter)
-app.use('/api/hero-videos', publicHeroVideosRouter)
+const cache = cacheMiddleware(60)
+app.use('/api/events', cache, publicEventsRouter)
+app.use('/api/settings', cache, publicSettingsRouter)
+app.use('/api/hero-videos', cache, publicHeroVideosRouter)
 app.use(
   '/api/ticket-requests',
   ticketRequestLimiter,

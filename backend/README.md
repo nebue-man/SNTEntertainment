@@ -211,3 +211,126 @@ node dist/src/index.js  # run compiled output (note: dist/src/, not dist/)
 The `TicketRequest` model already has `paymentGatewayReference` and
 `paymentGatewayStatus` columns reserved for an online payment gateway integration.
 No email notifications are sent — deferred to Phase 2.
+
+---
+
+## Database operations
+
+### First deployment: seeding the database on the Droplet
+
+When you deploy for the first time, the postgres container starts with an empty
+database. `prisma migrate deploy` (run automatically by the backend's CMD) creates
+the schema, but you still need to populate the data.
+
+**Option A — Carry your local dev data across (recommended)**
+
+Run this on your local Mac before deploying, to export everything from your local
+postgres into a dump file:
+
+```bash
+# From the backend directory on your Mac
+pg_dump "postgresql://dilshan@localhost:5432/snt_events" \
+  --no-owner --no-acl \
+  -f local_export.sql
+```
+
+Then, on the Droplet after `docker compose up -d postgres` is healthy:
+
+```bash
+cat local_export.sql | docker compose exec -T postgres \
+  psql -U snt -d snt_events
+```
+
+**Option B — Fresh start with seed data**
+
+If you'd rather start clean on the Droplet:
+
+```bash
+docker compose exec backend npx ts-node --transpile-only prisma/seed.ts
+```
+
+**Verify data is present after either option:**
+
+```bash
+docker compose exec postgres psql -U snt -d snt_events -c \
+  "SELECT id, title, status FROM \"Event\" ORDER BY \"eventDate\";"
+```
+
+**Apply any pending Prisma migrations (safe to run even if schema is in sync):**
+
+```bash
+docker compose run --rm backend npx prisma migrate deploy
+```
+
+---
+
+### Automated backups
+
+The script `scripts/backup-postgres.sh` dumps the database to `./backups/` on the host filesystem (outside the Docker volume) and deletes files older than 14 days.
+
+**Set up the daily cron on the server** (as the deploy user, once deployed):
+
+```bash
+crontab -e
+```
+
+Add this line (adjust the path to wherever you cloned the repo):
+
+```
+0 3 * * * cd /opt/snt/backend && ./scripts/backup-postgres.sh >> /var/log/snt-backup.log 2>&1
+```
+
+This runs at 03:00 UTC every day. Check `/var/log/snt-backup.log` to confirm it's running.
+
+**Run a manual backup at any time:**
+
+```bash
+cd /opt/snt/backend && ./scripts/backup-postgres.sh
+```
+
+Backup files are saved to `./backups/snt_events_YYYYMMDD_HHMMSS.sql`.
+
+---
+
+### Restoring from a backup file
+
+```bash
+# Pick a backup file
+ls -lh backups/
+
+# Restore (this REPLACES all current data — be sure this is what you want)
+cat backups/snt_events_20260101_030000.sql | docker compose exec -T postgres \
+  psql -U snt -d snt_events
+
+# Re-apply migrations to ensure schema is in sync
+docker compose run --rm backend npx prisma migrate deploy
+```
+
+---
+
+### Verifying database health
+
+```bash
+# Check postgres container is healthy
+docker compose ps postgres
+
+# Quick connectivity test
+docker compose exec postgres pg_isready -U snt -d snt_events
+
+# Count rows in key tables
+docker compose exec postgres psql -U snt -d snt_events -c \
+  "SELECT 'Event' AS tbl, count(*) FROM \"Event\"
+   UNION ALL SELECT 'Admin', count(*) FROM \"Admin\"
+   UNION ALL SELECT 'TicketRequest', count(*) FROM \"TicketRequest\";"
+```
+
+---
+
+### ⚠ Volume warning
+
+The `postgres_data` named volume is the **sole persistent store** for all event data, admin accounts, ticket requests, and settings.
+
+- `docker compose down` — safe: stops containers, volume is preserved.
+- `docker compose down -v` — **DESTRUCTIVE**: deletes the volume and all data. Never run this in production without a verified backup.
+
+Before any redeployment that touches the Docker volumes, run `scripts/backup-postgres.sh` manually and confirm the file exists and is non-empty.
