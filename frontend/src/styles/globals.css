@@ -39,8 +39,8 @@
   --element-gap: 10px;
   --headline-padding-x: clamp(1.5rem, 8vw, 9rem);
   /* Vertical clearance for all non-hero page content.
-     = LOGO_REST_TOP (16px) + LOGO_REST_H (50px) + LOGO_REST_TOP (16px) + clearance (12px) = 94px.
-     Update if LOGO_REST_TOP or LOGO_REST_H change in PersistentLogo.tsx. */
+     = header pt-4 (16px) + LOGO_REST_H (50px) + pb-3 (12px) + clearance (16px) = 94px.
+     Update here if LOGO_REST_H changes in PersistentLogo. */
   --page-top: 94px;
 }
 
@@ -97,14 +97,6 @@
   to   { opacity: 1; }
 }
 
-/* ── Header responsive visibility ───────────────────────────────── */
-.nav-desktop { display: none; }
-.nav-mobile  { display: flex; align-items: center; }
-
-@media (min-width: 768px) {
-  .nav-desktop { display: block; }
-  .nav-mobile  { display: none;  }
-}
 
 @keyframes progress-shimmer {
   0%   { transform: translateX(-300%); }

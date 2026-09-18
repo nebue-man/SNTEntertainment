@@ -12,7 +12,6 @@ import {
   LG_BREAKPOINT,
   LOGO_REST_H,
   LOGO_REST_TOP,
-  LOGO_REST_LEFT,
   LOGO_FILTER_HERO,
   SPIN_RANGE,
   SPIN_DURATION,
@@ -98,7 +97,7 @@ export default function HeroIntro({ slides }: Props) {
       const restW    = sw * scaleDown                      // visual width at rest ≈ LOGO_REST_W
       const tx_start = W / 2 - sw / 2                     // p=0: centre screen
       const ty_start = H * 0.45 - sh / 2 - LOGO_REST_TOP // p=0: 45 % down
-      const tx_end   = LOGO_REST_LEFT                      // p=1: left-aligned in header
+      const tx_end   = W / 2 - restW / 2                  // p=1: centre header
 
       const tx    = tx_start + (tx_end - tx_start) * p
       const ty    = ty_start * (1 - p)

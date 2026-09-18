@@ -60,7 +60,7 @@ export default function BottomNav({ inline = false }: { inline?: boolean }) {
   const dockItems = NAV_ITEMS.map(({ label, href, icon }) => ({
     icon,
     label,
-    className: isActive(href) ? 'active' : '',
+    className: `cursor-target${isActive(href) ? ' active' : ''}`,
     onClick:   () => router.push(href),
   }))
 

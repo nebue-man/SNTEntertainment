@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
-import { Syne } from 'next/font/google'
+import { Montserrat } from 'next/font/google'
 import '@/styles/globals.css'
 import ClientShell from '@/components/layout/ClientShell'
 
-const syne = Syne({
+const montserrat = Montserrat({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['200', '300', '400', '500', '600', '700', '800'],
   variable: '--font-body',
   display: 'swap',
 })
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={syne.variable}>
+    <html lang="en" className={montserrat.variable}>
       <body className="bg-absolute-zero text-ghost-white">
         <ClientShell>{children}</ClientShell>
       </body>
