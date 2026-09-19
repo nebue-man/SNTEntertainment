@@ -24,7 +24,7 @@ export default function WhyChooseSNT() {
       </ScrollReveal>
       <ScrollReveal delay={0.05}>
         <p
-          className="text-ghost-white font-light mb-10"
+          className="text-ghost-white font-bold mb-10"
           style={{
             fontSize: '1.3125rem',
             fontFamily: 'var(--font-body)',

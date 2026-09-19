@@ -29,7 +29,7 @@ export default function AboutPage() {
         <SplitHeadline
           text="We build nights worth remembering."
           as="h1"
-          className="text-ghost-white font-light mb-12 max-w-4xl"
+          className="text-ghost-white font-bold mb-12 max-w-4xl"
           style={{ fontSize: 'var(--text-heading-sm)' }}
         />
 
@@ -59,7 +59,7 @@ export default function AboutPage() {
           <SplitHeadline
             text="What we stand for."
             as="h2"
-            className="text-ghost-white font-light mb-12"
+            className="text-ghost-white font-bold mb-12"
             style={{ fontSize: 'var(--text-heading-sm)' }}
           />
 
@@ -95,7 +95,7 @@ export default function AboutPage() {
           <SplitHeadline
             text="What drives us."
             as="h2"
-            className="text-ghost-white font-light mb-12"
+            className="text-ghost-white font-bold mb-12"
             style={{ fontSize: 'var(--text-heading-sm)' }}
           />
 
@@ -127,7 +127,7 @@ export default function AboutPage() {
           <SplitHeadline
             text="The people behind the sound."
             as="h2"
-            className="text-ghost-white font-light mb-12"
+            className="text-ghost-white font-bold mb-12"
             style={{ fontSize: 'var(--text-heading-sm)' }}
           />
 
