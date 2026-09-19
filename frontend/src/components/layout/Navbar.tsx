@@ -26,7 +26,7 @@ export default function Navbar() {
 
       {/* ── Fixed header — logo only, single row ─────────────────── */}
       <header
-        className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-center pt-4 pb-3"
+        className="fixed top-0 left-0 right-0 z-[200] flex items-center justify-start pt-4 pb-3 pl-6"
         style={{
           background: (isHome && !settled) ? 'transparent' : 'var(--color-absolute-zero)',
           transition: 'background 0.5s ease',
