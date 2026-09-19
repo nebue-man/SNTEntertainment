@@ -9,6 +9,7 @@ const SOCIAL_LINKS = [
     href:       'https://www.instagram.com/snt.entertainments?stkn=aTN2aWwxbGZnM2dv',
     icon:       InstagramIcon,
     hoverColor: '#E1306C',
+    hoverBg:    'rgba(225,48,108,0.1)',
     glow:       'rgba(225,48,108,0.4)',
   },
   {
@@ -16,6 +17,7 @@ const SOCIAL_LINKS = [
     href:       'https://www.facebook.com/share/19XsPVGkZc/',
     icon:       FacebookIcon,
     hoverColor: '#1877F2',
+    hoverBg:    'rgba(24,119,242,0.1)',
     glow:       'rgba(24,119,242,0.4)',
   },
   {
@@ -23,6 +25,7 @@ const SOCIAL_LINKS = [
     href:       'https://www.tiktok.com/@snt.entertainments?_r=1&_t=ZS-99ZxubCR1kO',
     icon:       TikTokIcon,
     hoverColor: '#ffffff',
+    hoverBg:    'rgba(255,255,255,0.1)',
     glow:       'rgba(255,255,255,0.25)',
   },
   {
@@ -30,6 +33,7 @@ const SOCIAL_LINKS = [
     href:       'https://wa.me/94705542542',
     icon:       WhatsAppIcon,
     hoverColor: '#25D366',
+    hoverBg:    'rgba(37,211,102,0.1)',
     glow:       'rgba(37,211,102,0.4)',
   },
 ]
@@ -123,12 +127,13 @@ export default function Footer() {
 }
 
 function SocialIcon({
-  label, href, icon: Icon, hoverColor, glow,
+  label, href, icon: Icon, hoverColor, hoverBg, glow,
 }: {
   label:      string
   href:       string
   icon:       (props: SVGProps<SVGSVGElement>) => React.ReactElement
   hoverColor: string
+  hoverBg:    string
   glow:       string
 }) {
   const [hovered, setHovered] = useState(false)
@@ -141,13 +146,19 @@ function SocialIcon({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        color:      hovered ? hoverColor : 'rgba(255,255,255,0.38)',
-        filter:     hovered ? `drop-shadow(0 0 8px ${glow})` : 'none',
-        transition: 'color 0.2s ease, filter 0.2s ease',
-        display:    'flex',
+        display:        'flex',
+        alignItems:     'center',
+        justifyContent: 'center',
+        width:          44,
+        height:         44,
+        borderRadius:   10,
+        background:     hovered ? hoverBg : 'rgba(255,255,255,0.06)',
+        color:          hovered ? hoverColor : 'rgba(255,255,255,0.75)',
+        filter:         hovered ? `drop-shadow(0 0 8px ${glow})` : 'none',
+        transition:     'color 0.2s ease, background 0.2s ease, filter 0.2s ease',
       }}
     >
-      <Icon style={{ width: 22, height: 22 }} />
+      <Icon style={{ width: 18, height: 18 }} />
     </a>
   )
 }
@@ -223,15 +234,19 @@ function ContactItem({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        display:      'flex',
-        alignItems:   'center',
-        color:        hovered ? 'var(--color-electric-lime)' : 'rgba(255,255,255,0.38)',
-        filter:       hovered ? 'drop-shadow(0 0 8px rgba(211,253,80,0.4))' : 'none',
-        transition:   'color 0.2s ease, filter 0.2s ease',
-        minHeight:    '44px',
+        display:        'flex',
+        alignItems:     'center',
+        justifyContent: 'center',
+        width:          44,
+        height:         44,
+        borderRadius:   10,
+        background:     hovered ? 'rgba(211,253,80,0.1)' : 'rgba(255,255,255,0.06)',
+        color:          hovered ? '#d3fd50' : 'rgba(255,255,255,0.75)',
+        filter:         hovered ? 'drop-shadow(0 0 8px rgba(211,253,80,0.4))' : 'none',
+        transition:     'color 0.2s ease, background 0.2s ease, filter 0.2s ease',
       }}
     >
-      <Icon style={{ width: 22, height: 22 }} />
+      <Icon style={{ width: 18, height: 18 }} />
     </a>
   )
 }
