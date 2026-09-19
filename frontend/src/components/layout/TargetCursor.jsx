@@ -103,6 +103,7 @@ const TargetCursor = ({
       yPercent: -50,
       x: window.innerWidth  / 2 - initialOffset.x,
       y: window.innerHeight / 2 - initialOffset.y,
+      opacity: 1,
     })
 
     const createSpinTimeline = () => {
