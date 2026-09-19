@@ -5,45 +5,28 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useLogoSettled } from './LogoContext'
 import JellyRadio from './JellyRadio'
 
-const labelStyle: React.CSSProperties = {
-  fontSize:      10,
-  fontWeight:    400,
-  letterSpacing: '0.13em',
-  textTransform: 'uppercase',
-  fontFamily:    'var(--font-body)',
-}
-
-const NAV_ITEMS = [
-  {
-    value: '/',
-    label: <span style={labelStyle}>HOME</span>,
-  },
-  {
-    value: '/events/upcoming',
-    label: <span style={labelStyle}>UPCOMING</span>,
-  },
-  {
-    value: '/events/past',
-    label: (
-      <>
-        <span style={labelStyle} className="hidden lg:inline">PAST EVENTS</span>
-        <span style={labelStyle} className="lg:hidden">PAST</span>
-      </>
-    ),
-  },
-  {
-    value: '/about',
-    label: <span style={labelStyle}>ABOUT</span>,
-  },
+const NAV_VALUES = [
+  { value: '/',                label: 'HOME'     },
+  { value: '/events/upcoming', label: 'UPCOMING' },
+  { value: '/events/past',     labelFull: 'PAST EVENTS', labelShort: 'PAST' },
+  { value: '/about',           label: 'ABOUT'    },
 ]
 
 export default function BottomNav() {
-  const pathname        = usePathname()
-  const router          = useRouter()
-  const { settled }     = useLogoSettled()
-  const [mounted, setMounted] = useState(false)
+  const pathname  = usePathname()
+  const router    = useRouter()
+  const { settled } = useLogoSettled()
 
-  useEffect(() => { setMounted(true) }, [])
+  const [mounted,  setMounted]  = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640)
+    check()
+    setMounted(true)
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   if (!mounted) return null
 
@@ -51,16 +34,38 @@ export default function BottomNav() {
   const visible = !isHome || settled
 
   const activeValue =
-    NAV_ITEMS.find(item =>
+    NAV_VALUES.find(item =>
       item.value === '/' ? pathname === '/' : pathname.startsWith(item.value)
     )?.value ?? '/'
+
+  const labelStyle: React.CSSProperties = {
+    fontSize:      isMobile ? 9 : 10,
+    fontWeight:    700,
+    letterSpacing: isMobile ? '0.09em' : '0.13em',
+    textTransform: 'uppercase',
+    fontFamily:    'var(--font-body)',
+  }
+
+  const navItems = NAV_VALUES.map(item => ({
+    value: item.value,
+    label: 'labelFull' in item ? (
+      <>
+        <span style={labelStyle} className="hidden lg:inline">{item.labelFull}</span>
+        <span style={labelStyle} className="lg:hidden">{item.labelShort}</span>
+      </>
+    ) : (
+      <span style={labelStyle}>{item.label}</span>
+    ),
+  }))
 
   return (
     <div
       className="cursor-target"
       style={{
         position:             'fixed',
-        bottom:               '2rem',
+        bottom:               isMobile
+          ? 'calc(1.25rem + env(safe-area-inset-bottom, 0px))'
+          : '2rem',
         left:                 '50%',
         transform:            'translateX(-50%)',
         zIndex:               150,
@@ -76,18 +81,18 @@ export default function BottomNav() {
       }}
     >
       <JellyRadio
-        items={NAV_ITEMS}
+        items={navItems}
         value={activeValue}
         onChange={(val: string) => router.push(val)}
         chipColor="transparent"
         activeColor="#d3fd50"
         textColor="rgba(255,255,255,0.5)"
         activeTextColor="#000000"
-        size="md"
-        gap={6}
+        size={isMobile ? 'sm' : 'md'}
+        gap={isMobile ? 3 : 6}
         radius={999}
         swell={0.15}
-        barge={3}
+        barge={isMobile ? 2 : 3}
         shrink={0.03}
         jelly={1}
         bounce={0.18}
