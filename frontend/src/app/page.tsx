@@ -7,7 +7,6 @@ import HeroIntro from '@/components/media/HeroIntro'
 import ScrollReveal from '@/components/ui/ScrollReveal'
 import SplitHeadline from '@/components/ui/SplitHeadline'
 import GhostButton from '@/components/ui/GhostButton'
-import AllEventsButton from '@/components/ui/AllEventsButton'
 import FlyerCard from '@/components/events/FlyerCard'
 import LoadingGate from '@/components/ui/LoadingGate'
 import WhyChooseSNT from '@/components/ui/WhyChooseSNT'
@@ -163,9 +162,6 @@ export default function Home() {
             className="text-ghost-white font-bold"
             style={{ fontSize: 'var(--text-heading-sm)' }}
           />
-          <ScrollReveal delay={0.1}>
-            <AllEventsButton href="/events/upcoming" />
-          </ScrollReveal>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {upcoming.slice(0, 4).map((event, i) => (
