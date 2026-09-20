@@ -344,14 +344,11 @@ export default function HeroIntro({ slides }: Props) {
           >
             <div style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
               {/* ── Three-line hero text block ─────────────────────── */}
-              {/* text-center on mobile creates a cinematic full-width statement;
-                  sm:text-left restores editorial left-alignment on wider screens */}
-              <div className="mb-10 text-center sm:text-left">
-                {/* Line 1 — dominant brand mark, ultra-light wide tracking for prestige */}
+              <div className="mb-10 text-left">
                 <h1
                   style={{
                     fontSize:      'clamp(1.1rem, 4.5vw, 2.75rem)',
-                    fontWeight:    200,
+                    fontWeight:    700,
                     letterSpacing: '0.22em',
                     lineHeight:    1.15,
                     color:         'var(--color-ghost-white)',
