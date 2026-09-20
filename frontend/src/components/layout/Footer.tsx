@@ -256,7 +256,7 @@ function ContactItem({
 
 function InstagramIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} {...props}>
       <rect x="3" y="3" width="18" height="18" rx="5" />
       <circle cx="12" cy="12" r="4.2" />
       <circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none" />
@@ -266,7 +266,7 @@ function InstagramIcon(props: SVGProps<SVGSVGElement>) {
 
 function FacebookIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} {...props}>
       <circle cx="12" cy="12" r="9" />
       <path d="M13.5 21v-6.5H16l.4-2.8h-2.9v-1.8c0-.8.4-1.6 1.7-1.6h1.3V5.9s-1.2-.2-2.3-.2c-2.3 0-3.9 1.4-3.9 4v2h-2.6v2.8h2.6V21" />
     </svg>
@@ -275,7 +275,7 @@ function FacebookIcon(props: SVGProps<SVGSVGElement>) {
 
 function TikTokIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} {...props}>
       <path d="M14 4v9.5a3 3 0 1 1-2.4-2.94" />
       <path d="M14 4c.4 2.2 2 3.8 4.2 4.1" />
     </svg>
@@ -284,7 +284,7 @@ function TikTokIcon(props: SVGProps<SVGSVGElement>) {
 
 function WhatsAppIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} {...props}>
       <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
     </svg>
   )
@@ -300,7 +300,7 @@ function PhoneIcon(props: SVGProps<SVGSVGElement>) {
 
 function MailIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} {...props}>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} {...props}>
       <rect x="2" y="4" width="20" height="16" rx="2" />
       <path d="m2 7 10 7 10-7" />
     </svg>
