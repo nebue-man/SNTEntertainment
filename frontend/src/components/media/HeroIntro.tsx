@@ -363,13 +363,14 @@ export default function HeroIntro({ slides }: Props) {
                 {/* Line 2 — full legal name, fluid size, wraps naturally on small screens */}
                 <p
                   style={{
-                    fontSize:      'clamp(0.5rem, 3.2vw, 1rem)',
+                    fontSize:      'clamp(0.5rem, 2.5vw, 1rem)',
                     fontWeight:    300,
-                    letterSpacing: '0.1em',
+                    letterSpacing: '0.06em',
                     lineHeight:    1.6,
                     color:         'rgba(255,255,255,0.4)',
                     marginBottom:  '0.85rem',
                     fontFamily:    'var(--font-body)',
+                    whiteSpace:    'nowrap',
                   }}
                 >
                   SNT ENTERTAINMENTS AND MANAGEMENT (Pvt) Ltd
