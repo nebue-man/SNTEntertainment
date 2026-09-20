@@ -3,6 +3,8 @@ import { memo, startTransition, useCallback, useEffect, useMemo, useRef, useStat
 import { motion, AnimatePresence, type TargetAndTransition, type Transition } from 'framer-motion'
 import type { PastApiEvent } from '@/lib/types'
 import { resolveMediaUrl } from '@/lib/mediaUrl'
+import SplitHeadline from '@/components/ui/SplitHeadline'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 // ── Constants ──────────────────────────────────────────────────────────────────
 
@@ -490,12 +492,15 @@ export default function PastEventsCoverflow({ events, initialSlug }: { events: P
         className="pb-10"
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
-        <h1
-          className="text-ghost-white font-light"
+        <ScrollReveal>
+          <p className="text-caption text-electric-lime tracking-widest uppercase mb-4 font-bold">Past Events</p>
+        </ScrollReveal>
+        <SplitHeadline
+          text="Our work speaks."
+          as="h1"
+          className="text-ghost-white font-bold mb-14"
           style={{ fontSize: 'var(--text-heading-sm)' }}
-        >
-          PAST EVENTS
-        </h1>
+        />
       </div>
 
       {/* Coverflow stage */}
