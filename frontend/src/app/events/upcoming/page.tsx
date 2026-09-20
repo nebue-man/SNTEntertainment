@@ -44,7 +44,7 @@ export default function UpcomingEventsPage() {
 
       <div className="pb-12" style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}>
         <ScrollReveal>
-          <p className="text-caption text-electric-lime tracking-widest uppercase mb-4">Upcoming Event</p>
+          <p className="text-caption text-electric-lime tracking-widest uppercase mb-4 font-bold">Upcoming Event</p>
         </ScrollReveal>
         <SplitHeadline
           text="What's next."

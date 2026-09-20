@@ -22,7 +22,7 @@ export default function AboutPage() {
 
         {/* ── Company History ──────────────────────────────────────────── */}
         <ScrollReveal>
-          <p className="text-caption text-electric-lime tracking-widest uppercase mb-4">
+          <p className="text-caption text-electric-lime tracking-widest uppercase mb-4 font-bold">
             Company History
           </p>
         </ScrollReveal>
@@ -52,7 +52,7 @@ export default function AboutPage() {
         {/* ── Mission & Vision ─────────────────────────────────────────── */}
         <div className="border-t border-pewter/20 pt-20 mb-20">
           <ScrollReveal>
-            <p className="text-caption text-electric-lime tracking-widest uppercase mb-4">
+            <p className="text-caption text-electric-lime tracking-widest uppercase mb-4 font-bold">
               Mission &amp; Vision
             </p>
           </ScrollReveal>
@@ -66,7 +66,7 @@ export default function AboutPage() {
           <ScrollReveal delay={0.1}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
               <div className="border border-pewter/20 p-8 md:p-10">
-                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Mission</p>
+                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6 font-bold">Mission</p>
                 <p className="text-body text-pewter leading-relaxed">
                   To deliver world-class event production and entertainment management services
                   by combining creativity, innovation, and operational excellence, ensuring every
@@ -74,7 +74,7 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="border border-pewter/20 p-8 md:p-10">
-                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Vision</p>
+                <p className="text-caption text-electric-lime tracking-widest uppercase mb-6 font-bold">Vision</p>
                 <p className="text-body text-pewter leading-relaxed">
                   To become Sri Lanka&apos;s leading event production and entertainment management
                   company, recognized internationally for excellence, innovation, and delivering
@@ -88,7 +88,7 @@ export default function AboutPage() {
         {/* ── Core Values ──────────────────────────────────────────────── */}
         <div className="border-t border-pewter/20 pt-20 mb-20">
           <ScrollReveal>
-            <p className="text-caption text-electric-lime tracking-widest uppercase mb-4">
+            <p className="text-caption text-electric-lime tracking-widest uppercase mb-4 font-bold">
               Core Values
             </p>
           </ScrollReveal>
@@ -104,7 +104,7 @@ export default function AboutPage() {
               <ScrollReveal key={v.num} delay={i * 0.06}>
                 <div className="flex gap-6">
                   <span
-                    className="text-caption text-electric-lime tracking-widest font-light shrink-0"
+                    className="text-caption text-electric-lime tracking-widest font-bold shrink-0"
                     style={{ marginTop: '3px' }}
                   >
                     {v.num}
@@ -122,7 +122,7 @@ export default function AboutPage() {
         {/* ── Team ─────────────────────────────────────────────────────── */}
         <div className="border-t border-pewter/20 pt-20 mb-20">
           <ScrollReveal>
-            <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Meet the Leadership</p>
+            <p className="text-caption text-electric-lime tracking-widest uppercase mb-6 font-bold">Meet the Leadership</p>
           </ScrollReveal>
           <SplitHeadline
             text="The people behind the sound."

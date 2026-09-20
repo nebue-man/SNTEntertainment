@@ -27,7 +27,7 @@ export default function TicketPhaseCard({ phase, selected, onSelect }: Props) {
         <div>
           <p className="text-body-lg text-ghost-white font-light">{phase.name}</p>
           {phase.isSoldOut && (
-            <p className="text-caption text-electric-lime tracking-widest uppercase mt-1">Sold out</p>
+            <p className="text-caption text-electric-lime tracking-widest uppercase mt-1 font-bold">Sold out</p>
           )}
           {!phase.isSoldOut && !phase.isActive && (
             <p className="text-caption text-pewter tracking-widest uppercase mt-1">Coming soon</p>
@@ -44,7 +44,7 @@ export default function TicketPhaseCard({ phase, selected, onSelect }: Props) {
             className="inline-block w-1.5 h-1.5 rounded-full"
             style={{ backgroundColor: 'var(--color-electric-lime)' }}
           />
-          <span className="text-caption text-electric-lime tracking-widest uppercase">Selected</span>
+          <span className="text-caption text-electric-lime tracking-widest uppercase font-bold">Selected</span>
         </div>
       )}
     </button>

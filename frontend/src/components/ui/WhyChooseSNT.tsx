@@ -27,22 +27,17 @@ export default function WhyChooseSNT() {
     <>
       <ScrollReveal>
         <p
-          className="text-electric-lime tracking-widest uppercase mb-3"
-          style={{ fontSize: 'var(--text-heading-sm)', fontWeight: 400 }}
+          className="text-caption text-electric-lime tracking-widest uppercase mb-3 font-bold"
         >
-          Why Choose SNT
+          Built to deliver.
         </p>
       </ScrollReveal>
       <ScrollReveal delay={0.05}>
         <p
           className="text-ghost-white font-bold mb-10"
-          style={{
-            fontSize: '1.3125rem',
-            fontFamily: 'var(--font-body)',
-            letterSpacing: '0.02em',
-          }}
+          style={{ fontSize: 'var(--text-heading-sm)' }}
         >
-          Built to deliver.
+          Why Choose SNT
         </p>
       </ScrollReveal>
       <div className="grid grid-cols-2 gap-3 max-w-4xl">

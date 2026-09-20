@@ -38,7 +38,7 @@ export default function FlyerCard({ event }: Props) {
       </div>
 
       <div className="p-5 border-t border-pewter/20 flex flex-col gap-1.5">
-        <p className="text-caption text-electric-lime tracking-widest uppercase">
+        <p className="text-caption text-electric-lime tracking-widest uppercase font-bold">
           {formatDate(event.eventDate)}
         </p>
         <h3 className={`text-body-lg text-ghost-white font-light line-clamp-2${hasLink ? ' group-hover:text-electric-lime transition-colors' : ''}`}>

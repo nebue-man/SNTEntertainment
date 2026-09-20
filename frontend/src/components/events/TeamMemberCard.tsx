@@ -39,7 +39,7 @@ export default function TeamMemberCard({ member, isExpanded, onMouseEnter, onMou
 
       <div>
         <p className="text-body text-ghost-white font-light">{member.name}</p>
-        <p className="text-body-sm text-electric-lime">{member.role}</p>
+        <p className="text-body-sm text-electric-lime font-bold">{member.role}</p>
 
         {/* Bio — animates from height 0 → auto on expand */}
         <motion.div

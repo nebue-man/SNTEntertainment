@@ -81,7 +81,7 @@ export default function EmailCaptureModal({ open, onClose, eventId, phaseName, p
           >
             <div className="flex items-start justify-between mb-8">
               <div>
-                <p className="text-caption text-electric-lime tracking-widest uppercase mb-1">
+                <p className="text-caption text-electric-lime tracking-widest uppercase mb-1 font-bold">
                   Ticket Request
                 </p>
                 <h2 id="modal-title" className="text-heading-sm text-ghost-white font-light">

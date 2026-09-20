@@ -24,7 +24,7 @@ export default function EventTicketSection({ eventId, phases }: Props) {
     <>
       <ScrollReveal>
         <div className="border-t border-pewter/20 pt-16">
-          <p className="text-caption text-electric-lime tracking-widest uppercase mb-6">Tickets</p>
+          <p className="text-caption text-electric-lime tracking-widest uppercase mb-6 font-bold">Tickets</p>
           <p className="text-body-sm text-pewter mb-10 max-w-md leading-relaxed">
             Select a ticket phase to request your spot. Our team will contact you with payment
             details by email.
