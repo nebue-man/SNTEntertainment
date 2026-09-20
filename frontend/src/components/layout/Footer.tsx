@@ -5,12 +5,12 @@ import { useState } from 'react'
 
 const SOCIAL_LINKS = [
   {
-    label:      'Instagram',
-    href:       'https://www.instagram.com/snt.entertainments?stkn=aTN2aWwxbGZnM2dv',
-    icon:       InstagramIcon,
-    hoverColor: '#E1306C',
-    hoverBg:    'rgba(225,48,108,0.1)',
-    glow:       'rgba(225,48,108,0.4)',
+    label:      'WhatsApp',
+    href:       'https://wa.me/94705542542',
+    icon:       WhatsAppIcon,
+    hoverColor: '#25D366',
+    hoverBg:    'rgba(37,211,102,0.1)',
+    glow:       'rgba(37,211,102,0.4)',
   },
   {
     label:      'Facebook',
@@ -21,20 +21,20 @@ const SOCIAL_LINKS = [
     glow:       'rgba(24,119,242,0.4)',
   },
   {
+    label:      'Instagram',
+    href:       'https://www.instagram.com/snt.entertainments?stkn=aTN2aWwxbGZnM2dv',
+    icon:       InstagramIcon,
+    hoverColor: '#E1306C',
+    hoverBg:    'rgba(225,48,108,0.1)',
+    glow:       'rgba(225,48,108,0.4)',
+  },
+  {
     label:      'TikTok',
     href:       'https://www.tiktok.com/@snt.entertainments?_r=1&_t=ZS-99ZxubCR1kO',
     icon:       TikTokIcon,
     hoverColor: '#ffffff',
     hoverBg:    'rgba(255,255,255,0.1)',
     glow:       'rgba(255,255,255,0.25)',
-  },
-  {
-    label:      'WhatsApp',
-    href:       'https://wa.me/94705542542',
-    icon:       WhatsAppIcon,
-    hoverColor: '#25D366',
-    hoverBg:    'rgba(37,211,102,0.1)',
-    glow:       'rgba(37,211,102,0.4)',
   },
 ]
 
@@ -90,9 +90,9 @@ export default function Footer() {
             {/* Row 1 — Hotline */}
             <HotlineRow />
 
-            {/* Row 2 — Social icons + email */}
+            {/* Row 2 — Social icons + email: WhatsApp, Facebook, Instagram, Mail, TikTok */}
             <div className="flex items-center justify-center gap-x-7">
-              {SOCIAL_LINKS.map((s) => (
+              {SOCIAL_LINKS.slice(0, 3).map((s) => (
                 <SocialIcon key={s.label} {...s} />
               ))}
               <ContactItem
@@ -100,6 +100,9 @@ export default function Footer() {
                 href="mailto:info.sntentertainments@gmail.com"
                 icon={MailIcon}
               />
+              {SOCIAL_LINKS.slice(3).map((s) => (
+                <SocialIcon key={s.label} {...s} />
+              ))}
             </div>
 
           </div>
