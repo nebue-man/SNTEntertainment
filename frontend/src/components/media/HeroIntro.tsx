@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import Link from 'next/link'
 import LogoSvg from '@/components/ui/LogoSvg'
@@ -40,8 +40,25 @@ export default function HeroIntro({ slides }: Props) {
   const [stageH, setStageH] = useState(LOGO_STAGE_H)
   const stageHRef = useRef(LOGO_STAGE_H)
 
+  const [slideIdx, setSlideIdx] = useState(0)
+  const [dimming, setDimming]   = useState(false)
+
   const lenis = useLenis()
   const setScrollProgress = useSetLogoScrollProgress()
+
+  const advanceSlide = useCallback(() => {
+    setDimming(true)
+    setTimeout(() => {
+      setSlideIdx(i => (i + 1) % slides.length)
+      setTimeout(() => setDimming(false), 400)
+    }, 400)
+  }, [slides.length])
+
+  useEffect(() => {
+    if (slides.length <= 1) return
+    const id = setInterval(advanceSlide, 5000)
+    return () => clearInterval(id)
+  }, [slides.length, advanceSlide])
 
   // Runs synchronously before first paint so the large-logo frame is never seen
   // when arriving via a logo click from another page.
@@ -184,7 +201,7 @@ export default function HeroIntro({ slides }: Props) {
     }
   }, [lenis, setScrollProgress])
 
-  const heroSrc = slides[0]?.src ?? ''
+  const heroSrc = slides[slideIdx]?.src ?? ''
   const stageW = Math.round(stageH * (383 / 421))
 
   return (
@@ -327,6 +344,19 @@ export default function HeroIntro({ slides }: Props) {
               height:        '65%',
               background:    'linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.48) 35%, transparent 70%)',
               zIndex:        2,
+              pointerEvents: 'none',
+            }}
+          />
+
+          {/* ── Slide transition dim ─────────────────────────────── */}
+          <div
+            style={{
+              position:      'absolute',
+              inset:         0,
+              background:    'black',
+              zIndex:        4,
+              opacity:       dimming ? 0.75 : 0,
+              transition:    'opacity 0.4s ease',
               pointerEvents: 'none',
             }}
           />

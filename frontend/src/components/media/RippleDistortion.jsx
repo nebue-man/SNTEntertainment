@@ -168,6 +168,7 @@ const RippleDistortion = ({
   const mountRef = useRef(null);
   const configRef = useRef({});
   const uniformsRef = useRef(null);
+  const imageTextureRef = useRef(null);
 
   configRef.current = { brushSize, spread, fade, spacing, clickStrength, trigger, enabled };
 
@@ -200,19 +201,9 @@ const RippleDistortion = ({
       wrapS: gl.CLAMP_TO_EDGE,
       wrapT: gl.CLAMP_TO_EDGE,
     });
+    imageTextureRef.current = imageTexture;
 
     let disposed = false;
-    if (src) {
-      const image = new window.Image();
-      image.crossOrigin = 'anonymous';
-      image.decoding = 'async';
-      image.onload = () => {
-        if (disposed) return;
-        imageTexture.image = image;
-        compositeUniforms.uTextureSize.value = [image.naturalWidth || 1, image.naturalHeight || 1];
-      };
-      image.src = src;
-    }
 
     const offsets = new Float32Array(MAX_WAVES * 2);
     const scales = new Float32Array(MAX_WAVES * 2);
@@ -389,11 +380,29 @@ const RippleDistortion = ({
       window.removeEventListener('pointermove', onMove);
       window.removeEventListener('pointerdown', onDown);
       uniformsRef.current = null;
+      imageTextureRef.current = null;
       if (canvas.parentNode === mount) mount.removeChild(canvas);
       const ext = gl.getExtension('WEBGL_lose_context');
       if (ext) ext.loseContext();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quality]);
+
+  // Swap texture when src changes — no GL teardown
+  useEffect(() => {
+    if (!src || !imageTextureRef.current) return;
+    let cancelled = false;
+    const image = new window.Image();
+    image.crossOrigin = 'anonymous';
+    image.decoding = 'async';
+    image.onload = () => {
+      if (cancelled || !imageTextureRef.current) return;
+      imageTextureRef.current.image = image;
+      const u = uniformsRef.current;
+      if (u) u.composite.uTextureSize.value = [image.naturalWidth || 1, image.naturalHeight || 1];
+    };
+    image.src = src;
+    return () => { cancelled = true; };
   }, [src, quality]);
 
   useEffect(() => {
