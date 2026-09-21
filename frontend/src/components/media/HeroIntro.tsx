@@ -379,7 +379,7 @@ export default function HeroIntro({ slides }: Props) {
                 {/* Line 3 — refined prestige note */}
                 <p
                   style={{
-                    fontSize:      'clamp(1rem, 1.6vw, 1.25rem)',
+                    fontSize:      'clamp(0.7rem, 3.2vw, 1.25rem)',
                     fontWeight:    400,
                     letterSpacing: '0.12em',
                     lineHeight:    1.4,
