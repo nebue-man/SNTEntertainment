@@ -45,7 +45,7 @@ export default function WhyChooseSNT() {
           <ScrollReveal key={i} delay={0.05 + i * 0.06} className="h-full">
             <div className="border border-pewter/20 p-4 h-full flex flex-col">
               <Icon size={20} className="text-electric-lime shrink-0" />
-              <p className="text-body-sm text-ghost-white leading-relaxed mt-3 flex-1 text-justify">{text}</p>
+              <p className="text-body-sm text-ghost-white leading-relaxed mt-3 flex-1">{text}</p>
             </div>
           </ScrollReveal>
         ))}
