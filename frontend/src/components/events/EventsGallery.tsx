@@ -39,7 +39,7 @@ export default function EventsGallery({ items }: Props) {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-body text-pewter py-16 text-center">No items match the selected filters.</p>
+        <p className="text-body text-pewter py-16 text-left">No items match the selected filters.</p>
       ) : (
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
           {filtered.map((item) => (

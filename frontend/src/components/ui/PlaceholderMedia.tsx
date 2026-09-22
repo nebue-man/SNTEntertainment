@@ -28,7 +28,7 @@ export default function PlaceholderMedia({
       <div className="text-pewter">
         {type === 'video' ? <Film size={32} strokeWidth={1} /> : <ImageIcon size={32} strokeWidth={1} />}
       </div>
-      <p className="text-caption text-pewter text-center max-w-[200px] leading-relaxed px-4">
+      <p className="text-caption text-pewter text-left max-w-[200px] leading-relaxed px-4">
         {label}
       </p>
     </div>

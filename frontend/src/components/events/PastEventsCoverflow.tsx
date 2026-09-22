@@ -557,7 +557,7 @@ export default function PastEventsCoverflow({ events, initialSlug }: { events: P
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-center text-pewter/30 text-[10px] tracking-[0.25em] uppercase mt-8 pb-[96px] select-none"
+            className="text-left text-pewter/30 text-[10px] tracking-[0.25em] uppercase mt-8 pb-[96px] select-none"
           >
             Click any event to explore photos
           </motion.p>
