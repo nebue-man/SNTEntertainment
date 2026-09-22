@@ -65,17 +65,17 @@ export default function AboutPage() {
 
           <ScrollReveal delay={0.1}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl">
-              <div className="border border-pewter/20 p-8 md:p-10">
+              <div className="border border-pewter/20 p-8 md:p-10 flex flex-col">
                 <p className="text-caption text-electric-lime tracking-widest uppercase mb-6 font-bold">Mission</p>
-                <p className="text-body text-pewter leading-relaxed">
+                <p className="text-body text-pewter leading-relaxed flex-1 text-justify">
                   To deliver world-class event production and entertainment management services
                   by combining creativity, innovation, and operational excellence, ensuring every
                   event exceeds client expectations and creates unforgettable experiences.
                 </p>
               </div>
-              <div className="border border-pewter/20 p-8 md:p-10">
+              <div className="border border-pewter/20 p-8 md:p-10 flex flex-col">
                 <p className="text-caption text-electric-lime tracking-widest uppercase mb-6 font-bold">Vision</p>
-                <p className="text-body text-pewter leading-relaxed">
+                <p className="text-body text-pewter leading-relaxed flex-1 text-justify">
                   To become Sri Lanka&apos;s leading event production and entertainment management
                   company, recognized internationally for excellence, innovation, and delivering
                   extraordinary live experiences.

@@ -37,7 +37,7 @@ export default function TeamMemberCard({ member, isExpanded, onMouseEnter, onMou
         )}
       </div>
 
-      <div>
+      <div className="flex flex-col">
         <p className="text-body text-ghost-white font-light">{member.name}</p>
         <p className="text-body-sm text-electric-lime font-bold">{member.role}</p>
 
@@ -52,7 +52,7 @@ export default function TeamMemberCard({ member, isExpanded, onMouseEnter, onMou
           transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
           style={{ overflow: 'hidden' }}
         >
-          <p className="text-body-sm text-pewter mt-2 leading-relaxed">{member.bio}</p>
+          <p className="text-body-sm text-pewter mt-2 leading-relaxed text-justify">{member.bio}</p>
         </motion.div>
       </div>
     </div>

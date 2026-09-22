@@ -42,10 +42,10 @@ export default function WhyChooseSNT() {
       </ScrollReveal>
       <div className="grid grid-cols-2 gap-3 max-w-4xl">
         {items.map(({ text, icon: Icon }, i) => (
-          <ScrollReveal key={i} delay={0.05 + i * 0.06}>
-            <div className="border border-pewter/20 p-4">
-              <Icon size={20} className="text-electric-lime" />
-              <p className="text-body-sm text-ghost-white leading-relaxed mt-3">{text}</p>
+          <ScrollReveal key={i} delay={0.05 + i * 0.06} className="h-full">
+            <div className="border border-pewter/20 p-4 h-full flex flex-col">
+              <Icon size={20} className="text-electric-lime shrink-0" />
+              <p className="text-body-sm text-ghost-white leading-relaxed mt-3 flex-1 text-justify">{text}</p>
             </div>
           </ScrollReveal>
         ))}
