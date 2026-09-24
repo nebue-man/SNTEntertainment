@@ -21,6 +21,10 @@ import {
 const inputCls = 'w-full bg-transparent border border-[#4d4d4d] px-4 py-2.5 text-sm focus:outline-none focus:border-white transition-colors'
 const labelCls = 'block text-[11px] tracking-[0.2em] uppercase text-white/40 mb-2'
 
+function makeSlug(title: string): string {
+  return title.toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim().replace(/[\s]+/g, '-')
+}
+
 // ── Details Tab ────────────────────────────────────────────────────────────────
 
 function DetailsTab({ event, onSaved }: { event: AdminEventDetail; onSaved: () => void }) {
@@ -48,7 +52,9 @@ function DetailsTab({ event, onSaved }: { event: AdminEventDetail; onSaved: () =
     setMsg('')
     try {
       const form = new FormData()
-      Object.entries(fields).forEach(([k, v]) => form.append(k, v))
+      Object.entries(fields).forEach(([k, v]) =>
+        form.append(k, k === 'slug' ? makeSlug(v) : v)
+      )
       const rawDate = dateRef.current?.value
       if (rawDate) form.append('eventDate', new Date(rawDate).toISOString())
       if (flyer) form.append('flyer', flyer)

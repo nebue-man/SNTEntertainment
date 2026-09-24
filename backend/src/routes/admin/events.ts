@@ -135,6 +135,7 @@ router.patch(
 
       const updateData: Record<string, unknown> = { ...body.data }
       if (body.data.eventDate) updateData.eventDate = new Date(body.data.eventDate)
+      if (body.data.slug) updateData.slug = makeSlug(body.data.slug)
 
       if (req.file) {
         // Upload new flyer; delete old Cloudinary asset if there was one
