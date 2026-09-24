@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import app from './app'
+import { startScheduler } from './lib/scheduler'
 
 const REQUIRED_ENV = [
   'DATABASE_URL',
@@ -20,4 +21,5 @@ const PORT = parseInt(process.env.PORT ?? '4000', 10)
 
 app.listen(PORT, () => {
   console.log(`SNT backend running on port ${PORT}`)
+  startScheduler()
 })
