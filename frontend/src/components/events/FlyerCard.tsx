@@ -14,8 +14,15 @@ function formatDate(iso: string) {
   })
 }
 
+function computeSoldOut(event: Event): boolean {
+  const active = event.ticketPhases?.filter(p => p.isActive)
+  if (!active || active.length === 0) return false
+  return active.every(p => p.isSoldOut)
+}
+
 export default function FlyerCard({ event }: Props) {
   const hasLink = !!event.ticketUrl
+  const soldOut = hasLink && computeSoldOut(event)
 
   return (
     <div className="group block border border-pewter/20 hover:border-pewter/50 transition-colors duration-300 overflow-hidden">
@@ -46,7 +53,11 @@ export default function FlyerCard({ event }: Props) {
         </h3>
         <p className="text-body-sm text-pewter truncate mb-3">{event.venue}</p>
 
-        {hasLink ? (
+        {soldOut ? (
+          <div className="w-full py-3 border border-red-500/30 text-red-400/60 text-[11px] tracking-[0.2em] uppercase text-center cursor-default select-none">
+            Sold Out
+          </div>
+        ) : hasLink ? (
           <a
             href={event.ticketUrl!}
             target="_blank"

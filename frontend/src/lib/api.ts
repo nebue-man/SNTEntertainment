@@ -15,9 +15,26 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>
 }
 
+type RawPhase = { id: string; name: string; price: number; currency: string; quantityAvailable: number; quantitySold: number }
+type RawEvent = Omit<Event, 'ticketPhases'> & { phases?: RawPhase[] }
+
+function mapRawEvent(raw: RawEvent): Event {
+  return {
+    ...raw,
+    ticketPhases: raw.phases?.map(p => ({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+      currency: p.currency,
+      isActive: true,
+      isSoldOut: p.quantitySold >= p.quantityAvailable,
+    })),
+  }
+}
+
 export const getUpcomingEvents = () =>
-  apiFetch<{ data: Event[] }>('/api/events?status=upcoming')
-    .then((r) => (Array.isArray(r.data) ? r.data : []))
+  apiFetch<{ data: RawEvent[] }>('/api/events?status=upcoming')
+    .then((r) => (Array.isArray(r.data) ? r.data.map(mapRawEvent) : []))
 
 export const getPastEvents = () =>
   apiFetch<{ data: Event[] }>('/api/events?status=past')
