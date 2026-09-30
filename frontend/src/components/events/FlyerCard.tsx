@@ -17,15 +17,15 @@ function formatDate(iso: string) {
 export default function FlyerCard({ event }: Props) {
   const hasLink = !!event.ticketUrl
 
-  const inner = (
-    <>
+  return (
+    <div className="group block border border-pewter/20 hover:border-pewter/50 transition-colors duration-300 overflow-hidden">
       <div className="aspect-[3/4] relative bg-absolute-zero overflow-hidden">
         {event.flyerUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={event.flyerUrl}
             alt={`${event.title} event flyer`}
-            className={`w-full h-full object-contain transition-transform duration-500${hasLink ? ' group-hover:scale-105' : ''}`}
+            className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <PlaceholderMedia
@@ -41,34 +41,27 @@ export default function FlyerCard({ event }: Props) {
         <p className="text-caption text-electric-lime tracking-widest uppercase font-bold">
           {formatDate(event.eventDate)}
         </p>
-        <h3 className={`text-body-lg text-ghost-white font-light line-clamp-2${hasLink ? ' group-hover:text-electric-lime transition-colors' : ''}`}>
+        <h3 className="text-body-lg text-ghost-white font-light line-clamp-2">
           {event.title}
         </h3>
-        <p className="text-body-sm text-pewter truncate">{event.venue}</p>
+        <p className="text-body-sm text-pewter truncate mb-3">{event.venue}</p>
+
+        {hasLink ? (
+          <a
+            href={event.ticketUrl!}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full py-3 bg-electric-lime text-black text-[11px] tracking-[0.2em] uppercase font-bold text-center hover:opacity-90 active:scale-[0.98] transition-all duration-150"
+            aria-label={`Buy tickets for ${event.title}`}
+          >
+            Buy Tickets
+          </a>
+        ) : (
+          <div className="w-full py-3 border border-pewter/20 text-pewter/40 text-[11px] tracking-[0.2em] uppercase text-center cursor-default select-none">
+            Coming Soon
+          </div>
+        )}
       </div>
-    </>
-  )
-
-  if (hasLink) {
-    return (
-      <a
-        href={event.ticketUrl!}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group block border border-pewter/20 hover:border-ghost-white/60 transition-colors duration-300 overflow-hidden"
-        aria-label={`${event.title} — ${formatDate(event.eventDate)} — buy tickets`}
-      >
-        {inner}
-      </a>
-    )
-  }
-
-  return (
-    <div
-      className="block border border-pewter/20 overflow-hidden cursor-default"
-      aria-label={`${event.title} — ${formatDate(event.eventDate)}`}
-    >
-      {inner}
     </div>
   )
 }
