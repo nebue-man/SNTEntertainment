@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import SmoothScrollProvider from './SmoothScrollProvider'
+import SmoothScroll from './SmoothScroll'
 import Navbar from './Navbar'
 import Footer from './Footer'
 import { LogoProvider } from './LogoContext'
@@ -28,7 +28,7 @@ export default function ClientShell({ children }: { children: React.ReactNode })
   const isHome = pathname === '/'
   return (
     <LogoProvider>
-      <SmoothScrollProvider>
+      <SmoothScroll>
         <AmbientDiveBackground />
         <Navbar />
         <main style={isHome ? undefined : { paddingTop: 'var(--page-top)' }}>
@@ -51,7 +51,7 @@ export default function ClientShell({ children }: { children: React.ReactNode })
             onClick={() => { window.location.href = 'mailto:info.sntentertainments@gmail.com' }}
           />
         </div>
-      </SmoothScrollProvider>
+      </SmoothScroll>
     </LogoProvider>
   )
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Montserrat } from 'next/font/google'
+import 'lenis/dist/lenis.css'
 import '@/styles/globals.css'
 import ClientShell from '@/components/layout/ClientShell'
 
