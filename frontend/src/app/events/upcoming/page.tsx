@@ -4,13 +4,14 @@ import { useEffect, useState, useCallback } from 'react'
 import SplitHeadline from '@/components/ui/SplitHeadline'
 import ScrollReveal from '@/components/ui/ScrollReveal'
 import FlyerCard from '@/components/events/FlyerCard'
+import UpcomingEmptyState from '@/components/events/UpcomingEmptyState'
 import LoadingGate from '@/components/ui/LoadingGate'
-import { upcomingEventsPlaceholder } from '@/lib/eventsConfig'
 import { getUpcomingEvents } from '@/lib/api'
 import type { Event } from '@/lib/types'
 
 export default function UpcomingEventsPage() {
   const [events, setEvents] = useState<Event[]>([])
+  const [eventsIsEmpty, setEventsIsEmpty] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
@@ -24,11 +25,13 @@ export default function UpcomingEventsPage() {
 
     Promise.race([getUpcomingEvents(), timeout])
       .then((data) => {
-        setEvents(data.length > 0 ? data : upcomingEventsPlaceholder)
+        setEvents(data)
+        setEventsIsEmpty(data.length === 0)
         setLoading(false)
       })
       .catch(() => {
-        setError(true)
+        setEvents([])
+        setEventsIsEmpty(true)
         setLoading(false)
       })
   }, [])
@@ -53,8 +56,8 @@ export default function UpcomingEventsPage() {
           style={{ fontSize: 'var(--text-heading-sm)' }}
         />
 
-        {events.length === 0 ? (
-          <p className="text-body text-pewter">No upcoming events at this time. Check back soon.</p>
+        {eventsIsEmpty ? (
+          <UpcomingEmptyState />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {events.map((event, i) => (
