@@ -9,10 +9,10 @@ import SplitHeadline from '@/components/ui/SplitHeadline'
 import GhostButton from '@/components/ui/GhostButton'
 import AllEventsButton from '@/components/ui/AllEventsButton'
 import FlyerCard from '@/components/events/FlyerCard'
+import UpcomingEmptyState from '@/components/events/UpcomingEmptyState'
 import LoadingGate from '@/components/ui/LoadingGate'
 import WhyChooseSNT from '@/components/ui/WhyChooseSNT'
 import CapabilitiesMarquee from '@/components/ui/CapabilitiesMarquee'
-import { upcomingEventsPlaceholder } from '@/lib/eventsConfig'
 import { getUpcomingEvents, getPastEventsWithMedia } from '@/lib/api'
 import type { Event, HeroSlide, PastApiEvent } from '@/lib/types'
 import { resolveMediaUrl } from '@/lib/mediaUrl'
@@ -29,6 +29,7 @@ const ICONS_PHOTOS: HeroSlide[] = [
 
 export default function Home() {
   const [upcoming, setUpcoming] = useState<Event[]>([])
+  const [upcomingIsEmpty, setUpcomingIsEmpty] = useState(false)
   const [pastFeatured, setPastFeatured] = useState<PastApiEvent[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -46,7 +47,8 @@ export default function Home() {
       timeout,
     ])
       .then(([upcomingData, pastData]) => {
-        setUpcoming(upcomingData.length > 0 ? upcomingData : upcomingEventsPlaceholder)
+        setUpcoming(upcomingData)
+        setUpcomingIsEmpty(upcomingData.length === 0)
         setPastFeatured(
           pastData
             .slice()
@@ -56,8 +58,8 @@ export default function Home() {
         setLoading(false)
       })
       .catch(() => {
-        // Backend offline — fall back to placeholders so the frontend is previewable
-        setUpcoming(upcomingEventsPlaceholder)
+        setUpcoming([])
+        setUpcomingIsEmpty(true)
         setPastFeatured([])
         setLoading(false)
       })
@@ -150,6 +152,7 @@ export default function Home() {
 
       {/* ── Upcoming Events ───────────────────────────────────── */}
       <section
+        aria-label="Upcoming events"
         className="py-24 md:py-32 border-b border-pewter/20"
         style={{ paddingLeft: 'var(--headline-padding-x)', paddingRight: 'var(--headline-padding-x)' }}
       >
@@ -167,13 +170,17 @@ export default function Home() {
             <AllEventsButton href="/events/upcoming" />
           </ScrollReveal>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {upcoming.slice(0, 4).map((event, i) => (
-            <ScrollReveal key={event.id} delay={i * 0.08}>
-              <FlyerCard event={event} />
-            </ScrollReveal>
-          ))}
-        </div>
+        {upcomingIsEmpty ? (
+          <UpcomingEmptyState />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {upcoming.slice(0, 4).map((event, i) => (
+              <ScrollReveal key={event.id} delay={i * 0.08}>
+                <FlyerCard event={event} />
+              </ScrollReveal>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ── Why Choose SNT ───────────────────────────────────── */}
