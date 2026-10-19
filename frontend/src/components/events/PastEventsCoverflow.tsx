@@ -82,7 +82,7 @@ function GalleryOverlay({
         <div>
           <p className="text-ghost-white font-light text-[17px] leading-tight">{event.title}</p>
           <p className="text-pewter text-[13px] mt-2 tracking-wide">
-            {event.venue}&nbsp;&middot;&nbsp;{new Date(event.eventDate).getFullYear()}
+            {event.venue}{event.venue && event.eventDate ? <>&nbsp;&middot;&nbsp;</> : null}{event.eventDate ? new Date(event.eventDate).getFullYear() : null}
           </p>
         </div>
         {photos.length > 0 && (
@@ -277,10 +277,10 @@ const CoverflowCard = memo(function CoverflowCard({
             {event.title}
           </p>
           <p className="text-pewter/70 text-[10px] mt-1 tracking-wider">
-            {new Date(event.eventDate).toLocaleDateString('en-US', {
+            {event.eventDate ? new Date(event.eventDate).toLocaleDateString('en-US', {
               month: 'short',
               year: 'numeric',
-            })}
+            }) : null}
           </p>
         </div>
       </div>

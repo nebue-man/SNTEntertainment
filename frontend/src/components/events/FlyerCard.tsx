@@ -1,5 +1,6 @@
 import type { Event } from '@/lib/types'
 import PlaceholderMedia from '@/components/ui/PlaceholderMedia'
+import CursorGrid from '@/components/ui/CursorGrid'
 
 interface Props { event: Event }
 
@@ -72,8 +73,30 @@ export default function FlyerCard({ event }: Props) {
             Buy Tickets
           </a>
         ) : (
-          <div className="w-full py-3 border border-pewter/20 text-pewter/40 text-[11px] tracking-[0.2em] uppercase text-center cursor-default select-none">
-            Coming Soon
+          <div className="w-full border border-pewter/20" style={{ height: '44px' }}>
+            <CursorGrid
+              cellSize={18}
+              color="#d3fd50"
+              gridColor="#d3fd50"
+              gridStyle="crosses"
+              highlight="area"
+              radius={80}
+              holdTime={150}
+              fadeDuration={500}
+              fillOpacity={0.05}
+              gridOpacity={0.1}
+              spotlight={0.45}
+              maxOpacity={0.85}
+              edgeFade={0.28}
+              lineWidth={1}
+              intro={false}
+              clickPulse={true}
+              pulseSpeed={500}
+            >
+              <div className="w-full h-full flex items-center justify-center text-pewter/40 text-[11px] tracking-[0.2em] uppercase select-none">
+                Coming Soon
+              </div>
+            </CursorGrid>
           </div>
         )}
       </div>

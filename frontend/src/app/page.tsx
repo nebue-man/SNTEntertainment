@@ -51,7 +51,7 @@ export default function Home() {
         setPastFeatured(
           pastData
             .slice()
-            .sort((a, b) => new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime())
+            .sort((a, b) => new Date(b.eventDate ?? 0).getTime() - new Date(a.eventDate ?? 0).getTime())
             .slice(0, 4)
         )
         setLoading(false)
@@ -107,7 +107,7 @@ export default function Home() {
                 .filter((m) => m.type === 'PHOTO')
                 .sort((a, b) => a.sortOrder - b.sortOrder)[0] ?? null
               const hasVideo = event.media.some((m) => m.type === 'VIDEO')
-              const year = new Date(event.eventDate).getFullYear()
+              const year = event.eventDate ? new Date(event.eventDate).getFullYear() : null
 
               return (
                 <ScrollReveal key={event.id} delay={i * 0.08}>
