@@ -41,8 +41,8 @@ export default function NewEventPage() {
       form.append('title', fields.title)
       form.append('slug', autoSlug(fields.slug) || autoSlug(fields.title))
       form.append('description', fields.description)
-      form.append('venue', fields.venue)
-      form.append('eventDate', new Date(dateRef.current?.value || '').toISOString())
+      if (fields.venue) form.append('venue', fields.venue)
+      if (dateRef.current?.value) form.append('eventDate', new Date(dateRef.current.value).toISOString())
       form.append('status', fields.status)
       form.append('ticketUrl', fields.ticketUrl)
       if (flyer) form.append('flyer', flyer)
@@ -109,8 +109,8 @@ export default function NewEventPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className={labelCls}>Venue</label>
-              <input value={fields.venue} onChange={set('venue')} required className={inputCls} />
+              <label className={labelCls}>Venue <span className="normal-case text-white/20">(optional)</span></label>
+              <input value={fields.venue} onChange={set('venue')} className={inputCls} placeholder="Venue TBA" />
             </div>
             <div>
               <label className={labelCls}>Status</label>
@@ -122,11 +122,10 @@ export default function NewEventPage() {
           </div>
 
           <div>
-            <label className={labelCls}>Event Date &amp; Time</label>
+            <label className={labelCls}>Event Date &amp; Time <span className="normal-case text-white/20">(optional)</span></label>
             <input
               type="datetime-local"
               ref={dateRef}
-              required
               className={`${inputCls} [color-scheme:dark]`}
             />
           </div>

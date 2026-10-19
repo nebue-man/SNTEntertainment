@@ -6,8 +6,8 @@ export const CreateEventSchema = z.object({
   title: z.string().min(1).max(200),
   slug: z.string().regex(slugRegex, 'Slug must be lowercase-hyphenated').optional(),
   description: z.string().min(1),
-  venue: z.string().min(1).max(300),
-  eventDate: z.string().datetime({ offset: true }),
+  venue: z.string().max(300).optional().nullable(),
+  eventDate: z.string().datetime({ offset: true }).optional().nullable(),
   status: z.enum(['UPCOMING', 'PAST']),
   flyerUrl: z.string().url().nullable().optional(),
   ticketUrl: z.preprocess(

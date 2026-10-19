@@ -45,13 +45,17 @@ export default function FlyerCard({ event }: Props) {
       </div>
 
       <div className="p-5 border-t border-pewter/20 flex flex-col gap-1.5">
-        <p className="text-caption text-electric-lime tracking-widest uppercase font-bold">
-          {formatDate(event.eventDate)}
-        </p>
+        {event.eventDate && (
+          <p className="text-caption text-electric-lime tracking-widest uppercase font-bold">
+            {formatDate(event.eventDate)}
+          </p>
+        )}
         <h3 className="text-body-lg text-ghost-white font-light line-clamp-2">
           {event.title}
         </h3>
-        <p className="text-body-sm text-pewter truncate mb-3">{event.venue}</p>
+        {event.venue && (
+          <p className="text-body-sm text-pewter truncate mb-3">{event.venue}</p>
+        )}
 
         {soldOut ? (
           <div className="w-full py-3 border border-red-500/30 text-red-400/60 text-[11px] tracking-[0.2em] uppercase text-center cursor-default select-none">

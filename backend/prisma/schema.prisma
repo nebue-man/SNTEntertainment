@@ -39,8 +39,8 @@ model Event {
   slug           String          @unique
   title          String
   description    String
-  venue          String
-  eventDate      DateTime
+  venue          String?
+  eventDate      DateTime?
   status         EventStatus
   flyerUrl       String?
   flyerPublicId  String?

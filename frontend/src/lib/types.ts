@@ -20,8 +20,8 @@ export interface Event {
   id: string
   slug: string
   title: string
-  eventDate: string     // ISO 8601, e.g. "2026-09-20T12:30:00.000Z"
-  venue: string
+  eventDate?: string | null
+  venue?: string | null
   description: string
   flyerUrl?: string | null
   ticketUrl?: string | null
@@ -54,8 +54,8 @@ export interface PastApiEvent {
   id: string
   slug: string
   title: string
-  venue: string
-  eventDate: string
+  venue?: string | null
+  eventDate?: string | null
   status: 'PAST'
   flyerUrl: string | null
   media: ApiEventMedia[]

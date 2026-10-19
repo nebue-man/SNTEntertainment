@@ -84,8 +84,8 @@ function DetailsTab({ event, onSaved }: { event: AdminEventDetail; onSaved: () =
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className={labelCls}>Venue</label>
-          <input value={fields.venue} onChange={set('venue')} required className={inputCls} />
+          <label className={labelCls}>Venue <span className="normal-case text-white/20">(optional)</span></label>
+          <input value={fields.venue} onChange={set('venue')} className={inputCls} placeholder="Venue TBA" />
         </div>
         <div>
           <label className={labelCls}>Status</label>
@@ -96,13 +96,12 @@ function DetailsTab({ event, onSaved }: { event: AdminEventDetail; onSaved: () =
         </div>
       </div>
       <div>
-        <label className={labelCls}>Event Date &amp; Time</label>
+        <label className={labelCls}>Event Date &amp; Time <span className="normal-case text-white/20">(optional)</span></label>
         <input
-          key={event.eventDate}
+          key={event.eventDate ?? 'no-date'}
           type="datetime-local"
-          defaultValue={toDateTimeLocal(event.eventDate)}
+          defaultValue={event.eventDate ? toDateTimeLocal(event.eventDate) : ''}
           ref={dateRef}
-          required
           className={`${inputCls} [color-scheme:dark]`}
         />
       </div>
