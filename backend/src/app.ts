@@ -15,6 +15,10 @@ import adminRouter from './routes/admin'
 
 const app = express()
 
+// Trust the first proxy hop (nginx / DigitalOcean load-balancer) so that
+// express-rate-limit can read the real client IP from X-Forwarded-For.
+app.set('trust proxy', 1)
+
 // ── Security headers ──────────────────────────────────────────────────────────
 // crossOriginResourcePolicy must be 'cross-origin' because the frontend and
 // backend run on different origins (different ports locally, different subdomains
