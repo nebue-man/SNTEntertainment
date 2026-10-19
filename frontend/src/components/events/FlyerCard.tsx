@@ -75,25 +75,24 @@ export default function FlyerCard({ event }: Props) {
         ) : (
           <div className="w-full border border-pewter/20" style={{ height: '44px' }}>
             <CursorGrid
-              cellSize={18}
+              cellSize={30}
               color="#d3fd50"
               gridColor="#d3fd50"
               gridStyle="crosses"
               highlight="area"
-              radius={80}
-              holdTime={150}
-              fadeDuration={500}
-              fillOpacity={0.05}
-              gridOpacity={0.1}
-              spotlight={0.45}
-              maxOpacity={0.85}
-              edgeFade={0.28}
-              lineWidth={1}
+              radius={60}
+              holdTime={100}
+              fadeDuration={400}
+              fillOpacity={0.02}
+              gridOpacity={0.04}
+              spotlight={0.18}
+              maxOpacity={0.45}
+              edgeFade={0.3}
+              lineWidth={0.75}
               intro={false}
-              clickPulse={true}
-              pulseSpeed={500}
+              clickPulse={false}
             >
-              <div className="w-full h-full flex items-center justify-center text-pewter/40 text-[11px] tracking-[0.2em] uppercase select-none">
+              <div className="w-full h-full flex items-center justify-center text-ghost-white/65 text-[11px] tracking-[0.2em] uppercase select-none">
                 Coming Soon
               </div>
             </CursorGrid>
