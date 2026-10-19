@@ -89,6 +89,7 @@ export default function FlyerCard({ event }: Props) {
               maxOpacity={0.45}
               edgeFade={0.3}
               lineWidth={0.75}
+              ambient={0.35}
               intro={false}
               clickPulse={false}
             >
